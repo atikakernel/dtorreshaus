@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { ShoppingCart, Home, Heart, X, Plus, Minus, Trash2 } from 'lucide-react'
+import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles } from 'lucide-react'
 
-// Catálogo de productos
+// Catálogo de productos organizados por sección
 const productsData = {
-  hogar: [
+  cocina: [
     {
       sku: 'JAC01-5',
       nombre: 'Dispensador de vidrio con bomba cromada – 200 ml',
@@ -93,80 +93,100 @@ const productsData = {
       categoria: 'Hogar / Cocina – Almacenamiento',
       precio: 29000,
       emoji: '🍱'
+    },
+    {
+      sku: 'JAC01-24',
+      nombre: 'Recipiente hermético de vidrio con tapa rosada – 650 ml',
+      descripcion: 'Contenedor individual de vidrio templado con tapa hermética rosada, ideal para conservar alimentos. Apto para microondas y refrigerador.',
+      material: 'Vidrio / Silicona – 650 ml – 14 × 6 cm',
+      categoria: 'Hogar / Cocina – Almacenamiento',
+      precio: 12900,
+      emoji: '🥡'
+    },
+    {
+      sku: 'JAC01-39',
+      nombre: 'Mini selladores plásticos de colores – Set 12 unidades',
+      descripcion: 'Selladores plásticos de colores para bolsas de snacks o alimentos. Prácticos y resistentes. Precio por unidad 0.32 CNY.',
+      material: 'Plástico PP – 12 pzas – 0.32 CNY c/u',
+      categoria: 'Hogar / Cocina – Organización',
+      precio: 3500,
+      emoji: '📎'
     }
   ],
-  labubu: [
+  baño: [
     {
-      sku: 'LAB-001',
-      nombre: 'Labubu Classic Rosa',
-      descripcion: 'Adorable Labubu en color rosa pastel. El compañero perfecto para tu colección. Diseño original con detalles encantadores y expresión única.',
-      material: 'Vinilo de alta calidad – 12 cm',
-      categoria: 'Labubu – Coleccionables',
-      precio: 89000,
-      emoji: '🌸'
+      sku: 'JAC01-28',
+      nombre: 'Dispensador de jabón cerámico beige con dosificador dorado – 300 ml',
+      descripcion: 'Dosificador decorativo de baño o cocina, en cerámica color beige con acabado brillante y bomba dorada metálica.',
+      material: 'Cerámica / Metal – 300 ml – 7.8 CNY',
+      categoria: 'Hogar / Baño',
+      precio: 18900,
+      emoji: '🧼'
     },
     {
-      sku: 'LAB-002',
-      nombre: 'Labubu Classic Azul',
-      descripcion: 'Labubu en tono azul cielo. Perfecto para decorar tu escritorio o estante. Material duradero y colores vibrantes.',
-      material: 'Vinilo de alta calidad – 12 cm',
-      categoria: 'Labubu – Coleccionables',
-      precio: 89000,
-      emoji: '💙'
+      sku: 'JAC01-29',
+      nombre: 'Dispensador de jabón gris con tapa de madera clara – 280 ml',
+      descripcion: 'Elegante dispensador gris texturizado con tapa tipo bambú y bomba plateada. Ideal para baño moderno.',
+      material: 'Cerámica / Metal – 280 ml – 6.1 CNY',
+      categoria: 'Hogar / Baño',
+      precio: 15000,
+      emoji: '🧼'
     },
     {
-      sku: 'LAB-003',
-      nombre: 'Labubu Classic Blanco',
-      descripcion: 'Labubu en elegante blanco puro. Un clásico atemporal para los verdaderos coleccionistas.',
-      material: 'Vinilo de alta calidad – 12 cm',
-      categoria: 'Labubu – Coleccionables',
-      precio: 89000,
-      emoji: '🤍'
+      sku: 'JAC01-30',
+      nombre: 'Dispensador de jabón gris oscuro con tapa de bambú – 280 ml',
+      descripcion: 'Variante más oscura del modelo anterior, con bomba metálica plateada y cuerpo gris antracita texturizado.',
+      material: 'Cerámica / Metal – 280 ml – 6.4 CNY',
+      categoria: 'Hogar / Baño',
+      precio: 15500,
+      emoji: '🧼'
     },
     {
-      sku: 'LAB-004',
-      nombre: 'Labubu Halloween Special',
-      descripcion: 'Edición especial de Halloween con disfraz de bruja. Detalle único y limitado para los fans de Labubu.',
-      material: 'Vinilo de alta calidad – 12 cm',
-      categoria: 'Labubu – Edición Especial',
-      precio: 125000,
-      emoji: '🎃'
+      sku: 'JAC01-31',
+      nombre: 'Dispensador de jabón gris con base transparente – 250 ml',
+      descripcion: 'Dispensador moderno con cuerpo gris mate y base transparente. Bomba metálica cromada resistente.',
+      material: 'Plástico ABS / Metal – 250 ml – 9.5 CNY',
+      categoria: 'Hogar / Baño',
+      precio: 17900,
+      emoji: '🧴'
     },
     {
-      sku: 'LAB-005',
-      nombre: 'Labubu Navidad 2024',
-      descripcion: 'Versión navideña con gorrito de Santa y bufanda. Perfecto para la temporada festiva.',
-      material: 'Vinilo de alta calidad – 12 cm',
-      categoria: 'Labubu – Edición Especial',
-      precio: 125000,
-      emoji: '🎅'
+      sku: 'JAC01-32',
+      nombre: 'Dispensador de jabón cerámico blanco con detalles dorados – 300 ml',
+      descripcion: 'Dosificador blanco elegante con líneas doradas y bomba metálica. Perfecto para baño o tocador.',
+      material: 'Cerámica / Metal – 300 ml – 7.9 CNY',
+      categoria: 'Hogar / Baño',
+      precio: 18500,
+      emoji: '✨'
     },
     {
-      sku: 'LAB-006',
-      nombre: 'Labubu Mini Llavero',
-      descripcion: 'Labubu en versión miniatura para llevar a todas partes. Incluye cadena y mosquetón metálico.',
-      material: 'Vinilo – 6 cm',
-      categoria: 'Labubu – Accesorios',
+      sku: 'JAC01-33',
+      nombre: 'Set 3 piezas de baño gris – vaso + jabón + cepillo',
+      descripcion: 'Set completo de baño color gris oscuro, incluye dispensador, vaso y portacepillos. Diseño moderno con textura vertical.',
+      material: 'Cerámica / Metal – 3 pzas – 15.5 CNY',
+      categoria: 'Hogar / Baño – Sets',
       precio: 35000,
-      emoji: '🔑'
+      emoji: '🛁'
+    }
+  ],
+  limpieza: [
+    {
+      sku: 'JAC01-34',
+      nombre: 'Paños de microfibra multicolor – Set 5 unidades 30×30 cm',
+      descripcion: 'Paños suaves y absorbentes de microfibra con colores surtidos. Perfectos para limpieza de cocina y superficies.',
+      material: 'Microfibra – 30×30 cm – 4.1 CNY / 5 pcs',
+      categoria: 'Hogar / Limpieza',
+      precio: 8500,
+      emoji: '🧽'
     },
     {
-      sku: 'LAB-007',
-      nombre: 'Set Labubu Rainbow (6 pcs)',
-      descripcion: 'Set completo de 6 Labubus en colores del arcoíris. Incluye rosa, azul, amarillo, verde, morado y naranja.',
-      material: 'Vinilo de alta calidad – 12 cm cada uno',
-      categoria: 'Labubu – Sets',
-      precio: 475000,
-      emoji: '🌈'
-    },
-    {
-      sku: 'LAB-008',
-      nombre: 'Labubu Peluche Grande',
-      descripcion: 'Versión en peluche súper suave y abrazable. Perfecto como almohada decorativa o compañero de descanso.',
-      material: 'Felpa premium – 35 cm',
-      categoria: 'Labubu – Peluches',
-      precio: 189000,
-      emoji: '🧸'
+      sku: 'JAC01-35',
+      nombre: 'Paños de microfibra neutros – Set 5 unidades 30×30 cm',
+      descripcion: 'Paños beige y marrones de microfibra gruesa con alta absorción. Reutilizables y lavables.',
+      material: 'Microfibra – 30×30 cm – 3.5 CNY / 5 pcs',
+      categoria: 'Hogar / Limpieza',
+      precio: 7500,
+      emoji: '🧽'
     }
   ]
 }
@@ -180,6 +200,34 @@ const formatPrice = (price) => {
   }).format(price)
 }
 
+// Componente para imagen del producto con fallback
+const ProductImage = ({ sku, emoji }) => {
+  const [imageError, setImageError] = useState(false)
+  const imageExtensions = ['jpg', 'jpeg', 'png', 'webp']
+
+  // Intentar cargar imagen desde assets
+  const tryLoadImage = () => {
+    if (imageError) return null
+
+    // Intentamos con la primera extensión por defecto
+    const imagePath = `/assets/products/${sku}.jpg`
+    return (
+      <img
+        src={imagePath}
+        alt={sku}
+        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        onError={() => setImageError(true)}
+      />
+    )
+  }
+
+  return (
+    <div className="product-image">
+      {!imageError ? tryLoadImage() : emoji}
+    </div>
+  )
+}
+
 function App() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [cart, setCart] = useState([])
@@ -188,11 +236,13 @@ function App() {
   // Filtrar productos según categoría activa
   const getFilteredProducts = () => {
     if (activeCategory === 'all') {
-      return [...productsData.hogar, ...productsData.labubu]
-    } else if (activeCategory === 'hogar') {
-      return productsData.hogar
+      return [...productsData.cocina, ...productsData.baño, ...productsData.limpieza]
+    } else if (activeCategory === 'cocina') {
+      return productsData.cocina
+    } else if (activeCategory === 'baño') {
+      return productsData.baño
     } else {
-      return productsData.labubu
+      return productsData.limpieza
     }
   }
 
@@ -256,21 +306,29 @@ function App() {
               className={`nav-button ${activeCategory === 'all' ? 'active' : ''}`}
               onClick={() => setActiveCategory('all')}
             >
+              <Home size={18} style={{ display: 'inline', marginRight: '5px' }} />
               Ver Todo
             </button>
             <button
-              className={`nav-button ${activeCategory === 'hogar' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('hogar')}
+              className={`nav-button ${activeCategory === 'cocina' ? 'active' : ''}`}
+              onClick={() => setActiveCategory('cocina')}
             >
-              <Home size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Artículos para el Hogar
+              <ChefHat size={18} style={{ display: 'inline', marginRight: '5px' }} />
+              Cocina
             </button>
             <button
-              className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('labubu')}
+              className={`nav-button ${activeCategory === 'baño' ? 'active' : ''}`}
+              onClick={() => setActiveCategory('baño')}
             >
-              <Heart size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Labubus
+              <Droplet size={18} style={{ display: 'inline', marginRight: '5px' }} />
+              Baño
+            </button>
+            <button
+              className={`nav-button ${activeCategory === 'limpieza' ? 'active' : ''}`}
+              onClick={() => setActiveCategory('limpieza')}
+            >
+              <Sparkles size={18} style={{ display: 'inline', marginRight: '5px' }} />
+              Limpieza
             </button>
           </div>
         </div>
@@ -280,7 +338,7 @@ function App() {
       <div className="container">
         <div className="hero">
           <h1>Bienvenido a dtorreshaus</h1>
-          <p>Tu tienda de artículos para el hogar y coleccionables Labubu en Colombia</p>
+          <p>Tu tienda de artículos para el hogar en Colombia</p>
         </div>
       </div>
 
@@ -289,15 +347,14 @@ function App() {
         <section className="products-section">
           <h2 className="section-title">
             {activeCategory === 'all' && 'Todos los Productos'}
-            {activeCategory === 'hogar' && 'Artículos para el Hogar'}
-            {activeCategory === 'labubu' && 'Colección Labubu'}
+            {activeCategory === 'cocina' && 'Cocina'}
+            {activeCategory === 'baño' && 'Baño'}
+            {activeCategory === 'limpieza' && 'Limpieza'}
           </h2>
           <div className="products-grid">
             {getFilteredProducts().map(product => (
               <div key={product.sku} className="product-card">
-                <div className="product-image">
-                  {product.emoji}
-                </div>
+                <ProductImage sku={product.sku} emoji={product.emoji} />
                 <div className="product-info">
                   <div className="product-sku">{product.sku}</div>
                   <h3 className="product-name">{product.nombre}</h3>
@@ -383,7 +440,7 @@ function App() {
       <footer className="footer">
         <div className="footer-content">
           <h3>dtorreshaus</h3>
-          <p>Tu tienda de confianza para artículos del hogar y coleccionables</p>
+          <p>Tu tienda de confianza para artículos del hogar</p>
           <p>Envíos a toda Colombia</p>
           <p style={{ marginTop: '20px', fontSize: '14px', opacity: '0.7' }}>
             © 2024 dtorreshaus. Todos los derechos reservados.
