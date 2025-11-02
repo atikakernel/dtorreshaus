@@ -209,8 +209,8 @@ const ProductImage = ({ sku, emoji }) => {
   const tryLoadImage = () => {
     if (imageError) return null
 
-    // Intentamos con la primera extensión por defecto
-    const imagePath = `/assets/products/${sku}.jpg`
+    // Intentamos con la extensión .jpeg (formato subido)
+    const imagePath = `/assets/products/${sku}.jpeg`
     return (
       <img
         src={imagePath}
