@@ -1,40 +1,76 @@
 # dtorreshaus
 
-E-commerce de artículos para el hogar y coleccionables Labubu
+E-commerce completo de artículos para el hogar en Colombia
 
 ## Descripción
 
 dtorreshaus es una tienda online moderna desarrollada con React y Vite que ofrece:
-- Artículos de cocina y hogar de alta calidad
-- Colección completa de Labubus coleccionables
+- Amplio catálogo de artículos de cocina y hogar
+- Productos de baño, limpieza y organización
+- Tecnología y electrodomésticos
+- Decoración y accesorios para el hogar
 - Carrito de compras funcional
 - Diseño responsive para todos los dispositivos
 - Precios en pesos colombianos (COP)
 
 ## Características
 
-- **Catálogo de Productos**: 10 productos para el hogar + 8 Labubus
-- **Navegación por Categorías**: Hogar, Labubu, Ver Todo
+- **Catálogo de Productos**: 71 productos organizados en 7 categorías
+- **Navegación por Categorías**: Cocina, Baño, Limpieza, Organización, Decoración, Tecnología, Bienestar
 - **Carrito de Compras**: Agregar, eliminar y modificar cantidades
 - **Diseño Responsive**: Optimizado para móvil, tablet y desktop
 - **SEO Optimizado**: Meta tags y títulos descriptivos
 - **Interfaz Moderna**: Con iconos de Lucide React
+- **Sistema de Imágenes**: Soporte para imágenes reales de productos (formato .jpeg)
 
 ## Catálogo de Productos
 
-### Artículos para el Hogar
-- Dispensadores de vidrio con bomba cromada
-- Botellas térmicas de vidrio
-- Pulverizadores de aceite
-- Vasos de vidrio (varios modelos)
-- Sets de contenedores herméticos
+### 🍳 Cocina (28 productos)
+- Dispensadores y botellas de vidrio
+- Vasos y vajilla (8 modelos diferentes)
+- Contenedores herméticos y almacenamiento
+- Ralladores y utensilios de cocina
+- Cubiertos (3 sets de 6 piezas)
+- Jarras decorativas y funcionales
+- Especieros cerámicos con bandeja de bambú
+- Electrodomésticos (freidora de aire, licuadora, batidor eléctrico)
+- Purificadores de agua
+- Tablas para picar
+- Selladores de bolsas
 
-### Labubus
-- Labubus clásicos (Rosa, Azul, Blanco)
-- Ediciones especiales (Halloween, Navidad)
-- Mini llaveros
-- Set Rainbow (6 piezas)
-- Peluches grandes
+### 🚿 Baño (11 productos)
+- Dispensadores de jabón cerámicos (6 modelos)
+- Sets completos de baño
+- Cepillos sanitarios (3 modelos)
+- Jabones decorativos
+- Accesorios portátiles
+
+### 🧹 Limpieza (4 productos)
+- Paños de microfibra (2 sets)
+- Recogedores y cepillos compactos
+- Sets 2 en 1 de limpieza
+
+### 📦 Organización (7 productos)
+- Ganchos decorativos y funcionales
+- Cajas organizadoras (3 modelos)
+- Carrito de mercado plegable
+
+### 💡 Decoración (10 productos)
+- Lámparas LED decorativas con efecto 3D
+- Lámparas infantiles
+- Velas aromáticas (7 sets diferentes)
+- Velas tea light en varios aromas
+
+### ⚡ Tecnología (10 productos)
+- Ventiladores USB (4 modelos)
+- Secadores de cabello profesionales (3 modelos)
+- Plancha alisadora
+- Máquina cortapelo profesional
+- Termo deportivo
+
+### 💚 Bienestar (4 productos)
+- Bolsas térmicas de agua con fundas decorativas (3 modelos)
+- Manguera extensible para jardín
 
 ## Instalación
 
