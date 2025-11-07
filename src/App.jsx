@@ -42,6 +42,51 @@ const productsData = {
       emoji: '💦'
     },
     {
+      sku: 'JAC01-9',
+      nombre: 'Mug cerámico con diseño floral surtido – 260 ml',
+      descripcion: 'Taza de cerámica decorada, disponible en 4 diseños florales. Ideal para café o té.',
+      material: 'Cerámica – Ø 7.6 × 8 cm',
+      categoria: 'Cocina – Vajilla',
+      precio: 7000,
+      emoji: '🌺'
+    },
+    {
+      sku: 'JAC01-10',
+      nombre: 'Mug cerámico con puntos de colores – 230 ml',
+      descripcion: 'Taza colorida con puntos blancos. Ideal para cafés cortos o capuchinos.',
+      material: 'Cerámica – Ø 7.5 × 8.5 cm',
+      categoria: 'Cocina – Vajilla',
+      precio: 5500,
+      emoji: '☕'
+    },
+    {
+      sku: 'JAC01-11',
+      nombre: 'Mug cerámico "Coffee" colores surtidos – 230 ml',
+      descripcion: 'Taza con diseño "Coffee" en tonos tierra. Ideal para uso diario o cafeterías.',
+      material: 'Cerámica – Ø 7.5 × 8.5 cm',
+      categoria: 'Cocina – Vajilla',
+      precio: 5500,
+      emoji: '☕'
+    },
+    {
+      sku: 'JAC01-13',
+      nombre: 'Mug cerámico grande con diseño moderno – 360 ml',
+      descripcion: 'Taza grande para café o bebidas calientes. Diseño moderno en 3 colores surtidos.',
+      material: 'Cerámica – Ø 8 × 11.5 cm',
+      categoria: 'Cocina – Vajilla',
+      precio: 6000,
+      emoji: '☕'
+    },
+    {
+      sku: 'JAC01-15',
+      nombre: 'Mug cerámico vintage en colores pastel – 380 ml',
+      descripcion: 'Taza de cerámica estilo vintage, colores pastel y borde metálico. Ideal para regalo.',
+      material: 'Cerámica – Ø 9 × 9.7 cm',
+      categoria: 'Cocina – Vajilla',
+      precio: 6500,
+      emoji: '🍵'
+    },
+    {
       sku: 'JAC01-20',
       nombre: 'Vaso alto de vidrio facetado – 475 ml',
       descripcion: 'Vaso de vidrio transparente con diseño facetado tipo restaurante. Apto para lavavajillas.',
@@ -194,6 +239,15 @@ const productsData = {
       categoria: 'Cocina – Utensilios',
       precio: 17500,
       emoji: '🥤'
+    },
+    {
+      sku: 'JAC01-93',
+      nombre: 'Jarra térmica blanca de cerámica con tapa plateada – 1.5 L',
+      descripcion: 'Jarra térmica elegante de cerámica blanca con tapa metálica y mango ergonómico. Mantiene la temperatura por horas.',
+      material: 'Cerámica + acero – 1.5 L',
+      categoria: 'Cocina – Vajilla',
+      precio: 45000,
+      emoji: '☕'
     },
     {
       sku: 'JAC01-96',
@@ -389,6 +443,15 @@ const productsData = {
       emoji: '🧽'
     },
     {
+      sku: 'JAC01-36',
+      nombre: 'Set 3 paños de cocina microfibra – 25×25 cm',
+      descripcion: 'Paños absorbentes de microfibra para limpieza de cocina o baño. Suaves, duraderos y de secado rápido.',
+      material: 'Microfibra – 25 × 25 cm',
+      categoria: 'Limpieza – Cocina',
+      precio: 6500,
+      emoji: '🧽'
+    },
+    {
       sku: 'JAC01-46',
       nombre: 'Recogedor con escobilla compacto – color rosado',
       descripcion: 'Mini recogedor de plástico con cepillo de limpieza. Compacto y fácil de guardar.',
@@ -499,6 +562,33 @@ const productsData = {
       categoria: 'Decoración – Iluminación',
       precio: 79000,
       emoji: '❤️'
+    },
+    {
+      sku: 'JAC01-158',
+      nombre: 'Lámpara decorativa de mesa circular con luz LED – 21 cm',
+      descripcion: 'Lámpara LED circular con base metálica y empaque individual. Diseño moderno, ideal para dormitorios.',
+      material: 'Acrílico + ABS – 21 cm',
+      categoria: 'Decoración – Iluminación',
+      precio: 23000,
+      emoji: '💡'
+    },
+    {
+      sku: 'JAC01-159',
+      nombre: 'Lámpara decorativa con base metálica – 24 cm',
+      descripcion: 'Lámpara LED de 24 cm con base estable, luz cálida y empaque individual. Perfecta para ambientar espacios.',
+      material: 'Acrílico + ABS – 24 cm',
+      categoria: 'Decoración – Iluminación',
+      precio: 22000,
+      emoji: '🔆'
+    },
+    {
+      sku: 'JAC01-160',
+      nombre: 'Lámpara decorativa con base metálica efecto 3D – 24 cm',
+      descripcion: 'Lámpara LED efecto 3D de 24 cm, luz cálida ajustable. Ideal para regalo o decoración moderna.',
+      material: 'Acrílico + ABS – 24 cm',
+      categoria: 'Decoración – Iluminación',
+      precio: 23500,
+      emoji: '✨'
     },
     {
       sku: 'JAC01-113',
@@ -706,7 +796,7 @@ const formatPrice = (price) => {
 }
 
 // Componente para imagen del producto con fallback
-const ProductImage = ({ sku, emoji }) => {
+const ProductImage = ({ sku, emoji, onClick }) => {
   const [imageError, setImageError] = useState(false)
 
   const tryLoadImage = () => {
@@ -716,15 +806,17 @@ const ProductImage = ({ sku, emoji }) => {
       <img
         src={imagePath}
         alt={sku}
-        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+        style={{ width: '100%', height: '100%', objectFit: 'contain', cursor: 'pointer' }}
         onError={() => setImageError(true)}
+        onClick={onClick}
+        title="Click para ver en detalle"
       />
     )
   }
 
   return (
-    <div className="product-image">
-      {!imageError ? tryLoadImage() : emoji}
+    <div className="product-image" style={{ background: '#f8f9fa' }}>
+      {!imageError ? tryLoadImage() : <div style={{ fontSize: '80px' }}>{emoji}</div>}
     </div>
   )
 }
@@ -733,6 +825,7 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [cart, setCart] = useState([])
   const [isCartOpen, setIsCartOpen] = useState(false)
+  const [imageModal, setImageModal] = useState({ isOpen: false, sku: null, nombre: '' })
 
   // Filtrar productos según categoría activa
   const getFilteredProducts = () => {
@@ -784,6 +877,16 @@ function App() {
   // Calcular total del carrito
   const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0)
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0)
+
+  // Abrir modal de imagen
+  const openImageModal = (sku, nombre) => {
+    setImageModal({ isOpen: true, sku, nombre })
+  }
+
+  // Cerrar modal de imagen
+  const closeImageModal = () => {
+    setImageModal({ isOpen: false, sku: null, nombre: '' })
+  }
 
   return (
     <div className="app">
@@ -890,7 +993,11 @@ function App() {
           <div className="products-grid">
             {getFilteredProducts().map(product => (
               <div key={product.sku} className="product-card">
-                <ProductImage sku={product.sku} emoji={product.emoji} />
+                <ProductImage
+                  sku={product.sku}
+                  emoji={product.emoji}
+                  onClick={() => openImageModal(product.sku, product.nombre)}
+                />
                 <div className="product-info">
                   <div className="product-sku">{product.sku}</div>
                   <h3 className="product-name">{product.nombre}</h3>
@@ -968,6 +1075,26 @@ function App() {
                 <span className="cart-total-price">{formatPrice(cartTotal)}</span>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {imageModal.isOpen && (
+        <div className="image-modal-overlay" onClick={closeImageModal}>
+          <div className="image-modal-content" onClick={(e) => e.stopPropagation()}>
+            <button className="image-modal-close" onClick={closeImageModal}>
+              <X size={32} />
+            </button>
+            <h3 className="image-modal-title">{imageModal.nombre}</h3>
+            <div className="image-modal-image">
+              <img
+                src={`/assets/products/${imageModal.sku}.jpeg`}
+                alt={imageModal.nombre}
+                style={{ maxWidth: '100%', maxHeight: '80vh', objectFit: 'contain' }}
+              />
+            </div>
+            <p className="image-modal-hint">SKU: {imageModal.sku}</p>
           </div>
         </div>
       )}
