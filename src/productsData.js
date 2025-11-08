@@ -1142,5 +1142,164 @@ export const productsData = {
       precio: 48000,
       emoji: '⚽'
     }
+  ],
+
+  labubu: [
+    {
+      sku: 'POP01',
+      nombre: 'Labubu Caja Sorpresa (3ª Generación)',
+      descripcion: 'Figura sorpresa de colección. Cada caja incluye un diseño aleatorio de Labubu. Ideal para regalar o coleccionar.',
+      material: 'Vinilo + PVC – Diseño aleatorio',
+      categoria: 'Labubu – Pop Mart',
+      precio: 32900,
+      emoji: '🎁'
+    },
+    {
+      sku: 'POP02',
+      nombre: 'Labubu con Ropa (más de 1000 estilos)',
+      descripcion: 'Figura Labubu con traje textil completo. Más de mil estilos únicos y edición coleccionable Pop Mart.',
+      material: 'Peluche + Vinilo – +1000 estilos',
+      categoria: 'Labubu – Pop Mart',
+      precio: 32900,
+      emoji: '👗'
+    },
+    {
+      sku: 'POP03',
+      nombre: 'Labubu Monster (con Cadena Metálica)',
+      descripcion: 'Edición especial del clásico Labubu con traje peludo y cadena metálica. Diseño premium y exclusivo.',
+      material: 'Plush + Metal – Edición especial',
+      categoria: 'Labubu – Pop Mart',
+      precio: 39900,
+      emoji: '🔗'
+    },
+    {
+      sku: 'POP04',
+      nombre: 'Labubu Monster Tornasol (Iridiscente)',
+      descripcion: 'Figura Labubu edición tornasol con acabado brillante y textura multicolor. Efecto iridiscente premium.',
+      material: 'Plush iridiscente – Multicolor',
+      categoria: 'Labubu – Pop Mart',
+      precio: 34900,
+      emoji: '✨'
+    },
+    {
+      sku: 'POP05',
+      nombre: 'Gran Labubu (38 cm – Edición Gigante)',
+      descripcion: 'Figura gigante de 38 cm con textura premium y ojos brillantes. La joya de la colección Pop Mart.',
+      material: 'Plush premium – 38 cm',
+      categoria: 'Labubu – Pop Mart',
+      precio: 369000,
+      emoji: '🦖'
+    }
+  ],
+
+  armas: [
+    {
+      sku: 'WPN-ARP9-01',
+      nombre: 'ARP9 – Rifle táctico premium',
+      descripcion: 'Nuestra arma más potente, con diseño realista, luz en la mira y alto rendimiento. Ideal para coleccionistas y entusiastas del gel blaster.',
+      material: 'ABS táctico + Gel blaster eléctrico',
+      categoria: 'Armas – Rifles Premium',
+      precio: 220000,
+      emoji: '🔫'
+    },
+    {
+      sku: 'WPN-AK47-BLK-01',
+      nombre: 'AK47 Negra – Clásico con humo y luz',
+      descripcion: 'Inspirada en el clásico diseño AK, cuenta con pila de litio, efectos de humo y luces LED. Potencia media y excelente agarre.',
+      material: 'ABS + Pila litio – Luz y humo',
+      categoria: 'Armas – Rifles Clásicos',
+      precio: 110000,
+      emoji: '💥'
+    },
+    {
+      sku: 'WPN-AK47-RED-01',
+      nombre: 'AK47 Roja – Edición camuflada',
+      descripcion: 'Versión roja camuflada de la AK47, con pila recargable y sistema de luces y humo. Ideal para uso recreativo.',
+      material: 'ABS camuflado + Pila recargable',
+      categoria: 'Armas – Rifles Clásicos',
+      precio: 110000,
+      emoji: '🔴'
+    },
+    {
+      sku: 'WPN-AK47-DBP-01',
+      nombre: 'AK47 Doble Pila – Alta potencia',
+      descripcion: 'Potente rifle de doble pila con efectos de luz y humo. Ideal para sesiones largas sin recargar.',
+      material: 'ABS + Doble pila litio – Luz y humo',
+      categoria: 'Armas – Rifles Clásicos',
+      precio: 110000,
+      emoji: '⚡'
+    },
+    {
+      sku: 'WPN-UMP7-01',
+      nombre: 'UMP7 – Compacta de una pila',
+      descripcion: 'Modelo compacto, ligero y fácil de usar. Ideal para principiantes.',
+      material: 'ABS + Pila recargable',
+      categoria: 'Armas – Compactas',
+      precio: 60000,
+      emoji: '🎯'
+    },
+    {
+      sku: 'WPN-UMP45-01',
+      nombre: 'UMP45 – Potente y ligera',
+      descripcion: 'Diseño moderno con pila de litio y alta potencia. Disparo estable y largo alcance.',
+      material: 'ABS + Pila litio',
+      categoria: 'Armas – Compactas',
+      precio: 90000,
+      emoji: '🔹'
+    },
+    {
+      sku: 'WPN-VECTOR-BLK-01',
+      nombre: 'Vector Negra – Profesional con linterna',
+      descripcion: 'Arma profesional con linterna integrada, efectos de humo y luz. Pila de litio de alta capacidad.',
+      material: 'ABS táctico + Linterna LED',
+      categoria: 'Armas – Profesionales',
+      precio: 120000,
+      emoji: '🔦'
+    },
+    {
+      sku: 'WPN-M4-01',
+      nombre: 'M4 – Doble pila multicolor',
+      descripcion: 'Rifle M4 con doble pila y diseño colorido. Ideal para uso prolongado y alto impacto visual.',
+      material: 'ABS multicolor + Doble pila',
+      categoria: 'Armas – Rifles M4',
+      precio: 120000,
+      emoji: '🌈'
+    },
+    {
+      sku: 'WPN-M416-SKULL-01',
+      nombre: 'M416 Calavera – Diseño agresivo',
+      descripcion: 'Versión calavera con luces LED y pila de litio. Excelente potencia y estética táctica.',
+      material: 'ABS diseño calavera + Pila litio',
+      categoria: 'Armas – Rifles M4',
+      precio: 140000,
+      emoji: '💀'
+    },
+    {
+      sku: 'WPN-M416-MIL-01',
+      nombre: 'M416 Militar – Doble pila',
+      descripcion: 'Modelo militar con doble pila recargable. Mide casi un metro. Ideal para colección.',
+      material: 'ABS militar + Doble pila – 100 cm',
+      categoria: 'Armas – Rifles M4',
+      precio: 120000,
+      emoji: '🪖'
+    },
+    {
+      sku: 'WPN-DBLCANNON-01',
+      nombre: 'Doble Cañón – Bifocal con luz dual',
+      descripcion: 'Rifle de doble cañón con luces en ambos extremos. Efecto visual impresionante.',
+      material: 'ABS + Doble LED – Doble cañón',
+      categoria: 'Armas – Especiales',
+      precio: 180000,
+      emoji: '🔥'
+    },
+    {
+      sku: 'WPN-SHOOT-ELITE-01',
+      nombre: 'Shooting Elite – Compacta doble pila',
+      descripcion: 'Arma compacta con doble pila, ideal para principiantes. Gran potencia para su tamaño.',
+      material: 'ABS compacto + Doble pila',
+      categoria: 'Armas – Compactas',
+      precio: 75000,
+      emoji: '🎮'
+    }
   ]
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin } from 'lucide-react'
+import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target } from 'lucide-react'
 import { productsData } from './productsData.js'
 
 // Colombian cities for shipping calculation
@@ -86,7 +86,9 @@ function App() {
         ...productsData.decoración,
         ...productsData.tecnología,
         ...productsData.bienestar,
-        ...productsData.deportes
+        ...productsData.deportes,
+        ...productsData.labubu,
+        ...productsData.armas
       ]
     } else {
       products = productsData[activeCategory] || []
@@ -233,6 +235,20 @@ function App() {
               <Dumbbell size={18} style={{ display: 'inline', marginRight: '5px' }} />
               Deportes
             </button>
+            <button
+              className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
+              onClick={() => setActiveCategory('labubu')}
+            >
+              <Gift size={18} style={{ display: 'inline', marginRight: '5px' }} />
+              Labubu
+            </button>
+            <button
+              className={`nav-button ${activeCategory === 'armas' ? 'active' : ''}`}
+              onClick={() => setActiveCategory('armas')}
+            >
+              <Target size={18} style={{ display: 'inline', marginRight: '5px' }} />
+              Gel Blasters
+            </button>
           </div>
         </div>
       </nav>
@@ -284,6 +300,8 @@ function App() {
             {activeCategory === 'tecnología' && 'Tecnología'}
             {activeCategory === 'bienestar' && 'Bienestar'}
             {activeCategory === 'deportes' && 'Deportes'}
+            {activeCategory === 'labubu' && 'Labubu Pop Mart'}
+            {activeCategory === 'armas' && 'Gel Blasters'}
             {searchTerm && `Resultados para: "${searchTerm}"`}
           </h2>
           <div className="products-grid">
