@@ -30,8 +30,26 @@ const PORT = process.env.PORT || 3001
 app.use(helmet())
 
 // CORS - Permitir requests del frontend
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'https://dtorreshaus.com',
+  'http://dtorreshaus.com',
+  'https://www.dtorreshaus.com',
+  'http://www.dtorreshaus.com'
+]
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Permitir requests sin origin (como mobile apps o curl)
+    if (!origin) return callback(null, true)
+
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = 'La política de CORS no permite el acceso desde este origen.'
+      return callback(new Error(msg), false)
+    }
+    return callback(null, true)
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
