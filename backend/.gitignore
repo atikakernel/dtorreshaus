@@ -1,0 +1,50 @@
+# ====================================
+# BACKEND .gitignore - dtorreshaus
+# ====================================
+
+# Archivos de entorno (¡NUNCA subir a git!)
+.env
+.env.local
+.env.production
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Logs
+logs/
+*.log
+
+# Base de datos local
+*.db
+*.sqlite
+*.sqlite3
+
+# Prisma
+prisma/.env
+prisma/migrations/*.sql
+
+# Build
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporal
+tmp/
+temp/
+*.tmp
+
+# PM2
+.pm2/
