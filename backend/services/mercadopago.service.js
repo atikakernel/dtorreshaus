@@ -1,17 +1,25 @@
 /**
  * ====================================
- * SERVICIO MERCADO PAGO
+ * SERVICIO MERCADO PAGO v2.0+
  * ====================================
- * Integración con la API de MercadoPago
+ * Integración con la API de MercadoPago SDK v2
  * Documentación: https://www.mercadopago.com.co/developers
  */
 
-const mercadopago = require('mercadopago')
+const { MercadoPagoConfig, Preference, Payment, PaymentMethod } = require('mercadopago')
 
-// Configurar MercadoPago
-mercadopago.configure({
-  access_token: process.env.MERCADOPAGO_ACCESS_TOKEN
+// Configurar cliente de MercadoPago
+const client = new MercadoPagoConfig({
+  accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN,
+  options: {
+    timeout: 5000,
+    idempotencyKey: 'dtorreshaus'
+  }
 })
+
+const preferenceClient = new Preference(client)
+const paymentClient = new Payment(client)
+const paymentMethodClient = new PaymentMethod(client)
 
 /**
  * Crear preferencia de pago
@@ -22,6 +30,7 @@ async function createPaymentPreference(orderData) {
   try {
     const preference = {
       items: cart.map(item => ({
+        id: item.sku,
         title: item.nombre,
         description: item.descripcion,
         picture_url: `${process.env.FRONTEND_URL}/assets/products/${item.sku}.jpeg`,
@@ -32,7 +41,7 @@ async function createPaymentPreference(orderData) {
       })),
       payer: {
         name: customerInfo.name,
-        surname: '', // MercadoPago requiere nombre y apellido separados
+        surname: customerInfo.surname || 'N/A',
         email: customerInfo.email,
         phone: {
           area_code: '57',
@@ -40,10 +49,10 @@ async function createPaymentPreference(orderData) {
         },
         identification: {
           type: 'CC', // CC, CE, NIT
-          number: customerInfo.documentNumber || ''
+          number: customerInfo.documentNumber || '00000000'
         },
         address: {
-          street_name: shippingAddress.address,
+          street_name: shippingAddress.address || customerInfo.address,
           street_number: '',
           zip_code: shippingAddress.postalCode || '110111'
         }
@@ -53,7 +62,7 @@ async function createPaymentPreference(orderData) {
         mode: 'custom',
         receiver_address: {
           apartment: '',
-          street_name: shippingAddress.address,
+          street_name: shippingAddress.address || customerInfo.address,
           city_name: shippingAddress.city,
           state_name: shippingAddress.state || 'Cundinamarca',
           country_name: 'Colombia',
@@ -80,18 +89,18 @@ async function createPaymentPreference(orderData) {
       }
     }
 
-    const response = await mercadopago.preferences.create(preference)
+    const response = await preferenceClient.create({ body: preference })
 
     return {
       success: true,
-      preferenceId: response.body.id,
-      initPoint: response.body.init_point, // URL de pago
-      sandboxInitPoint: response.body.sandbox_init_point, // URL de prueba
+      preferenceId: response.id,
+      initPoint: response.init_point, // URL de pago
+      sandboxInitPoint: response.sandbox_init_point, // URL de prueba
       reference: reference
     }
   } catch (error) {
-    console.error('Error MercadoPago:', error)
-    throw new Error('Error creando preferencia de pago en MercadoPago')
+    console.error('Error MercadoPago createPreference:', error)
+    throw new Error(error.message || 'Error creando preferencia de pago en MercadoPago')
   }
 }
 
@@ -100,18 +109,18 @@ async function createPaymentPreference(orderData) {
  */
 async function getPaymentInfo(paymentId) {
   try {
-    const payment = await mercadopago.payment.findById(paymentId)
+    const payment = await paymentClient.get({ id: paymentId })
 
     return {
-      id: payment.body.id,
-      status: payment.body.status, // approved, rejected, pending, in_process
-      status_detail: payment.body.status_detail,
-      transaction_amount: payment.body.transaction_amount,
-      currency_id: payment.body.currency_id,
-      external_reference: payment.body.external_reference,
-      payment_method_id: payment.body.payment_method_id,
-      payment_type_id: payment.body.payment_type_id,
-      payer: payment.body.payer
+      id: payment.id,
+      status: payment.status, // approved, rejected, pending, in_process
+      status_detail: payment.status_detail,
+      transaction_amount: payment.transaction_amount,
+      currency_id: payment.currency_id,
+      external_reference: payment.external_reference,
+      payment_method_id: payment.payment_method_id,
+      payment_type_id: payment.payment_type_id,
+      payer: payment.payer
     }
   } catch (error) {
     console.error('Error obteniendo info de pago:', error)
@@ -127,15 +136,15 @@ async function processWebhookNotification(notificationData) {
 
   if (type === 'payment') {
     try {
-      const payment = await mercadopago.payment.findById(data.id)
+      const payment = await paymentClient.get({ id: data.id })
 
       return {
-        paymentId: payment.body.id,
-        status: payment.body.status,
-        externalReference: payment.body.external_reference,
-        transactionAmount: payment.body.transaction_amount,
-        paymentMethodId: payment.body.payment_method_id,
-        statusDetail: payment.body.status_detail
+        paymentId: payment.id,
+        status: payment.status,
+        externalReference: payment.external_reference,
+        transactionAmount: payment.transaction_amount,
+        paymentMethodId: payment.payment_method_id,
+        statusDetail: payment.status_detail
       }
     } catch (error) {
       console.error('Error procesando webhook MP:', error)
@@ -151,16 +160,25 @@ async function processWebhookNotification(notificationData) {
  */
 async function refundPayment(paymentId, amount = null) {
   try {
-    const refund = await mercadopago.refund.create({
-      payment_id: paymentId,
-      amount: amount // null = reembolso total
+    // En SDK v2, los reembolsos se manejan a través del cliente de Payment
+    const refundData = {
+      payment_id: paymentId
+    }
+
+    if (amount) {
+      refundData.amount = amount
+    }
+
+    const refund = await paymentClient.refund({
+      id: paymentId,
+      body: refundData
     })
 
     return {
       success: true,
-      refundId: refund.body.id,
-      status: refund.body.status,
-      amount: refund.body.amount
+      refundId: refund.id,
+      status: refund.status,
+      amount: refund.amount
     }
   } catch (error) {
     console.error('Error reembolsando:', error)
@@ -173,9 +191,9 @@ async function refundPayment(paymentId, amount = null) {
  */
 async function getPaymentMethods() {
   try {
-    const response = await mercadopago.payment_methods.listAll()
+    const response = await paymentMethodClient.get()
 
-    return response.body.filter(method => method.status === 'active')
+    return response.filter(method => method.status === 'active')
   } catch (error) {
     console.error('Error obteniendo métodos de pago:', error)
     return []
