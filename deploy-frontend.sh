@@ -1,0 +1,61 @@
+#!/bin/bash
+
+# ====================================
+# SCRIPT DE DEPLOYMENT - FRONTEND
+# ====================================
+# Despliega el frontend de React a EC2
+# ====================================
+
+set -e  # Salir si hay error
+
+# Colores para output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+echo -e "${GREEN}=====================================${NC}"
+echo -e "${GREEN}🚀 Deployment Frontend - dtorreshaus${NC}"
+echo -e "${GREEN}=====================================${NC}"
+
+# Variables (configura estas)
+EC2_USER="ubuntu"
+EC2_HOST="YOUR_EC2_IP"  # ⚠️ CAMBIAR ESTO
+EC2_KEY="~/.ssh/your-key.pem"  # ⚠️ CAMBIAR ESTO
+REMOTE_DIR="/var/www/dtorreshaus/frontend"
+
+# 1. Build del frontend
+echo -e "${YELLOW}📦 Buildeando frontend...${NC}"
+npm run build
+
+if [ ! -d "dist" ]; then
+    echo -e "${RED}❌ Error: No se generó el directorio dist${NC}"
+    exit 1
+fi
+
+echo -e "${GREEN}✅ Build completado${NC}"
+
+# 2. Crear directorio remoto si no existe
+echo -e "${YELLOW}📁 Creando directorio en EC2...${NC}"
+ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "sudo mkdir -p $REMOTE_DIR && sudo chown -R $EC2_USER:$EC2_USER $REMOTE_DIR"
+
+# 3. Sync archivos
+echo -e "${YELLOW}📤 Subiendo archivos a EC2...${NC}"
+rsync -avz --delete \
+  -e "ssh -i $EC2_KEY" \
+  dist/ "$EC2_USER@$EC2_HOST:$REMOTE_DIR/"
+
+echo -e "${GREEN}✅ Archivos sincronizados${NC}"
+
+# 4. Configurar permisos
+echo -e "${YELLOW}🔒 Configurando permisos...${NC}"
+ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" << 'ENDSSH'
+sudo chown -R www-data:www-data /var/www/dtorreshaus/frontend
+sudo chmod -R 755 /var/www/dtorreshaus/frontend
+ENDSSH
+
+echo -e "${GREEN}=====================================${NC}"
+echo -e "${GREEN}✅ Deployment completado!${NC}"
+echo -e "${GREEN}=====================================${NC}"
+echo -e "${YELLOW}🌐 Tu sitio debería estar en: http://dtorreshaus.com${NC}"
+echo -e "${YELLOW}📊 Verifica en: http://$EC2_HOST${NC}"
