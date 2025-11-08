@@ -35,23 +35,38 @@ fi
 
 echo -e "${GREEN}✅ Build completado${NC}"
 
-# 2. Crear directorio remoto si no existe
-echo -e "${YELLOW}📁 Creando directorio en EC2...${NC}"
-ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "sudo mkdir -p $REMOTE_DIR && sudo chown -R $EC2_USER:$EC2_USER $REMOTE_DIR"
+# 2. Crear directorio temporal en EC2
+echo -e "${YELLOW}📁 Preparando directorio en EC2...${NC}"
+ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" "rm -rf /tmp/frontend-deploy && mkdir -p /tmp/frontend-deploy"
 
-# 3. Sync archivos
+# 3. Subir archivos usando SCP
 echo -e "${YELLOW}📤 Subiendo archivos a EC2...${NC}"
-rsync -avz --delete \
-  -e "ssh -i $EC2_KEY" \
-  dist/ "$EC2_USER@$EC2_HOST:$REMOTE_DIR/"
+scp -r -i "$EC2_KEY" dist/* "$EC2_USER@$EC2_HOST:/tmp/frontend-deploy/"
 
-echo -e "${GREEN}✅ Archivos sincronizados${NC}"
+echo -e "${GREEN}✅ Archivos subidos${NC}"
 
-# 4. Configurar permisos
-echo -e "${YELLOW}🔒 Configurando permisos...${NC}"
+# 4. Mover archivos y configurar permisos
+echo -e "${YELLOW}🔒 Configurando en producción...${NC}"
 ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" << 'ENDSSH'
+# Crear directorio si no existe
+sudo mkdir -p /var/www/dtorreshaus/frontend
+
+# Limpiar archivos viejos
+sudo rm -rf /var/www/dtorreshaus/frontend/*
+
+# Copiar nuevos archivos
+sudo cp -r /tmp/frontend-deploy/* /var/www/dtorreshaus/frontend/
+
+# Configurar permisos
 sudo chown -R www-data:www-data /var/www/dtorreshaus/frontend
 sudo chmod -R 755 /var/www/dtorreshaus/frontend
+
+# Limpiar temporal
+rm -rf /tmp/frontend-deploy
+
+# Verificar archivos
+echo "📁 Archivos en frontend:"
+ls -la /var/www/dtorreshaus/frontend/
 ENDSSH
 
 echo -e "${GREEN}=====================================${NC}"
