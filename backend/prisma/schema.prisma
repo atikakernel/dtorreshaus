@@ -1,0 +1,148 @@
+// ====================================
+// PRISMA SCHEMA - dtorreshaus
+// ====================================
+// Base de datos: PostgreSQL
+// ORM: Prisma
+// Documentación: https://www.prisma.io/docs
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ====================================
+// MODELO DE ÓRDENES
+// ====================================
+model Order {
+  id        String   @id @default(uuid())
+  reference String   @unique // DTH-timestamp-uuid
+
+  // Información del cliente
+  customerName  String
+  customerEmail String
+  customerPhone String
+  customerDocument String? // Para PSE
+
+  // Dirección de envío
+  shippingAddress Json // { address, city, state, postalCode }
+
+  // Productos (JSON array)
+  cart Json // [{ sku, nombre, precio, quantity }]
+
+  // Montos
+  subtotal     Float
+  shippingCost Float   @default(0)
+  tax          Float   @default(0)
+  total        Float
+
+  // Estado de la orden
+  status String @default("pending") // pending, paid, failed, cancelled, shipped, delivered
+
+  // Información de pago
+  paymentMethod  String // nequi, card, pse, mercadopago
+  paymentGateway String // wompi, mercadopago
+  transactionId  String? // ID de la transacción en la pasarela
+
+  // Fechas
+  createdAt DateTime @default(now())
+  paidAt    DateTime?
+  shippedAt DateTime?
+  deliveredAt DateTime?
+  cancelledAt DateTime?
+
+  // Notas
+  customerNotes String?
+  adminNotes    String?
+
+  @@index([customerEmail])
+  @@index([status])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+// ====================================
+// MODELO DE TRANSACCIONES
+// ====================================
+model Transaction {
+  id              String   @id @default(uuid())
+  orderReference  String
+
+  gateway         String   // wompi, mercadopago
+  gatewayTransactionId String @unique
+
+  amount          Float
+  currency        String   @default("COP")
+
+  status          String   // pending, approved, declined, error
+  statusDetail    String?
+
+  paymentMethod   String   // nequi, card, pse, etc
+
+  rawData         Json     // Respuesta completa de la pasarela
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([orderReference])
+  @@index([status])
+  @@map("transactions")
+}
+
+// ====================================
+// MODELO DE PRODUCTOS (Opcional)
+// ====================================
+// Puedes migrar tus productos aquí para mejor rendimiento
+model Product {
+  id          String   @id @default(uuid())
+  sku         String   @unique
+  nombre      String
+  descripcion String
+  material    String
+  categoria   String
+  precio      Float
+  emoji       String
+
+  // Inventario
+  stock       Int      @default(0)
+  active      Boolean  @default(true)
+
+  // SEO
+  slug        String?  @unique
+  metaTitle   String?
+  metaDescription String?
+
+  // Fechas
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([categoria])
+  @@index([active])
+  @@map("products")
+}
+
+// ====================================
+// MODELO DE CLIENTES (Opcional)
+// ====================================
+model Customer {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String
+  phone     String?
+
+  // Dirección por defecto
+  defaultAddress Json?
+
+  // Estadísticas
+  totalOrders Int @default(0)
+  totalSpent  Float @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@map("customers")
+}
