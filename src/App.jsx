@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target } from 'lucide-react'
 import { productsData } from './productsData.js'
+import { Checkout } from './components/Checkout'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
@@ -597,152 +598,23 @@ function App() {
             )}
 
             {checkoutStep === 'payment' && (
-              <div style={{ padding: '30px' }}>
-                <h3 style={{ marginBottom: '20px', color: 'var(--dark-color)' }}>Método de Pago</h3>
-
-                <div style={{ marginBottom: '20px' }}>
-                  <div
-                    onClick={() => setSelectedPaymentMethod('pse')}
-                    style={{
-                      padding: '20px',
-                      border: `2px solid ${selectedPaymentMethod === 'pse' ? 'var(--primary-color)' : 'var(--border-color)'}`,
-                      borderRadius: '12px',
-                      marginBottom: '15px',
-                      cursor: 'pointer',
-                      background: selectedPaymentMethod === 'pse' ? 'rgba(255, 107, 157, 0.1)' : 'white',
-                      transition: 'all 0.3s'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                      <div style={{
-                        width: '50px',
-                        height: '50px',
-                        background: 'var(--primary-color)',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        fontSize: '18px'
-                      }}>
-                        PSE
-                      </div>
-                      <div>
-                        <strong style={{ display: 'block', marginBottom: '5px' }}>PSE - Pagos Seguros en Línea</strong>
-                        <small style={{ color: '#666' }}>Paga directamente desde tu banco</small>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => setSelectedPaymentMethod('wompi')}
-                    style={{
-                      padding: '20px',
-                      border: `2px solid ${selectedPaymentMethod === 'wompi' ? 'var(--primary-color)' : 'var(--border-color)'}`,
-                      borderRadius: '12px',
-                      marginBottom: '15px',
-                      cursor: 'pointer',
-                      background: selectedPaymentMethod === 'wompi' ? 'rgba(255, 107, 157, 0.1)' : 'white',
-                      transition: 'all 0.3s'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                      <div style={{
-                        width: '50px',
-                        height: '50px',
-                        background: '#00D4FF',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: 'bold'
-                      }}>
-                        <CreditCard size={24} />
-                      </div>
-                      <div>
-                        <strong style={{ display: 'block', marginBottom: '5px' }}>Wompi</strong>
-                        <small style={{ color: '#666' }}>Tarjetas de crédito/débito, Nequi, Bancolombia</small>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div
-                    onClick={() => setSelectedPaymentMethod('mercadopago')}
-                    style={{
-                      padding: '20px',
-                      border: `2px solid ${selectedPaymentMethod === 'mercadopago' ? 'var(--primary-color)' : 'var(--border-color)'}`,
-                      borderRadius: '12px',
-                      cursor: 'pointer',
-                      background: selectedPaymentMethod === 'mercadopago' ? 'rgba(255, 107, 157, 0.1)' : 'white',
-                      transition: 'all 0.3s'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                      <div style={{
-                        width: '50px',
-                        height: '50px',
-                        background: '#009EE3',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontWeight: 'bold',
-                        fontSize: '16px'
-                      }}>
-                        MP
-                      </div>
-                      <div>
-                        <strong style={{ display: 'block', marginBottom: '5px' }}>Mercado Pago</strong>
-                        <small style={{ color: '#666' }}>Todas las tarjetas, pagos en efectivo y más</small>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', gap: '15px' }}>
-                  <button
-                    onClick={() => setCheckoutStep('info')}
-                    style={{
-                      flex: 1,
-                      padding: '15px',
-                      background: 'white',
-                      color: 'var(--dark-color)',
-                      border: '2px solid var(--border-color)',
-                      borderRadius: '25px',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Volver
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (!selectedPaymentMethod) {
-                        alert('Por favor selecciona un método de pago')
-                        return
-                      }
-                      setCheckoutStep('confirmation')
-                    }}
-                    style={{
-                      flex: 1,
-                      padding: '15px',
-                      background: 'linear-gradient(135deg, var(--primary-color), var(--accent-color))',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '25px',
-                      fontSize: '16px',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Confirmar Pago
-                  </button>
-                </div>
-              </div>
+              <Checkout
+                cart={cart}
+                total={cartTotal}
+                shippingCost={colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0}
+                customerInfo={customerInfo}
+                onClose={() => {
+                  setIsCheckoutOpen(false)
+                  setCheckoutStep('info')
+                }}
+                onSuccess={(result) => {
+                  console.log('Pago exitoso:', result)
+                  // El usuario será redirigido a Wompi automáticamente
+                  // Cuando regrese de Wompi, podríamos mostrar confirmación
+                  setCheckoutStep('confirmation')
+                  setSelectedPaymentMethod('wompi')
+                }}
+              />
             )}
 
             {checkoutStep === 'confirmation' && (
