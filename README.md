@@ -1,145 +1,285 @@
-# dtorreshaus
+# 🏠 dtorreshaus
 
-E-commerce completo de artículos para el hogar en Colombia
+Ecommerce completo con pasarelas de pago reales para Colombia.
 
-## Descripción
+**🌐 Frontend**: http://dtorreshaus.com
+**🔌 Backend API**: http://api.dtorreshaus.com
 
-dtorreshaus es una tienda online moderna desarrollada con React y Vite que ofrece:
-- Amplio catálogo de artículos de cocina y hogar
-- Productos de baño, limpieza y organización
-- Tecnología y electrodomésticos
-- Decoración y accesorios para el hogar
-- Carrito de compras funcional
-- Diseño responsive para todos los dispositivos
-- Precios en pesos colombianos (COP)
+---
 
-## Características
+## 📦 Características
 
-- **Catálogo de Productos**: 71 productos organizados en 7 categorías
-- **Navegación por Categorías**: Cocina, Baño, Limpieza, Organización, Decoración, Tecnología, Bienestar
-- **Carrito de Compras**: Agregar, eliminar y modificar cantidades
-- **Diseño Responsive**: Optimizado para móvil, tablet y desktop
-- **SEO Optimizado**: Meta tags y títulos descriptivos
-- **Interfaz Moderna**: Con iconos de Lucide React
-- **Sistema de Imágenes**: Soporte para imágenes reales de productos (formato .jpeg)
+- ✅ **136 productos** en 10 categorías
+- ✅ **Checkout funcional** con Wompi (Nequi, Tarjetas, PSE)
+- ✅ **Backend API** con Express + Node.js
+- ✅ **Frontend** en React 18 + Vite
+- ✅ **Desplegado en AWS EC2**
+- ✅ **Dominios configurados**
 
-## Catálogo de Productos
+## 🚀 Inicio Rápido
 
-### 🍳 Cocina (28 productos)
-- Dispensadores y botellas de vidrio
-- Vasos y vajilla (8 modelos diferentes)
-- Contenedores herméticos y almacenamiento
-- Ralladores y utensilios de cocina
-- Cubiertos (3 sets de 6 piezas)
-- Jarras decorativas y funcionales
-- Especieros cerámicos con bandeja de bambú
-- Electrodomésticos (freidora de aire, licuadora, batidor eléctrico)
-- Purificadores de agua
-- Tablas para picar
-- Selladores de bolsas
-
-### 🚿 Baño (11 productos)
-- Dispensadores de jabón cerámicos (6 modelos)
-- Sets completos de baño
-- Cepillos sanitarios (3 modelos)
-- Jabones decorativos
-- Accesorios portátiles
-
-### 🧹 Limpieza (4 productos)
-- Paños de microfibra (2 sets)
-- Recogedores y cepillos compactos
-- Sets 2 en 1 de limpieza
-
-### 📦 Organización (7 productos)
-- Ganchos decorativos y funcionales
-- Cajas organizadoras (3 modelos)
-- Carrito de mercado plegable
-
-### 💡 Decoración (10 productos)
-- Lámparas LED decorativas con efecto 3D
-- Lámparas infantiles
-- Velas aromáticas (7 sets diferentes)
-- Velas tea light en varios aromas
-
-### ⚡ Tecnología (10 productos)
-- Ventiladores USB (4 modelos)
-- Secadores de cabello profesionales (3 modelos)
-- Plancha alisadora
-- Máquina cortapelo profesional
-- Termo deportivo
-
-### 💚 Bienestar (4 productos)
-- Bolsas térmicas de agua con fundas decorativas (3 modelos)
-- Manguera extensible para jardín
-
-## Instalación
+### Desarrollo Local
 
 ```bash
 # Instalar dependencias
 npm install
 
-# Ejecutar en modo desarrollo
+# Iniciar frontend (puerto 5173)
 npm run dev
 
-# Compilar para producción
-npm run build
-
-# Previsualizar build de producción
-npm run preview
+# El frontend se conecta al backend en producción
+# Ver .env.development para configuración
 ```
 
-## Tecnologías Utilizadas
+### Buildear para Producción
 
-- **React 18**: Framework de UI
-- **Vite**: Build tool y dev server
-- **Lucide React**: Iconos modernos
-- **CSS3**: Estilos personalizados con variables CSS
+```bash
+# Buildear frontend
+npm run build
 
-## Estructura del Proyecto
+# Desplegar a EC2 (requiere configuración)
+./deploy-frontend.sh
+```
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```
 dtorreshaus/
 ├── src/
-│   ├── App.jsx          # Componente principal
-│   ├── main.jsx         # Punto de entrada
-│   └── index.css        # Estilos globales
-├── index.html           # HTML base
-├── package.json         # Dependencias
-├── vite.config.js       # Configuración de Vite
-└── README.md           # Documentación
+│   ├── components/
+│   │   └── Checkout.jsx          # Checkout con Wompi
+│   ├── services/
+│   │   └── api.js                # Cliente API
+│   ├── hooks/
+│   │   └── useProducts.js        # Hook para productos
+│   ├── App.jsx                   # Componente principal
+│   ├── productsData.js           # 136 productos
+│   └── index.css                 # Estilos
+├── backend/
+│   ├── server.js                 # Servidor Express
+│   ├── routes/                   # Rutas del API
+│   ├── services/                 # Lógica de Wompi
+│   └── prisma/                   # Schema de DB
+├── .env.development              # Config desarrollo
+├── .env.production               # Config producción
+└── deploy-frontend.sh            # Script de deployment
 ```
 
-## Uso
+---
 
-1. La aplicación se abre mostrando todos los productos
-2. Usa los botones de navegación para filtrar por categoría
-3. Haz clic en "Agregar" para añadir productos al carrito
-4. Haz clic en el icono del carrito para ver tu compra
-5. Modifica cantidades con los botones + y -
-6. El total se actualiza automáticamente
+## 🛒 Catálogo de Productos
 
-## Desarrollo Futuro
+| Categoría | Productos | Ejemplos |
+|-----------|-----------|----------|
+| 🍳 Cocina | 28 | Vajilla, utensilios, electrodomésticos |
+| 🚿 Baño | 11 | Dispensadores, cepillos, accesorios |
+| 🧹 Limpieza | 4 | Paños, recogedores, organizadores |
+| 📦 Organización | 10 | Contenedores, cestas, cajas |
+| 💡 Decoración | 7 | Marcos, jarrones, espejos |
+| ⚡ Tecnología | 10 | Gadgets, cargadores, audífonos |
+| 💖 Bienestar | 13 | Difusores, mascarillas, yoga |
+| 💪 Deportes | 36 | Pesas, bandas, colchonetas |
+| 🎁 Labubu | 5 | Figuras coleccionables Pop Mart |
+| 🎯 Gel Blasters | 12 | Armas de hidrogel |
 
-- Integración con pasarela de pagos
-- Sistema de búsqueda de productos
-- Filtros avanzados (precio, material, etc.)
-- Sistema de favoritos
-- Autenticación de usuarios
-- Historial de pedidos
+**Total**: 136 productos
 
-## Contribuir
+---
 
-Este proyecto es parte de un ecommerce en desarrollo. Si deseas contribuir, por favor:
-1. Haz fork del repositorio
-2. Crea una rama para tu feature
-3. Haz commit de tus cambios
-4. Push a la rama
-5. Crea un Pull Request
+## 💳 Pagos
 
-## Licencia
+Integración completa con **Wompi**:
+- 💜 **Nequi**
+- 💳 **Tarjetas** (Visa, Mastercard, Amex)
+- 🏦 **PSE** (Pagos Seguros en Línea)
 
-© 2024 dtorreshaus. Todos los derechos reservados.
+### Credenciales de Prueba (Test)
 
-## Contacto
+**Nequi**: `3001234567`
+**Tarjeta**: `4242 4242 4242 4242` / CVV: `123` / Fecha: cualquier futura
 
-Para consultas sobre productos o pedidos, por favor contacta a través de los canales oficiales de dtorreshaus.
+---
+
+## 🔧 Configuración
+
+### Variables de Entorno
+
+**Desarrollo** (`.env.development`):
+```bash
+VITE_API_URL=http://localhost:3001
+```
+
+**Producción** (`.env.production`):
+```bash
+VITE_API_URL=http://api.dtorreshaus.com
+```
+
+### Backend (.env en EC2)
+
+```bash
+NODE_ENV=production
+PORT=3001
+
+# Wompi
+WOMPI_PUBLIC_KEY=pub_prod_xxx
+WOMPI_PRIVATE_KEY=prv_prod_xxx
+WOMPI_EVENTS_SECRET=xxx
+```
+
+---
+
+## 📡 API Endpoints
+
+**Base URL**: `http://api.dtorreshaus.com`
+
+| Endpoint | Método | Descripción |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/api/products` | GET | Listar productos |
+| `/api/payments/wompi/nequi` | POST | Crear pago Nequi |
+| `/api/payments/wompi/card` | POST | Crear pago tarjeta |
+| `/api/payments/wompi/pse` | POST | Crear pago PSE |
+| `/api/webhooks/wompi` | POST | Webhook de Wompi |
+
+---
+
+## 🚢 Deployment
+
+### Frontend
+
+```bash
+# 1. Configurar IP y llave en deploy-frontend.sh
+nano deploy-frontend.sh
+
+# 2. Buildear y desplegar
+./deploy-frontend.sh
+```
+
+### Backend
+
+```bash
+# En EC2
+cd /var/www/dtorreshaus/dtorreshaus/backend
+git pull
+npm install
+pm2 restart dtorreshaus-backend
+```
+
+Ver guía completa: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+
+---
+
+## 🔒 SSL/HTTPS (Opcional)
+
+```bash
+# En EC2
+sudo certbot --nginx -d dtorreshaus.com -d www.dtorreshaus.com
+sudo certbot --nginx -d api.dtorreshaus.com
+
+# Luego actualizar .env.production:
+# VITE_API_URL=https://api.dtorreshaus.com
+```
+
+---
+
+## 🧪 Testing
+
+### Test del Backend
+
+```bash
+curl http://api.dtorreshaus.com/health
+# Respuesta: {"status":"ok","timestamp":"...","uptime":123}
+```
+
+### Test del Checkout
+
+1. Abre http://dtorreshaus.com
+2. Agrega productos al carrito
+3. Click en "Proceder al Pago"
+4. Llena el formulario
+5. Selecciona método de pago
+6. Serás redirigido a Wompi
+
+---
+
+## 📚 Documentación
+
+- **Deployment Completo**: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md)
+- **Scripts útiles**: `deploy-frontend.sh`, `fix-nginx.sh`, `debug-nginx.sh`
+
+---
+
+## 🛠️ Stack Tecnológico
+
+**Frontend**:
+- React 18
+- Vite 5
+- Lucide Icons
+
+**Backend**:
+- Node.js 18
+- Express
+- Prisma (PostgreSQL)
+- Wompi SDK
+
+**Infraestructura**:
+- AWS EC2 (Ubuntu)
+- Nginx
+- PM2
+- Certbot (SSL)
+
+---
+
+## 📝 Notas
+
+- **Wompi**: Requiere KYC (1-3 días) para producción
+- **DNS**: Ya configurado para dtorreshaus.com y api.dtorreshaus.com
+- **CORS**: Backend acepta requests desde dtorreshaus.com
+- **Fallback**: Si el API falla, usa datos estáticos automáticamente
+
+---
+
+## 🐛 Troubleshooting
+
+### Frontend no carga
+
+```bash
+# Verificar archivos
+ssh ubuntu@18.224.137.24
+ls -la /var/www/dtorreshaus/frontend/
+
+# Ver logs de Nginx
+sudo tail -f /var/log/nginx/dtorreshaus.error.log
+```
+
+### Backend no responde
+
+```bash
+# Ver logs de PM2
+pm2 logs dtorreshaus-backend
+
+# Reiniciar
+pm2 restart dtorreshaus-backend
+```
+
+### Error de CORS
+
+```bash
+# Verificar allowed origins en server.js
+grep -A 10 "allowedOrigins" backend/server.js
+
+# Reiniciar backend
+pm2 restart dtorreshaus-backend
+```
+
+---
+
+## 📞 Soporte
+
+Revisa la guía de deployment en [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) para instrucciones detalladas.
+
+---
+
+**© 2024 dtorreshaus - Ecommerce para Colombia** 🇨🇴
