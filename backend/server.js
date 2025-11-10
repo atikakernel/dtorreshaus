@@ -23,6 +23,9 @@ const shippingRouter = require('./routes/shipping')
 const app = express()
 const PORT = process.env.PORT || 3001
 
+// Trust proxy - Necesario porque Nginx hace de reverse proxy
+app.set('trust proxy', 1)
+
 // ====================================
 // MIDDLEWARE DE SEGURIDAD
 // ====================================
