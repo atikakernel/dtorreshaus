@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target } from 'lucide-react'
+import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target, Truck } from 'lucide-react'
 import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
+import { OrderTracking } from './components/OrderTracking'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
@@ -74,6 +75,9 @@ function App() {
     city: 'Bogotá'
   })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
+  const [trackingReference, setTrackingReference] = useState('')
+  const [trackingInput, setTrackingInput] = useState('')
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
@@ -184,6 +188,14 @@ function App() {
     }, 100)
   }
 
+  // Rastrear pedido
+  const handleTrackOrder = () => {
+    if (trackingInput.trim()) {
+      setTrackingReference(trackingInput.trim())
+      setIsTrackingModalOpen(true)
+    }
+  }
+
   return (
     <div className="app">
       {/* Header */}
@@ -193,11 +205,60 @@ function App() {
             <Home size={32} />
             <span>dtorreshaus</span>
           </div>
-          <button className="cart-button" onClick={() => setIsCartOpen(true)}>
-            <ShoppingCart size={20} />
-            Carrito
-            {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
-          </button>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', display: 'flex', gap: '5px' }}>
+              <input
+                type="text"
+                placeholder="DTH-xxxxx"
+                value={trackingInput}
+                onChange={(e) => setTrackingInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleTrackOrder()}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '20px',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  background: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  fontSize: '14px',
+                  outline: 'none',
+                  width: '140px'
+                }}
+              />
+              <button
+                onClick={handleTrackOrder}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: '2px solid white',
+                  color: 'white',
+                  padding: '8px 15px',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = 'white'
+                  e.target.style.color = 'var(--primary-color)'
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.2)'
+                  e.target.style.color = 'white'
+                }}
+              >
+                <Truck size={16} />
+                Rastrear
+              </button>
+            </div>
+            <button className="cart-button" onClick={() => setIsCartOpen(true)}>
+              <ShoppingCart size={20} />
+              Carrito
+              {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -748,6 +809,17 @@ function App() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Order Tracking Modal */}
+      {isTrackingModalOpen && (
+        <OrderTracking
+          reference={trackingReference}
+          onClose={() => {
+            setIsTrackingModalOpen(false)
+            setTrackingInput('')
+          }}
+        />
       )}
 
       {/* Footer */}
