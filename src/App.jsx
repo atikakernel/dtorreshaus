@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target } from 'lucide-react'
 import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
@@ -74,6 +74,9 @@ function App() {
     city: 'Bogotá'
   })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
+
+  // Ref para scroll a productos
+  const productsSectionRef = useRef(null)
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
@@ -152,6 +155,15 @@ function App() {
     setImageModal({ isOpen: false, sku: null, nombre: '' })
   }
 
+  // Cambiar categoría y hacer scroll a productos
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category)
+    // Scroll suave a la sección de productos
+    setTimeout(() => {
+      productsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
+  }
+
   return (
     <div className="app">
       {/* Header */}
@@ -174,7 +186,7 @@ function App() {
         <div className="nav-buttons">
           <button
             className={`nav-button ${activeCategory === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('all')}
+            onClick={() => handleCategoryClick('all')}
           >
             <div className="nav-button-circle">
               <Home size={24} />
@@ -183,7 +195,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'cocina' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('cocina')}
+            onClick={() => handleCategoryClick('cocina')}
           >
             <div className="nav-button-circle">
               <ChefHat size={24} />
@@ -192,7 +204,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'baño' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('baño')}
+            onClick={() => handleCategoryClick('baño')}
           >
             <div className="nav-button-circle">
               <Droplet size={24} />
@@ -201,7 +213,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'limpieza' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('limpieza')}
+            onClick={() => handleCategoryClick('limpieza')}
           >
             <div className="nav-button-circle">
               <Sparkles size={24} />
@@ -210,7 +222,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'organización' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('organización')}
+            onClick={() => handleCategoryClick('organización')}
           >
             <div className="nav-button-circle">
               <Package size={24} />
@@ -219,7 +231,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'decoración' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('decoración')}
+            onClick={() => handleCategoryClick('decoración')}
           >
             <div className="nav-button-circle">
               <Lightbulb size={24} />
@@ -228,7 +240,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'tecnología' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('tecnología')}
+            onClick={() => handleCategoryClick('tecnología')}
           >
             <div className="nav-button-circle">
               <Zap size={24} />
@@ -237,7 +249,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'bienestar' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('bienestar')}
+            onClick={() => handleCategoryClick('bienestar')}
           >
             <div className="nav-button-circle">
               <Heart size={24} />
@@ -246,7 +258,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'deportes' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('deportes')}
+            onClick={() => handleCategoryClick('deportes')}
           >
             <div className="nav-button-circle">
               <Dumbbell size={24} />
@@ -255,7 +267,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('labubu')}
+            onClick={() => handleCategoryClick('labubu')}
           >
             <div className="nav-button-circle">
               <Gift size={24} />
@@ -264,7 +276,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'armas' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('armas')}
+            onClick={() => handleCategoryClick('armas')}
           >
             <div className="nav-button-circle">
               <Target size={24} />
@@ -310,7 +322,7 @@ function App() {
 
       {/* Products Section */}
       <main className="container">
-        <section className="products-section">
+        <section className="products-section" ref={productsSectionRef}>
           <h2 className="section-title">
             {activeCategory === 'all' && 'Todos los Productos'}
             {activeCategory === 'cocina' && 'Cocina'}
