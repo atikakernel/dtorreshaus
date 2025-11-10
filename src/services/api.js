@@ -130,3 +130,27 @@ export async function checkAPIConnection() {
     return false
   }
 }
+
+/**
+ * ====================================
+ * ENVÍOS - ENVIA.COM
+ * ====================================
+ */
+
+export async function quoteShipping(destination, packages) {
+  return fetchAPI('/api/shipping/quote', {
+    method: 'POST',
+    body: JSON.stringify({ destination, packages })
+  })
+}
+
+export async function createShipment(destination, packages, orderId) {
+  return fetchAPI('/api/shipping/create', {
+    method: 'POST',
+    body: JSON.stringify({ destination, packages, orderId })
+  })
+}
+
+export async function trackShipment(trackingNumber) {
+  return fetchAPI(`/api/shipping/track/${trackingNumber}`)
+}

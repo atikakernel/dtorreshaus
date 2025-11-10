@@ -97,38 +97,108 @@ code {
   font-weight: bold;
 }
 
-/* Navigation */
+/* Navigation - Estilo Rappi */
 .nav {
   background: white;
   padding: 15px 0;
   box-shadow: var(--shadow);
   margin-bottom: 30px;
+  position: sticky;
+  top: 71px;
+  z-index: 99;
 }
 
 .nav-buttons {
   display: flex;
   gap: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 20px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.nav-buttons::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
 }
 
 .nav-button {
+  flex-shrink: 0;
   background: white;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
-  padding: 10px 25px;
-  border-radius: 20px;
+  border: none;
   cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  min-width: 80px;
+}
+
+.nav-button-circle {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all 0.3s ease;
 }
 
-.nav-button:hover,
-.nav-button.active {
-  background: var(--primary-color);
+.nav-button.active .nav-button-circle {
+  background: var(--gradient-primary);
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.nav-button:hover .nav-button-circle {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-hover);
+}
+
+.nav-button-circle svg {
+  color: var(--text-color);
+}
+
+.nav-button.active .nav-button-circle svg {
   color: white;
-  transform: translateY(-2px);
+}
+
+.nav-button-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-color);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.nav-button.active .nav-button-label {
+  color: var(--primary-color);
+}
+
+/* Responsive - Desktop */
+@media (min-width: 768px) {
+  .nav-buttons {
+    justify-content: center;
+    flex-wrap: wrap;
+    overflow-x: visible;
+  }
+
+  .nav-button {
+    min-width: 90px;
+  }
+
+  .nav-button-circle {
+    width: 72px;
+    height: 72px;
+  }
+
+  .nav-button-label {
+    font-size: 13px;
+  }
 }
 
 /* Hero Section */

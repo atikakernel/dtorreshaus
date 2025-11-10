@@ -17,6 +17,7 @@ const paymentsRouter = require('./routes/payments')
 const ordersRouter = require('./routes/orders')
 const webhooksRouter = require('./routes/webhooks')
 const productsRouter = require('./routes/products')
+const shippingRouter = require('./routes/shipping')
 
 // Inicializar Express
 const app = express()
@@ -120,7 +121,8 @@ app.get('/', (req, res) => {
       payments: '/api/payments',
       orders: '/api/orders',
       webhooks: '/api/webhooks',
-      products: '/api/products'
+      products: '/api/products',
+      shipping: '/api/shipping'
     }
   })
 })
@@ -130,6 +132,7 @@ app.use('/api/payments', paymentsRouter)
 app.use('/api/orders', ordersRouter)
 app.use('/api/webhooks', webhooksRouter)
 app.use('/api/products', productsRouter)
+app.use('/api/shipping', shippingRouter)
 
 // ====================================
 // MANEJO DE ERRORES
