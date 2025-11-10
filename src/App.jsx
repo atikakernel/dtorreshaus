@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target } from 'lucide-react'
 import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
@@ -77,6 +77,26 @@ function App() {
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
+
+  // Cargar información guardada del cliente desde localStorage
+  useEffect(() => {
+    const savedInfo = localStorage.getItem('dtorreshaus_customer_info')
+    if (savedInfo) {
+      try {
+        const parsedInfo = JSON.parse(savedInfo)
+        setCustomerInfo(parsedInfo)
+      } catch (e) {
+        console.error('Error al cargar información guardada:', e)
+      }
+    }
+  }, [])
+
+  // Guardar información del cliente en localStorage cuando cambia
+  useEffect(() => {
+    if (customerInfo.name || customerInfo.email || customerInfo.phone) {
+      localStorage.setItem('dtorreshaus_customer_info', JSON.stringify(customerInfo))
+    }
+  }, [customerInfo])
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
@@ -497,6 +517,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Nombre Completo *</label>
                   <input
                     type="text"
+                    name="name"
+                    autoComplete="name"
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
                     style={{
@@ -514,6 +536,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Email *</label>
                   <input
                     type="email"
+                    name="email"
+                    autoComplete="email"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
                     style={{
@@ -531,6 +555,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Teléfono *</label>
                   <input
                     type="tel"
+                    name="tel"
+                    autoComplete="tel"
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
                     style={{
@@ -548,6 +574,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Dirección *</label>
                   <input
                     type="text"
+                    name="address"
+                    autoComplete="street-address"
                     value={customerInfo.address}
                     onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
                     style={{
@@ -644,18 +672,50 @@ function App() {
                   // El usuario será redirigido a Wompi automáticamente
                   // Cuando regrese de Wompi, podríamos mostrar confirmación
                   setCheckoutStep('confirmation')
-                  setSelectedPaymentMethod('wompi')
+                  setSelectedPaymentMethod(result.payment?.method || 'wompi')
+                  // Guardar info de transferencia si aplica
+                  if (result.payment?.instructions) {
+                    sessionStorage.setItem('transfer_instructions', JSON.stringify(result.payment.instructions))
+                  }
                 }}
               />
             )}
 
             {checkoutStep === 'confirmation' && (
               <div style={{ padding: '30px', textAlign: 'center' }}>
-                <div style={{ fontSize: '64px', marginBottom: '20px' }}>✅</div>
-                <h3 style={{ marginBottom: '15px', color: 'var(--dark-color)' }}>¡Pedido Procesado!</h3>
-                <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
-                  Tu pedido ha sido procesado exitosamente. En un entorno real, serías redirigido a la pasarela de pago de <strong>{selectedPaymentMethod === 'pse' ? 'PSE' : selectedPaymentMethod === 'wompi' ? 'Wompi' : 'Mercado Pago'}</strong>.
-                </p>
+                <div style={{ fontSize: '64px', marginBottom: '20px' }}>
+                  {selectedPaymentMethod === 'transfer' ? '💸' : '✅'}
+                </div>
+                <h3 style={{ marginBottom: '15px', color: 'var(--dark-color)' }}>
+                  {selectedPaymentMethod === 'transfer' ? '¡Pedido Registrado!' : '¡Pedido Procesado!'}
+                </h3>
+
+                {selectedPaymentMethod === 'transfer' && (() => {
+                  const instructions = JSON.parse(sessionStorage.getItem('transfer_instructions') || '{}')
+                  return (
+                    <div style={{ marginBottom: '20px', padding: '20px', background: '#fef3c7', borderRadius: '10px', border: '2px solid #f59e0b' }}>
+                      <p style={{ color: '#92400e', fontWeight: '600', marginBottom: '15px' }}>
+                        📱 Instrucciones de Pago
+                      </p>
+                      <div style={{ textAlign: 'left', color: '#666' }}>
+                        <p style={{ marginBottom: '8px' }}><strong>Banco:</strong> {instructions.bank}</p>
+                        <p style={{ marginBottom: '8px' }}><strong>Nequi:</strong> {instructions.phone}</p>
+                        <p style={{ marginBottom: '8px' }}><strong>A nombre de:</strong> {instructions.name}</p>
+                        <p style={{ marginBottom: '8px' }}><strong>Referencia:</strong> <code style={{ background: 'white', padding: '2px 6px', borderRadius: '4px' }}>{instructions.reference}</code></p>
+                        <p style={{ marginTop: '15px', fontSize: '14px', fontStyle: 'italic' }}>
+                          Por favor envía el comprobante de pago a nuestro WhatsApp
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                {selectedPaymentMethod !== 'transfer' && (
+                  <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
+                    Tu pedido ha sido procesado exitosamente con <strong>{selectedPaymentMethod === 'pse' ? 'PSE' : selectedPaymentMethod === 'nequi' ? 'Nequi' : selectedPaymentMethod === 'card' ? 'Tarjeta' : 'Wompi'}</strong>.
+                  </p>
+                )}
+
                 <p style={{ marginBottom: '20px', padding: '15px', background: 'var(--light-color)', borderRadius: '10px' }}>
                   <strong>Resumen del pedido:</strong><br />
                   Cliente: {customerInfo.name}<br />
@@ -668,8 +728,8 @@ function App() {
                     setCart([])
                     setIsCheckoutOpen(false)
                     setCheckoutStep('info')
-                    setCustomerInfo({ name: '', email: '', phone: '', address: '', city: 'Bogotá' })
                     setSelectedPaymentMethod('')
+                    sessionStorage.removeItem('transfer_instructions')
                   }}
                   style={{
                     padding: '15px 40px',
