@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createWompiNequiPayment, createWompiCardPayment, createWompiPSEPayment } from '../services/api'
+import { createOrder, createWompiNequiPayment, createWompiCardPayment, createWompiPSEPayment } from '../services/api'
 
 export function Checkout({
   cart,
@@ -25,7 +25,8 @@ export function Checkout({
     setError(null)
 
     try {
-      const paymentData = {
+      // Preparar datos de la orden
+      const orderData = {
         customerInfo,
         cart,
         total: finalTotal,
@@ -33,33 +34,52 @@ export function Checkout({
         shippingAddress: {
           address: customerInfo.address,
           city: customerInfo.city
-        }
+        },
+        paymentMethod: selectedMethod,
+        paymentGateway: selectedMethod === 'transfer' ? 'manual' : 'wompi'
+      }
+
+      // Crear orden en la base de datos
+      const orderResult = await createOrder(orderData)
+
+      if (!orderResult.success) {
+        setError('Error creando la orden: ' + orderResult.error)
+        return
+      }
+
+      const { order } = orderResult
+
+      // Si es transferencia manual, mostrar instrucciones
+      if (selectedMethod === 'transfer') {
+        onSuccess({
+          success: true,
+          payment: {
+            id: order.id,
+            reference: order.reference,
+            status: order.status,
+            amount: order.total,
+            method: 'transfer',
+            instructions: {
+              bank: 'Nequi',
+              phone: '3043465419',
+              name: 'dtorreshaus',
+              reference: order.reference
+            }
+          },
+          message: 'Pedido registrado. Por favor realiza la transferencia'
+        })
+        return
+      }
+
+      // Para métodos de Wompi, procesar pago
+      const paymentData = {
+        ...orderData,
+        orderId: order.id,
+        orderReference: order.reference
       }
 
       let result
-
       switch (selectedMethod) {
-        case 'transfer':
-          // Transferencia/Nequi Manual - no requiere pasarela
-          result = {
-            success: true,
-            payment: {
-              id: 'TRANSFER-' + Date.now(),
-              status: 'PENDING',
-              amount: finalTotal,
-              method: 'transfer',
-              instructions: {
-                bank: 'Nequi',
-                phone: '3043465419',
-                name: 'dtorreshaus',
-                reference: 'ORDEN-' + Date.now()
-              }
-            },
-            message: 'Pedido registrado. Por favor realiza la transferencia'
-          }
-          onSuccess(result)
-          break
-
         case 'nequi':
           result = await createWompiNequiPayment(paymentData)
           break
@@ -73,17 +93,18 @@ export function Checkout({
           throw new Error('Método de pago no válido')
       }
 
-      if (selectedMethod !== 'transfer') {
-        if (result.success) {
-          // Redirigir a la página de pago de Wompi
-          if (result.payment.paymentLinkUrl) {
-            window.location.href = result.payment.paymentLinkUrl
-          } else {
-            onSuccess(result)
-          }
+      if (result.success) {
+        // Redirigir a la página de pago de Wompi
+        if (result.payment?.paymentLinkUrl) {
+          window.location.href = result.payment.paymentLinkUrl
         } else {
-          setError('Error al procesar el pago. Intenta de nuevo.')
+          onSuccess({
+            ...result,
+            orderReference: order.reference
+          })
         }
+      } else {
+        setError('Error al procesar el pago. Intenta de nuevo.')
       }
     } catch (err) {
       console.error('Error en el pago:', err)
