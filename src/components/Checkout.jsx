@@ -39,6 +39,42 @@ export function Checkout({
       let result
 
       switch (selectedMethod) {
+        case 'test':
+          // Pago de prueba - simula pago exitoso
+          result = {
+            success: true,
+            payment: {
+              id: 'TEST-' + Date.now(),
+              status: 'APPROVED',
+              amount: finalTotal,
+              method: 'test'
+            },
+            message: 'Pago de prueba procesado exitosamente'
+          }
+          onSuccess(result)
+          break
+
+        case 'transfer':
+          // Transferencia/Nequi Manual - no requiere pasarela
+          result = {
+            success: true,
+            payment: {
+              id: 'TRANSFER-' + Date.now(),
+              status: 'PENDING',
+              amount: finalTotal,
+              method: 'transfer',
+              instructions: {
+                bank: 'Nequi',
+                phone: '3001234567',
+                name: 'dtorreshaus',
+                reference: 'ORDEN-' + Date.now()
+              }
+            },
+            message: 'Pedido registrado. Por favor realiza la transferencia'
+          }
+          onSuccess(result)
+          break
+
         case 'nequi':
           result = await createWompiNequiPayment(paymentData)
           break
@@ -52,15 +88,17 @@ export function Checkout({
           throw new Error('Método de pago no válido')
       }
 
-      if (result.success) {
-        // Redirigir a la página de pago de Wompi
-        if (result.payment.paymentLinkUrl) {
-          window.location.href = result.payment.paymentLinkUrl
+      if (selectedMethod !== 'test' && selectedMethod !== 'transfer') {
+        if (result.success) {
+          // Redirigir a la página de pago de Wompi
+          if (result.payment.paymentLinkUrl) {
+            window.location.href = result.payment.paymentLinkUrl
+          } else {
+            onSuccess(result)
+          }
         } else {
-          onSuccess(result)
+          setError('Error al procesar el pago. Intenta de nuevo.')
         }
-      } else {
-        setError('Error al procesar el pago. Intenta de nuevo.')
       }
     } catch (err) {
       console.error('Error en el pago:', err)
@@ -87,6 +125,42 @@ export function Checkout({
       )}
 
       <div style={{ marginBottom: '20px' }}>
+        {/* Pago de Prueba - solo para testing */}
+        <div
+          onClick={() => setSelectedMethod('test')}
+          style={{
+            border: selectedMethod === 'test' ? '2px solid #10b981' : '1px solid #ddd',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '10px',
+            cursor: 'pointer',
+            background: selectedMethod === 'test' ? '#ecfdf5' : 'white'
+          }}
+        >
+          <strong>🧪 Pago de Prueba</strong>
+          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
+            Solo para testing - No se realiza cobro real
+          </p>
+        </div>
+
+        {/* Transferencia/Nequi Manual */}
+        <div
+          onClick={() => setSelectedMethod('transfer')}
+          style={{
+            border: selectedMethod === 'transfer' ? '2px solid var(--primary-color)' : '1px solid #ddd',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '10px',
+            cursor: 'pointer',
+            background: selectedMethod === 'transfer' ? '#f0f9ff' : 'white'
+          }}
+        >
+          <strong>💸 Transferencia/Nequi Manual</strong>
+          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
+            Realiza una transferencia o pago por Nequi directamente
+          </p>
+        </div>
+
         <div
           onClick={() => setSelectedMethod('nequi')}
           style={{
@@ -98,9 +172,9 @@ export function Checkout({
             background: selectedMethod === 'nequi' ? '#f0f9ff' : 'white'
           }}
         >
-          <strong>💜 Nequi</strong>
+          <strong>💜 Nequi (Wompi)</strong>
           <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-            Paga con tu cuenta Nequi
+            Paga con tu cuenta Nequi vía Wompi
           </p>
         </div>
 
