@@ -39,21 +39,6 @@ export function Checkout({
       let result
 
       switch (selectedMethod) {
-        case 'test':
-          // Pago de prueba - simula pago exitoso
-          result = {
-            success: true,
-            payment: {
-              id: 'TEST-' + Date.now(),
-              status: 'APPROVED',
-              amount: finalTotal,
-              method: 'test'
-            },
-            message: 'Pago de prueba procesado exitosamente'
-          }
-          onSuccess(result)
-          break
-
         case 'transfer':
           // Transferencia/Nequi Manual - no requiere pasarela
           result = {
@@ -65,7 +50,7 @@ export function Checkout({
               method: 'transfer',
               instructions: {
                 bank: 'Nequi',
-                phone: '3001234567',
+                phone: '3043465419',
                 name: 'dtorreshaus',
                 reference: 'ORDEN-' + Date.now()
               }
@@ -88,7 +73,7 @@ export function Checkout({
           throw new Error('Método de pago no válido')
       }
 
-      if (selectedMethod !== 'test' && selectedMethod !== 'transfer') {
+      if (selectedMethod !== 'transfer') {
         if (result.success) {
           // Redirigir a la página de pago de Wompi
           if (result.payment.paymentLinkUrl) {
@@ -125,24 +110,6 @@ export function Checkout({
       )}
 
       <div style={{ marginBottom: '20px' }}>
-        {/* Pago de Prueba - solo para testing */}
-        <div
-          onClick={() => setSelectedMethod('test')}
-          style={{
-            border: selectedMethod === 'test' ? '2px solid #10b981' : '1px solid #ddd',
-            padding: '15px',
-            borderRadius: '8px',
-            marginBottom: '10px',
-            cursor: 'pointer',
-            background: selectedMethod === 'test' ? '#ecfdf5' : 'white'
-          }}
-        >
-          <strong>🧪 Pago de Prueba</strong>
-          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-            Solo para testing - No se realiza cobro real
-          </p>
-        </div>
-
         {/* Transferencia/Nequi Manual */}
         <div
           onClick={() => setSelectedMethod('transfer')}

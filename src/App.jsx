@@ -684,22 +684,11 @@ function App() {
             {checkoutStep === 'confirmation' && (
               <div style={{ padding: '30px', textAlign: 'center' }}>
                 <div style={{ fontSize: '64px', marginBottom: '20px' }}>
-                  {selectedPaymentMethod === 'test' ? '🧪' : selectedPaymentMethod === 'transfer' ? '💸' : '✅'}
+                  {selectedPaymentMethod === 'transfer' ? '💸' : '✅'}
                 </div>
                 <h3 style={{ marginBottom: '15px', color: 'var(--dark-color)' }}>
                   {selectedPaymentMethod === 'transfer' ? '¡Pedido Registrado!' : '¡Pedido Procesado!'}
                 </h3>
-
-                {selectedPaymentMethod === 'test' && (
-                  <div style={{ marginBottom: '20px', padding: '15px', background: '#ecfdf5', borderRadius: '10px', border: '1px solid #10b981' }}>
-                    <p style={{ color: '#065f46', fontWeight: '600' }}>
-                      ✅ Pago de Prueba Exitoso
-                    </p>
-                    <p style={{ color: '#666', marginTop: '10px', fontSize: '14px' }}>
-                      Este es un pago simulado. No se realizó ningún cargo real.
-                    </p>
-                  </div>
-                )}
 
                 {selectedPaymentMethod === 'transfer' && (() => {
                   const instructions = JSON.parse(sessionStorage.getItem('transfer_instructions') || '{}')
@@ -721,9 +710,9 @@ function App() {
                   )
                 })()}
 
-                {!['test', 'transfer'].includes(selectedPaymentMethod) && (
+                {selectedPaymentMethod !== 'transfer' && (
                   <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
-                    Tu pedido ha sido procesado exitosamente. En un entorno real, serías redirigido a la pasarela de pago de <strong>{selectedPaymentMethod === 'pse' ? 'PSE' : selectedPaymentMethod === 'wompi' ? 'Wompi' : 'Mercado Pago'}</strong>.
+                    Tu pedido ha sido procesado exitosamente con <strong>{selectedPaymentMethod === 'pse' ? 'PSE' : selectedPaymentMethod === 'nequi' ? 'Nequi' : selectedPaymentMethod === 'card' ? 'Tarjeta' : 'Wompi'}</strong>.
                   </p>
                 )}
 
