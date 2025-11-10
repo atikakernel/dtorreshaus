@@ -169,88 +169,108 @@ function App() {
         </div>
       </header>
 
-      {/* Navigation */}
+      {/* Navigation - Estilo Rappi */}
       <nav className="nav">
-        <div className="container">
-          <div className="nav-buttons">
-            <button
-              className={`nav-button ${activeCategory === 'all' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('all')}
-            >
-              <Home size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Todo
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'cocina' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('cocina')}
-            >
-              <ChefHat size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Cocina
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'baño' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('baño')}
-            >
-              <Droplet size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Baño
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'limpieza' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('limpieza')}
-            >
-              <Sparkles size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Limpieza
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'organización' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('organización')}
-            >
-              <Package size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Organización
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'decoración' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('decoración')}
-            >
-              <Lightbulb size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Decoración
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'tecnología' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('tecnología')}
-            >
-              <Zap size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Tecnología
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'bienestar' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('bienestar')}
-            >
-              <Heart size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Bienestar
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'deportes' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('deportes')}
-            >
-              <Dumbbell size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Deportes
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('labubu')}
-            >
-              <Gift size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Labubu
-            </button>
-            <button
-              className={`nav-button ${activeCategory === 'armas' ? 'active' : ''}`}
-              onClick={() => setActiveCategory('armas')}
-            >
-              <Target size={18} style={{ display: 'inline', marginRight: '5px' }} />
-              Gel Blasters
-            </button>
-          </div>
+        <div className="nav-buttons">
+          <button
+            className={`nav-button ${activeCategory === 'all' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('all')}
+          >
+            <div className="nav-button-circle">
+              <Home size={24} />
+            </div>
+            <span className="nav-button-label">Todo</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'cocina' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('cocina')}
+          >
+            <div className="nav-button-circle">
+              <ChefHat size={24} />
+            </div>
+            <span className="nav-button-label">Cocina</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'baño' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('baño')}
+          >
+            <div className="nav-button-circle">
+              <Droplet size={24} />
+            </div>
+            <span className="nav-button-label">Baño</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'limpieza' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('limpieza')}
+          >
+            <div className="nav-button-circle">
+              <Sparkles size={24} />
+            </div>
+            <span className="nav-button-label">Limpieza</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'organización' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('organización')}
+          >
+            <div className="nav-button-circle">
+              <Package size={24} />
+            </div>
+            <span className="nav-button-label">Organización</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'decoración' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('decoración')}
+          >
+            <div className="nav-button-circle">
+              <Lightbulb size={24} />
+            </div>
+            <span className="nav-button-label">Decoración</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'tecnología' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('tecnología')}
+          >
+            <div className="nav-button-circle">
+              <Zap size={24} />
+            </div>
+            <span className="nav-button-label">Tecnología</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'bienestar' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('bienestar')}
+          >
+            <div className="nav-button-circle">
+              <Heart size={24} />
+            </div>
+            <span className="nav-button-label">Bienestar</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'deportes' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('deportes')}
+          >
+            <div className="nav-button-circle">
+              <Dumbbell size={24} />
+            </div>
+            <span className="nav-button-label">Deportes</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('labubu')}
+          >
+            <div className="nav-button-circle">
+              <Gift size={24} />
+            </div>
+            <span className="nav-button-label">Labubu</span>
+          </button>
+          <button
+            className={`nav-button ${activeCategory === 'armas' ? 'active' : ''}`}
+            onClick={() => setActiveCategory('armas')}
+          >
+            <div className="nav-button-circle">
+              <Target size={24} />
+            </div>
+            <span className="nav-button-label">Gel Blasters</span>
+          </button>
         </div>
       </nav>
 
