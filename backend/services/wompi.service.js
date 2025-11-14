@@ -42,11 +42,6 @@ async function createNequiPayment(orderData) {
     const merchantInfo = await getMerchantInfo()
     const amountInCents = Math.round(total * 100)
 
-    // Generar firma de integridad usando el integrity secret del merchant
-    const integritySecret = merchantInfo.integritySecret || WOMPI_EVENTS_SECRET
-    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
-    const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
-
     const transaction = {
       acceptance_token: merchantInfo.acceptanceToken,
       amount_in_cents: amountInCents,
@@ -57,7 +52,6 @@ async function createNequiPayment(orderData) {
         phone_number: customerInfo.phone
       },
       reference: reference,
-      signature: signature,
       customer_data: {
         phone_number: customerInfo.phone,
         full_name: customerInfo.name
@@ -106,11 +100,6 @@ async function createCardPayment(orderData) {
     const merchantInfo = await getMerchantInfo()
     const amountInCents = Math.round(total * 100)
 
-    // Generar firma de integridad usando el integrity secret del merchant
-    const integritySecret = merchantInfo.integritySecret || WOMPI_EVENTS_SECRET
-    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
-    const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
-
     const transaction = {
       acceptance_token: merchantInfo.acceptanceToken,
       amount_in_cents: amountInCents,
@@ -121,7 +110,6 @@ async function createCardPayment(orderData) {
         installments: 1
       },
       reference: reference,
-      signature: signature,
       customer_data: {
         phone_number: customerInfo.phone,
         full_name: customerInfo.name
