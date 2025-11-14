@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createOrder, createWompiNequiPayment, createWompiCardPayment, createWompiPSEPayment } from '../services/api'
+import { createOrder, createWompiNequiPayment, createWompiCardPayment } from '../services/api'
 
 export function Checkout({
   cart,
@@ -36,7 +36,7 @@ export function Checkout({
           city: customerInfo.city
         },
         paymentMethod: selectedMethod,
-        paymentGateway: selectedMethod === 'transfer' ? 'manual' : 'wompi'
+        paymentGateway: 'wompi'
       }
 
       // Crear orden en la base de datos
@@ -48,28 +48,6 @@ export function Checkout({
       }
 
       const { order } = orderResult
-
-      // Si es transferencia manual, mostrar instrucciones
-      if (selectedMethod === 'transfer') {
-        onSuccess({
-          success: true,
-          payment: {
-            id: order.id,
-            reference: order.reference,
-            status: order.status,
-            amount: order.total,
-            method: 'transfer',
-            instructions: {
-              bank: 'Nequi',
-              phone: '3043465419',
-              name: 'dtorreshaus',
-              reference: order.reference
-            }
-          },
-          message: 'Pedido registrado. Por favor realiza la transferencia'
-        })
-        return
-      }
 
       // Para métodos de Wompi, procesar pago
       const paymentData = {
@@ -85,9 +63,6 @@ export function Checkout({
           break
         case 'card':
           result = await createWompiCardPayment(paymentData)
-          break
-        case 'pse':
-          result = await createWompiPSEPayment(paymentData)
           break
         default:
           throw new Error('Método de pago no válido')
@@ -131,24 +106,6 @@ export function Checkout({
       )}
 
       <div style={{ marginBottom: '20px' }}>
-        {/* Transferencia/Nequi Manual */}
-        <div
-          onClick={() => setSelectedMethod('transfer')}
-          style={{
-            border: selectedMethod === 'transfer' ? '2px solid var(--primary-color)' : '1px solid #ddd',
-            padding: '15px',
-            borderRadius: '8px',
-            marginBottom: '10px',
-            cursor: 'pointer',
-            background: selectedMethod === 'transfer' ? '#f0f9ff' : 'white'
-          }}
-        >
-          <strong>💸 Transferencia/Nequi Manual</strong>
-          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-            Realiza una transferencia o pago por Nequi directamente
-          </p>
-        </div>
-
         <div
           onClick={() => setSelectedMethod('nequi')}
           style={{
@@ -180,22 +137,6 @@ export function Checkout({
           <strong>💳 Tarjeta de Crédito/Débito</strong>
           <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
             Visa, Mastercard, American Express
-          </p>
-        </div>
-
-        <div
-          onClick={() => setSelectedMethod('pse')}
-          style={{
-            border: selectedMethod === 'pse' ? '2px solid var(--primary-color)' : '1px solid #ddd',
-            padding: '15px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            background: selectedMethod === 'pse' ? '#f0f9ff' : 'white'
-          }}
-        >
-          <strong>🏦 PSE</strong>
-          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-            Pago a través de tu banco
           </p>
         </div>
       </div>
