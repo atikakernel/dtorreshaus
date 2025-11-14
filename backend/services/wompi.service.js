@@ -15,17 +15,20 @@ const WOMPI_PRIVATE_KEY = process.env.WOMPI_PRIVATE_KEY
 const WOMPI_EVENTS_SECRET = process.env.WOMPI_EVENTS_SECRET
 
 /**
- * Obtener token de aceptación (requerido por Wompi)
+ * Obtener información del merchant (token de aceptación e integrity)
  */
-async function getAcceptanceToken() {
+async function getMerchantInfo() {
   try {
     const response = await axios.get(
       `${WOMPI_API_URL}/merchants/${WOMPI_PUBLIC_KEY}`
     )
-    return response.data.data.presigned_acceptance.acceptance_token
+    return {
+      acceptanceToken: response.data.data.presigned_acceptance.acceptance_token,
+      integritySecret: response.data.data.presigned_personal_data_auth.integrity_secret
+    }
   } catch (error) {
-    console.error('Error obteniendo acceptance token:', error.response?.data || error.message)
-    throw new Error('No se pudo obtener el token de aceptación de Wompi')
+    console.error('Error obteniendo merchant info:', error.response?.data || error.message)
+    throw new Error('No se pudo obtener la información del merchant de Wompi')
   }
 }
 
@@ -36,15 +39,16 @@ async function createNequiPayment(orderData) {
   const { customerInfo, total, reference, shippingAddress } = orderData
 
   try {
-    const acceptanceToken = await getAcceptanceToken()
+    const merchantInfo = await getMerchantInfo()
     const amountInCents = Math.round(total * 100)
 
-    // Generar firma de integridad
-    const signatureString = `${reference}${amountInCents}COP${WOMPI_EVENTS_SECRET}`
+    // Generar firma de integridad usando el integrity secret del merchant
+    const integritySecret = merchantInfo.integritySecret || WOMPI_EVENTS_SECRET
+    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
     const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
 
     const transaction = {
-      acceptance_token: acceptanceToken,
+      acceptance_token: merchantInfo.acceptanceToken,
       amount_in_cents: amountInCents,
       currency: 'COP',
       customer_email: customerInfo.email,
@@ -99,15 +103,16 @@ async function createCardPayment(orderData) {
   const { customerInfo, total, reference, shippingAddress } = orderData
 
   try {
-    const acceptanceToken = await getAcceptanceToken()
+    const merchantInfo = await getMerchantInfo()
     const amountInCents = Math.round(total * 100)
 
-    // Generar firma de integridad
-    const signatureString = `${reference}${amountInCents}COP${WOMPI_EVENTS_SECRET}`
+    // Generar firma de integridad usando el integrity secret del merchant
+    const integritySecret = merchantInfo.integritySecret || WOMPI_EVENTS_SECRET
+    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
     const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
 
     const transaction = {
-      acceptance_token: acceptanceToken,
+      acceptance_token: merchantInfo.acceptanceToken,
       amount_in_cents: amountInCents,
       currency: 'COP',
       customer_email: customerInfo.email,
