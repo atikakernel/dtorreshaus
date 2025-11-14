@@ -80,7 +80,7 @@ async function createNequiPayment(orderData) {
       reference: reference
     }
   } catch (error) {
-    console.error('Error Wompi Nequi:', error.response?.data || error.message)
+    console.error('Error Wompi Nequi:', JSON.stringify(error.response?.data, null, 2) || error.message)
     throw new Error(error.response?.data?.error?.reason || 'Error procesando pago con Nequi')
   }
 }
@@ -136,7 +136,7 @@ async function createCardPayment(orderData) {
       reference: reference
     }
   } catch (error) {
-    console.error('Error Wompi Card:', error.response?.data || error.message)
+    console.error('Error Wompi Card:', JSON.stringify(error.response?.data, null, 2) || error.message)
     throw new Error(error.response?.data?.error?.reason || 'Error procesando pago con tarjeta')
   }
 }
