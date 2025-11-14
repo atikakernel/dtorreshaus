@@ -6,22 +6,22 @@ import { OrderTracking } from './components/OrderTracking'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
-  { name: 'Bogotá', shippingCost: 8000 },
-  { name: 'Medellín', shippingCost: 10000 },
-  { name: 'Cali', shippingCost: 12000 },
-  { name: 'Barranquilla', shippingCost: 15000 },
-  { name: 'Cartagena', shippingCost: 15000 },
-  { name: 'Bucaramanga', shippingCost: 12000 },
-  { name: 'Pereira', shippingCost: 11000 },
-  { name: 'Manizales', shippingCost: 11000 },
-  { name: 'Santa Marta', shippingCost: 16000 },
-  { name: 'Cúcuta', shippingCost: 13000 },
-  { name: 'Ibagué', shippingCost: 10000 },
-  { name: 'Pasto', shippingCost: 14000 },
-  { name: 'Villavicencio', shippingCost: 9000 },
-  { name: 'Armenia', shippingCost: 11000 },
-  { name: 'Tunja', shippingCost: 9000 },
-  { name: 'Otras ciudades', shippingCost: 18000 }
+  { name: 'Bogotá', shippingCost: 8000, region: 'Cundinamarca' },
+  { name: 'Medellín', shippingCost: 10000, region: 'Antioquia' },
+  { name: 'Cali', shippingCost: 12000, region: 'Valle del Cauca' },
+  { name: 'Barranquilla', shippingCost: 15000, region: 'Atlántico' },
+  { name: 'Cartagena', shippingCost: 15000, region: 'Bolívar' },
+  { name: 'Bucaramanga', shippingCost: 12000, region: 'Santander' },
+  { name: 'Pereira', shippingCost: 11000, region: 'Risaralda' },
+  { name: 'Manizales', shippingCost: 11000, region: 'Caldas' },
+  { name: 'Santa Marta', shippingCost: 16000, region: 'Magdalena' },
+  { name: 'Cúcuta', shippingCost: 13000, region: 'Norte de Santander' },
+  { name: 'Ibagué', shippingCost: 10000, region: 'Tolima' },
+  { name: 'Pasto', shippingCost: 14000, region: 'Nariño' },
+  { name: 'Villavicencio', shippingCost: 9000, region: 'Meta' },
+  { name: 'Armenia', shippingCost: 11000, region: 'Quindío' },
+  { name: 'Tunja', shippingCost: 9000, region: 'Boyacá' },
+  { name: 'Otras ciudades', shippingCost: 18000, region: 'Colombia' }
 ]
 
 // Formato de precio colombiano
@@ -72,7 +72,8 @@ function App() {
     email: '',
     phone: '',
     address: '',
-    city: 'Bogotá'
+    city: 'Bogotá',
+    region: 'Cundinamarca'
   })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
@@ -657,7 +658,14 @@ function App() {
                   </label>
                   <select
                     value={customerInfo.city}
-                    onChange={(e) => setCustomerInfo({...customerInfo, city: e.target.value})}
+                    onChange={(e) => {
+                      const selectedCity = colombianCities.find(c => c.name === e.target.value)
+                      setCustomerInfo({
+                        ...customerInfo,
+                        city: e.target.value,
+                        region: selectedCity?.region || 'Colombia'
+                      })
+                    }}
                     style={{
                       width: '100%',
                       padding: '12px',

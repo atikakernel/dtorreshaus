@@ -55,6 +55,7 @@ async function createNequiPayment(orderData) {
       shipping_address: {
         address_line_1: shippingAddress.address,
         city: shippingAddress.city,
+        region: shippingAddress.region || 'Colombia',
         phone_number: customerInfo.phone,
         country: 'CO'
       },
@@ -111,6 +112,7 @@ async function createCardPayment(orderData) {
       shipping_address: {
         address_line_1: shippingAddress.address,
         city: shippingAddress.city,
+        region: shippingAddress.region || 'Colombia',
         phone_number: customerInfo.phone,
         country: 'CO'
       },

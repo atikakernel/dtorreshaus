@@ -33,7 +33,8 @@ export function Checkout({
         shippingCost,
         shippingAddress: {
           address: customerInfo.address,
-          city: customerInfo.city
+          city: customerInfo.city,
+          region: customerInfo.region || 'Colombia'
         },
         paymentMethod: selectedMethod,
         paymentGateway: 'wompi'
