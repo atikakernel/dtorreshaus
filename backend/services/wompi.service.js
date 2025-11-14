@@ -290,5 +290,5 @@ module.exports = {
   getTransactionStatus,
   verifyWebhookSignature,
   getPSEBanks,
-  getAcceptanceToken
+  getMerchantInfo
 }
