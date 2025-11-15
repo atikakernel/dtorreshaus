@@ -286,9 +286,119 @@ async function sendOrderDelivered(order) {
   }
 }
 
+/**
+ * Email de notificación al admin cuando hay un pedido nuevo pagado
+ */
+async function sendAdminNewOrderNotification(order) {
+  const { customerEmail, customerName, reference, total, cart, shippingCost } = order
+
+  const productsHTML = cart.map(item => `
+    <tr>
+      <td style="padding: 10px; border-bottom: 1px solid #e5e7eb;">${item.nombre}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: center;">${item.quantity}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${item.precio.toLocaleString('es-CO')}</td>
+      <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${(item.precio * item.quantity).toLocaleString('es-CO')}</td>
+    </tr>
+  `).join('')
+
+  const mailOptions = {
+    from: `"dtorreshaus - Sistema" <${process.env.EMAIL_FROM}>`,
+    to: process.env.ADMIN_EMAIL || process.env.EMAIL_FROM,
+    subject: `🛒 Nuevo Pedido Pagado - ${reference}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #334155; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #10b981 0%, #34d399 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
+          <h1 style="color: white; margin: 0; font-size: 28px;">🎉 Nuevo Pedido!</h1>
+        </div>
+
+        <div style="background: white; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
+          <div style="background: #ecfdf5; padding: 20px; border-radius: 8px; border-left: 4px solid #10b981; margin-bottom: 20px;">
+            <p style="margin: 0; font-size: 16px; color: #065f46;">
+              <strong>¡Tienes un nuevo pedido pagado!</strong>
+            </p>
+            <p style="margin: '10px 0 0 0'; font-size: 14px; color: '#047857">
+              Prepara el paquete y marca como enviado desde el panel de admin.
+            </p>
+          </div>
+
+          <h3 style="color: #1e293b; border-bottom: 2px solid #10b981; padding-bottom: 10px;">📦 Detalles del Pedido</h3>
+          <p><strong>Número de Pedido:</strong> ${reference}</p>
+          <p><strong>Cliente:</strong> ${customerName}</p>
+          <p><strong>Email:</strong> ${customerEmail}</p>
+          <p><strong>Teléfono:</strong> ${order.customerPhone}</p>
+          <p><strong>Dirección:</strong> ${order.shippingAddress.address}, ${order.shippingAddress.city}</p>
+
+          <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+            <thead>
+              <tr style="background: #f8fafc;">
+                <th style="padding: 10px; text-align: left; border-bottom: 2px solid #10b981;">Producto</th>
+                <th style="padding: 10px; text-align: center; border-bottom: 2px solid #10b981;">Cant.</th>
+                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #10b981;">Precio</th>
+                <th style="padding: 10px; text-align: right; border-bottom: 2px solid #10b981;">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${productsHTML}
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3" style="padding: 10px; text-align: right;">Subtotal Productos:</td>
+                <td style="padding: 10px; text-align: right;">$${(total - shippingCost).toLocaleString('es-CO')}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="padding: 10px; text-align: right;">Costo de Envío:</td>
+                <td style="padding: 10px; text-align: right;">$${shippingCost.toLocaleString('es-CO')}</td>
+              </tr>
+              <tr style="border-top: 2px solid #10b981;">
+                <td colspan="3" style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px;">TOTAL:</td>
+                <td style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px; color: #10b981;">$${total.toLocaleString('es-CO')}</td>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div style="background: #f0f9ff; padding: 15px; border-radius: 8px; margin: 20px 0; text-align: center;">
+            <p style="margin: 0 0 15px 0; font-size: 14px;">
+              <strong>Siguiente paso:</strong> Prepara el paquete y márcalo como enviado
+            </p>
+            <a href="${process.env.FRONTEND_URL}/admin.html"
+               style="display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600;">
+              Ir al Panel de Admin
+            </a>
+          </div>
+
+          <p style="color: #64748b; font-size: 14px; margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+            Este es un email automático del sistema dtorreshaus.
+          </p>
+        </div>
+
+        <div style="text-align: center; padding: 20px; color: #94a3b8; font-size: 12px;">
+          <p>© 2024 dtorreshaus - Panel de Administración</p>
+        </div>
+      </body>
+      </html>
+    `
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('✅ Email de notificación al admin enviado:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('❌ Error enviando email al admin:', error)
+    return { success: false, error: error.message }
+  }
+}
+
 module.exports = {
   sendOrderConfirmation,
   sendPaymentConfirmed,
   sendOrderShipped,
-  sendOrderDelivered
+  sendOrderDelivered,
+  sendAdminNewOrderNotification
 }

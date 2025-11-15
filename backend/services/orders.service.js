@@ -143,8 +143,11 @@ async function confirmPayment(reference) {
       }
     })
 
-    // Enviar email de pago confirmado
+    // Enviar email de pago confirmado al cliente
     await emailService.sendPaymentConfirmed(updatedOrder)
+
+    // Enviar notificación al admin de nuevo pedido
+    await emailService.sendAdminNewOrderNotification(updatedOrder)
 
     console.log('✅ Pago confirmado para orden:', reference)
 
