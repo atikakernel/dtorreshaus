@@ -103,6 +103,13 @@ export async function getPSEBanks() {
   return fetchAPI('/api/payments/wompi/pse-banks')
 }
 
+export async function createWompiCheckout(orderData) {
+  return fetchAPI('/api/payments/wompi/checkout', {
+    method: 'POST',
+    body: JSON.stringify(orderData)
+  })
+}
+
 /**
  * ====================================
  * PAGOS - MERCADOPAGO

@@ -13,6 +13,48 @@ const mercadopagoService = require('../services/mercadopago.service')
 // const prisma = new PrismaClient()
 
 /**
+ * POST /api/payments/wompi/checkout
+ * Crear checkout link universal de Wompi (todos los métodos de pago)
+ */
+router.post('/wompi/checkout', async (req, res) => {
+  try {
+    const { customerInfo, cart, total, shippingCost, shippingAddress } = req.body
+
+    // Validaciones
+    if (!customerInfo || !cart || !total) {
+      return res.status(400).json({ error: 'Datos incompletos' })
+    }
+
+    const reference = `DTH-${Date.now()}-${uuidv4().slice(0, 8)}`
+    const finalTotal = total
+
+    // Crear checkout link de Wompi
+    const payment = await wompiService.createCheckoutLink({
+      customerInfo,
+      total: finalTotal,
+      reference,
+      shippingAddress,
+      cart
+    })
+
+    console.log(`✅ Checkout Wompi creado: ${reference}`)
+
+    res.json({
+      success: true,
+      payment,
+      message: 'Checkout creado exitosamente'
+    })
+
+  } catch (error) {
+    console.error('Error en /payments/wompi/checkout:', error)
+    res.status(500).json({
+      error: 'Error procesando checkout',
+      message: error.message
+    })
+  }
+})
+
+/**
  * POST /api/payments/wompi/nequi
  * Crear pago con Nequi (Wompi)
  */
