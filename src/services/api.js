@@ -58,14 +58,18 @@ export async function getProductsByCategory(category) {
  */
 
 export async function createOrder(orderData) {
-  return fetchAPI('/api/orders', {
+  return fetchAPI('/api/orders/create', {
     method: 'POST',
     body: JSON.stringify(orderData)
   })
 }
 
-export async function getOrderStatus(orderId) {
-  return fetchAPI(`/api/orders/${orderId}`)
+export async function getOrder(reference) {
+  return fetchAPI(`/api/orders/${reference}`)
+}
+
+export async function getOrderStatus(reference) {
+  return getOrder(reference)
 }
 
 /**

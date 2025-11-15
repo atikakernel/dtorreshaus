@@ -1,21 +1,23 @@
 /**
  * ====================================
- * RUTAS DE WEBHOOKS
+ * RUTAS DE WEBHOOKS - dtorreshaus
  * ====================================
  * Reciben notificaciones de las pasarelas de pago
+ * y automáticamente confirman pagos de órdenes
  */
 
 const express = require('express')
 const router = express.Router()
 const wompiService = require('../services/wompi.service')
 const mercadopagoService = require('../services/mercadopago.service')
-// const emailService = require('../services/email.service')
-// const { PrismaClient} = require('@prisma/client')
-// const prisma = new PrismaClient()
+const ordersService = require('../services/orders.service')
+const { PrismaClient} = require('@prisma/client')
+const prisma = new PrismaClient()
 
 /**
  * POST /api/webhooks/wompi
  * Webhook de Wompi - Recibe notificaciones de cambios en transacciones
+ * Confirma pagos automáticamente
  */
 router.post('/wompi', async (req, res) => {
   try {
@@ -32,53 +34,45 @@ router.post('/wompi', async (req, res) => {
       return res.status(401).json({ error: 'Firma inválida' })
     }
 
-    // Procesar evento
+    // Procesar evento de transacción actualizada
     if (event.event === 'transaction.updated') {
       const transaction = event.data.transaction
 
       console.log(`📊 Transacción actualizada: ${transaction.id} - Status: ${transaction.status}`)
 
-      // Actualizar orden en base de datos
-      // const order = await prisma.order.findFirst({
-      //   where: { transactionId: transaction.id }
-      // })
+      // Buscar orden por transaction ID
+      const order = await prisma.order.findFirst({
+        where: { transactionId: transaction.id }
+      })
 
-      // if (order) {
+      if (order) {
         if (transaction.status === 'APPROVED') {
-          console.log(`✅ Pago aprobado: ${transaction.reference}`)
+          console.log(`✅ Pago aprobado automáticamente: ${order.reference}`)
 
-          // await prisma.order.update({
-          //   where: { id: order.id },
-          //   data: {
-          //     status: 'paid',
-          //     paidAt: new Date()
-          //   }
-          // })
+          // Confirmar pago automáticamente usando el servicio
+          await ordersService.confirmPayment(order.reference)
 
-          // Enviar email de confirmación
-          // await emailService.sendOrderConfirmation({
-          //   email: order.customerEmail,
-          //   orderReference: order.reference,
-          //   total: order.total
-          // })
+          console.log(`✉️ Email de confirmación enviado a ${order.customerEmail}`)
 
         } else if (transaction.status === 'DECLINED') {
-          console.log(`❌ Pago rechazado: ${transaction.reference}`)
+          console.log(`❌ Pago rechazado: ${order.reference}`)
 
-          // await prisma.order.update({
-          //   where: { id: order.id },
-          //   data: { status: 'failed' }
-          // })
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: 'failed' }
+          })
 
         } else if (transaction.status === 'ERROR') {
-          console.log(`⚠️  Error en pago: ${transaction.reference}`)
+          console.log(`⚠️  Error en pago: ${order.reference}`)
 
-          // await prisma.order.update({
-          //   where: { id: order.id },
-          //   data: { status: 'error' }
-          // })
+          await prisma.order.update({
+            where: { id: order.id },
+            data: { status: 'error' }
+          })
         }
-      // }
+      } else {
+        console.log(`⚠️ No se encontró orden para transaction ID: ${transaction.id}`)
+      }
     }
 
     res.sendStatus(200)
@@ -92,6 +86,7 @@ router.post('/wompi', async (req, res) => {
 /**
  * POST /api/webhooks/mercadopago
  * Webhook de MercadoPago - Recibe notificaciones de pagos
+ * Confirma pagos automáticamente
  */
 router.post('/mercadopago', async (req, res) => {
   try {
@@ -105,40 +100,37 @@ router.post('/mercadopago', async (req, res) => {
       if (paymentInfo) {
         console.log(`📊 Pago actualizado: ${paymentInfo.paymentId} - Status: ${paymentInfo.status}`)
 
-        // Buscar orden
-        // const order = await prisma.order.findFirst({
-        //   where: { reference: paymentInfo.externalReference }
-        // })
+        // Buscar orden por referencia externa
+        const order = await prisma.order.findFirst({
+          where: { reference: paymentInfo.externalReference }
+        })
 
-        // if (order) {
+        if (order) {
           if (paymentInfo.status === 'approved') {
-            console.log(`✅ Pago aprobado (MP): ${paymentInfo.externalReference}`)
+            console.log(`✅ Pago aprobado automáticamente (MP): ${order.reference}`)
 
-            // await prisma.order.update({
-            //   where: { id: order.id },
-            //   data: {
-            //     status: 'paid',
-            //     paidAt: new Date(),
-            //     transactionId: paymentInfo.paymentId
-            //   }
-            // })
+            // Actualizar transaction ID
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { transactionId: paymentInfo.paymentId }
+            })
 
-            // Enviar email
-            // await emailService.sendOrderConfirmation({
-            //   email: order.customerEmail,
-            //   orderReference: order.reference,
-            //   total: order.total
-            // })
+            // Confirmar pago automáticamente
+            await ordersService.confirmPayment(order.reference)
+
+            console.log(`✉️ Email de confirmación enviado a ${order.customerEmail}`)
 
           } else if (paymentInfo.status === 'rejected') {
-            console.log(`❌ Pago rechazado (MP): ${paymentInfo.externalReference}`)
+            console.log(`❌ Pago rechazado (MP): ${order.reference}`)
 
-            // await prisma.order.update({
-            //   where: { id: order.id },
-            //   data: { status: 'failed' }
-            // })
+            await prisma.order.update({
+              where: { id: order.id },
+              data: { status: 'failed' }
+            })
           }
-        // }
+        } else {
+          console.log(`⚠️ No se encontró orden para referencia: ${paymentInfo.externalReference}`)
+        }
       }
     }
 
@@ -157,7 +149,11 @@ router.post('/mercadopago', async (req, res) => {
 router.get('/test', (req, res) => {
   res.json({
     message: 'Webhooks funcionando correctamente',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      wompi: '/api/webhooks/wompi',
+      mercadopago: '/api/webhooks/mercadopago'
+    }
   })
 })
 
