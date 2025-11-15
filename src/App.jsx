@@ -84,6 +84,7 @@ function App() {
   const [paymentConfirmation, setPaymentConfirmation] = useState({ show: false, transactionId: null })
   const [shippingCost, setShippingCost] = useState(0)
   const [loadingShipping, setLoadingShipping] = useState(false)
+  const [loadingLocation, setLoadingLocation] = useState(false)
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
@@ -240,6 +241,97 @@ function App() {
   // Calcular total del carrito
   const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0)
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0)
+
+  // Función para obtener ubicación del usuario
+  const getUserLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('Tu navegador no soporta geolocalización')
+      return
+    }
+
+    setLoadingLocation(true)
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+
+        try {
+          // Usar API de geocoding inverso de OpenStreetMap (Nominatim)
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+            {
+              headers: {
+                'Accept-Language': 'es'
+              }
+            }
+          )
+
+          const data = await response.json()
+
+          if (data && data.address) {
+            const address = data.address
+
+            // Construir dirección completa
+            let fullAddress = ''
+            if (address.road) fullAddress += address.road
+            if (address.house_number) fullAddress += ` #${address.house_number}`
+            if (address.neighbourhood) fullAddress += `, ${address.neighbourhood}`
+
+            // Determinar la ciudad más cercana
+            const city = address.city || address.town || address.municipality || address.county
+            let matchedCity = colombianCities.find(c =>
+              c.name.toLowerCase() === city?.toLowerCase()
+            )
+
+            // Si no hay match exacto, intentar con la región
+            if (!matchedCity && address.state) {
+              matchedCity = colombianCities.find(c =>
+                c.region.toLowerCase() === address.state?.toLowerCase()
+              )
+            }
+
+            // Actualizar información del cliente
+            setCustomerInfo(prev => ({
+              ...prev,
+              address: fullAddress || prev.address,
+              city: matchedCity?.name || prev.city,
+              region: matchedCity?.region || address.state || prev.region
+            }))
+
+            alert('📍 Ubicación detectada correctamente')
+          }
+        } catch (error) {
+          console.error('Error obteniendo dirección:', error)
+          alert('No se pudo obtener la dirección. Por favor ingrésala manualmente.')
+        } finally {
+          setLoadingLocation(false)
+        }
+      },
+      (error) => {
+        console.error('Error de geolocalización:', error)
+        setLoadingLocation(false)
+
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert('Debes permitir el acceso a tu ubicación para usar esta función')
+            break
+          case error.POSITION_UNAVAILABLE:
+            alert('No se pudo obtener tu ubicación. Inténtalo de nuevo.')
+            break
+          case error.TIMEOUT:
+            alert('El tiempo de espera se agotó. Inténtalo de nuevo.')
+            break
+          default:
+            alert('Error desconocido obteniendo tu ubicación')
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    )
+  }
 
   // Abrir modal de imagen
   const openImageModal = (sku, nombre) => {
@@ -704,7 +796,30 @@ function App() {
                 </div>
 
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Dirección *</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                    <label style={{ fontWeight: '600' }}>Dirección *</label>
+                    <button
+                      type="button"
+                      onClick={getUserLocation}
+                      disabled={loadingLocation}
+                      style={{
+                        background: loadingLocation ? '#ccc' : 'linear-gradient(135deg, #667eea, #764ba2)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '6px 12px',
+                        fontSize: '13px',
+                        cursor: loadingLocation ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      <MapPin size={14} />
+                      {loadingLocation ? 'Ubicando...' : 'Usar mi ubicación'}
+                    </button>
+                  </div>
                   <input
                     type="text"
                     name="address"
