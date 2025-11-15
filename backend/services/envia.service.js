@@ -11,6 +11,15 @@ const axios = require('axios')
 const ENVIA_API_URL = 'https://queries.envia.com/v1'
 const ENVIA_API_KEY = process.env.ENVIA_API_KEY
 
+// Headers comunes para todas las peticiones a Envia.com
+// Cloudflare requiere User-Agent y Accept para no bloquear
+const getEnviaHeaders = () => ({
+  'Authorization': `Bearer ${ENVIA_API_KEY}`,
+  'Content-Type': 'application/json',
+  'Accept': 'application/json',
+  'User-Agent': 'dtorreshaus-ecommerce/1.0'
+})
+
 /**
  * Cotizar envío usando Envia.com
  * @param {Object} shipmentData - Datos del envío
@@ -70,10 +79,7 @@ async function quoteShipment(shipmentData) {
         }
       },
       {
-        headers: {
-          'Authorization': `Bearer ${ENVIA_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+        headers: getEnviaHeaders()
       }
     )
 
@@ -175,10 +181,7 @@ async function createShipment(shipmentData) {
         }
       },
       {
-        headers: {
-          'Authorization': `Bearer ${ENVIA_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
+        headers: getEnviaHeaders()
       }
     )
 
@@ -198,7 +201,13 @@ async function createShipment(shipmentData) {
     }
 
   } catch (error) {
-    console.error('Error al crear envío con Envia:', error.response?.data || error.message)
+    console.error('❌ Error creando shipment:', error.response?.data || error.message)
+
+    // Si es error 403, dar más información sobre Cloudflare
+    if (error.response?.status === 403) {
+      console.error('⚠️  Error 403: Cloudflare bloqueó la petición. Verifica los headers y la API key.')
+    }
+
     return {
       success: false,
       error: error.response?.data?.message || error.message
@@ -214,9 +223,7 @@ async function trackShipment(trackingNumber) {
     const response = await axios.get(
       `${ENVIA_API_URL}/ship/track/${trackingNumber}`,
       {
-        headers: {
-          'Authorization': `Bearer ${ENVIA_API_KEY}`
-        }
+        headers: getEnviaHeaders()
       }
     )
 
