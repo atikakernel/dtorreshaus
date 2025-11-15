@@ -13,6 +13,7 @@ const WOMPI_API_URL = 'https://production.wompi.co/v1'
 const WOMPI_PUBLIC_KEY = process.env.WOMPI_PUBLIC_KEY
 const WOMPI_PRIVATE_KEY = process.env.WOMPI_PRIVATE_KEY
 const WOMPI_EVENTS_SECRET = process.env.WOMPI_EVENTS_SECRET
+const WOMPI_INTEGRITY_SECRET = process.env.WOMPI_INTEGRITY_SECRET
 
 /**
  * Obtener información del merchant (token de aceptación e integrity)
@@ -27,7 +28,7 @@ async function getMerchantInfo() {
       acceptanceToken: response.data.data.presigned_acceptance.acceptance_token,
       integritySecret: response.data.data.presigned_personal_data_auth?.integrity_secret ||
                        response.data.data.presigned_acceptance?.integrity_secret ||
-                       WOMPI_EVENTS_SECRET
+                       WOMPI_INTEGRITY_SECRET
     }
   } catch (error) {
     console.error('Error obteniendo merchant info:', error.response?.data || error.message)
