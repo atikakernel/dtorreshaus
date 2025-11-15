@@ -13,19 +13,26 @@ const WOMPI_API_URL = 'https://production.wompi.co/v1'
 const WOMPI_PUBLIC_KEY = process.env.WOMPI_PUBLIC_KEY
 const WOMPI_PRIVATE_KEY = process.env.WOMPI_PRIVATE_KEY
 const WOMPI_EVENTS_SECRET = process.env.WOMPI_EVENTS_SECRET
+const WOMPI_INTEGRITY_SECRET = process.env.WOMPI_INTEGRITY_SECRET
 
 /**
- * Obtener token de aceptación (requerido por Wompi)
+ * Obtener información del merchant (token de aceptación e integrity)
  */
-async function getAcceptanceToken() {
+async function getMerchantInfo() {
   try {
     const response = await axios.get(
       `${WOMPI_API_URL}/merchants/${WOMPI_PUBLIC_KEY}`
     )
-    return response.data.data.presigned_acceptance.acceptance_token
+    console.log('📊 Merchant data:', JSON.stringify(response.data.data, null, 2))
+    return {
+      acceptanceToken: response.data.data.presigned_acceptance.acceptance_token,
+      integritySecret: response.data.data.presigned_personal_data_auth?.integrity_secret ||
+                       response.data.data.presigned_acceptance?.integrity_secret ||
+                       WOMPI_INTEGRITY_SECRET
+    }
   } catch (error) {
-    console.error('Error obteniendo acceptance token:', error.response?.data || error.message)
-    throw new Error('No se pudo obtener el token de aceptación de Wompi')
+    console.error('Error obteniendo merchant info:', error.response?.data || error.message)
+    throw new Error('No se pudo obtener la información del merchant de Wompi')
   }
 }
 
@@ -36,11 +43,24 @@ async function createNequiPayment(orderData) {
   const { customerInfo, total, reference, shippingAddress } = orderData
 
   try {
-    const acceptanceToken = await getAcceptanceToken()
+    const merchantInfo = await getMerchantInfo()
+    const amountInCents = Math.round(total * 100)
+
+    // Generar firma de integridad
+    const integritySecret = merchantInfo.integritySecret
+    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
+    const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
+
+    console.log('🔐 Signature info:')
+    console.log('  - Reference:', reference)
+    console.log('  - Amount:', amountInCents)
+    console.log('  - Integrity Secret:', integritySecret)
+    console.log('  - Signature String:', signatureString)
+    console.log('  - Signature:', signature)
 
     const transaction = {
-      acceptance_token: acceptanceToken,
-      amount_in_cents: Math.round(total * 100), // Wompi usa centavos
+      acceptance_token: merchantInfo.acceptanceToken,
+      amount_in_cents: amountInCents,
       currency: 'COP',
       customer_email: customerInfo.email,
       payment_method: {
@@ -48,6 +68,7 @@ async function createNequiPayment(orderData) {
         phone_number: customerInfo.phone
       },
       reference: reference,
+      signature: signature,
       customer_data: {
         phone_number: customerInfo.phone,
         full_name: customerInfo.name
@@ -55,6 +76,7 @@ async function createNequiPayment(orderData) {
       shipping_address: {
         address_line_1: shippingAddress.address,
         city: shippingAddress.city,
+        region: shippingAddress.region || 'Colombia',
         phone_number: customerInfo.phone,
         country: 'CO'
       },
@@ -80,7 +102,7 @@ async function createNequiPayment(orderData) {
       reference: reference
     }
   } catch (error) {
-    console.error('Error Wompi Nequi:', error.response?.data || error.message)
+    console.error('Error Wompi Nequi:', JSON.stringify(error.response?.data, null, 2) || error.message)
     throw new Error(error.response?.data?.error?.reason || 'Error procesando pago con Nequi')
   }
 }
@@ -92,11 +114,17 @@ async function createCardPayment(orderData) {
   const { customerInfo, total, reference, shippingAddress } = orderData
 
   try {
-    const acceptanceToken = await getAcceptanceToken()
+    const merchantInfo = await getMerchantInfo()
+    const amountInCents = Math.round(total * 100)
+
+    // Generar firma de integridad
+    const integritySecret = merchantInfo.integritySecret
+    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
+    const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
 
     const transaction = {
-      acceptance_token: acceptanceToken,
-      amount_in_cents: Math.round(total * 100),
+      acceptance_token: merchantInfo.acceptanceToken,
+      amount_in_cents: amountInCents,
       currency: 'COP',
       customer_email: customerInfo.email,
       payment_method: {
@@ -104,6 +132,7 @@ async function createCardPayment(orderData) {
         installments: 1
       },
       reference: reference,
+      signature: signature,
       customer_data: {
         phone_number: customerInfo.phone,
         full_name: customerInfo.name
@@ -111,6 +140,7 @@ async function createCardPayment(orderData) {
       shipping_address: {
         address_line_1: shippingAddress.address,
         city: shippingAddress.city,
+        region: shippingAddress.region || 'Colombia',
         phone_number: customerInfo.phone,
         country: 'CO'
       },
@@ -136,7 +166,7 @@ async function createCardPayment(orderData) {
       reference: reference
     }
   } catch (error) {
-    console.error('Error Wompi Card:', error.response?.data || error.message)
+    console.error('Error Wompi Card:', JSON.stringify(error.response?.data, null, 2) || error.message)
     throw new Error(error.response?.data?.error?.reason || 'Error procesando pago con tarjeta')
   }
 }
@@ -271,5 +301,5 @@ module.exports = {
   getTransactionStatus,
   verifyWebhookSignature,
   getPSEBanks,
-  getAcceptanceToken
+  getMerchantInfo
 }

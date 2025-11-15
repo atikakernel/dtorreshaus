@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { createWompiNequiPayment, createWompiCardPayment, createWompiPSEPayment } from '../services/api'
+import { createOrder, createWompiNequiPayment, createWompiCardPayment } from '../services/api'
 
 export function Checkout({
   cart,
@@ -25,19 +25,39 @@ export function Checkout({
     setError(null)
 
     try {
-      const paymentData = {
+      // Preparar datos de la orden
+      const orderData = {
         customerInfo,
         cart,
         total: finalTotal,
         shippingCost,
         shippingAddress: {
           address: customerInfo.address,
-          city: customerInfo.city
-        }
+          city: customerInfo.city,
+          region: customerInfo.region || 'Colombia'
+        },
+        paymentMethod: selectedMethod,
+        paymentGateway: 'wompi'
+      }
+
+      // Crear orden en la base de datos
+      const orderResult = await createOrder(orderData)
+
+      if (!orderResult.success) {
+        setError('Error creando la orden: ' + orderResult.error)
+        return
+      }
+
+      const { order } = orderResult
+
+      // Para métodos de Wompi, procesar pago
+      const paymentData = {
+        ...orderData,
+        orderId: order.id,
+        orderReference: order.reference
       }
 
       let result
-
       switch (selectedMethod) {
         case 'nequi':
           result = await createWompiNequiPayment(paymentData)
@@ -45,19 +65,19 @@ export function Checkout({
         case 'card':
           result = await createWompiCardPayment(paymentData)
           break
-        case 'pse':
-          result = await createWompiPSEPayment(paymentData)
-          break
         default:
           throw new Error('Método de pago no válido')
       }
 
       if (result.success) {
         // Redirigir a la página de pago de Wompi
-        if (result.payment.paymentLinkUrl) {
+        if (result.payment?.paymentLinkUrl) {
           window.location.href = result.payment.paymentLinkUrl
         } else {
-          onSuccess(result)
+          onSuccess({
+            ...result,
+            orderReference: order.reference
+          })
         }
       } else {
         setError('Error al procesar el pago. Intenta de nuevo.')
@@ -98,9 +118,9 @@ export function Checkout({
             background: selectedMethod === 'nequi' ? '#f0f9ff' : 'white'
           }}
         >
-          <strong>💜 Nequi</strong>
+          <strong>💜 Nequi (Wompi)</strong>
           <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-            Paga con tu cuenta Nequi
+            Paga con tu cuenta Nequi vía Wompi
           </p>
         </div>
 
@@ -118,22 +138,6 @@ export function Checkout({
           <strong>💳 Tarjeta de Crédito/Débito</strong>
           <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
             Visa, Mastercard, American Express
-          </p>
-        </div>
-
-        <div
-          onClick={() => setSelectedMethod('pse')}
-          style={{
-            border: selectedMethod === 'pse' ? '2px solid var(--primary-color)' : '1px solid #ddd',
-            padding: '15px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            background: selectedMethod === 'pse' ? '#f0f9ff' : 'white'
-          }}
-        >
-          <strong>🏦 PSE</strong>
-          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
-            Pago a través de tu banco
           </p>
         </div>
       </div>

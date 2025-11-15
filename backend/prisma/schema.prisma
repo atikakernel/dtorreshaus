@@ -43,9 +43,16 @@ model Order {
   status String @default("pending") // pending, paid, failed, cancelled, shipped, delivered
 
   // Información de pago
-  paymentMethod  String // nequi, card, pse, mercadopago
-  paymentGateway String // wompi, mercadopago
+  paymentMethod  String // nequi, card, pse, mercadopago, transfer
+  paymentGateway String? // wompi, mercadopago, manual
   transactionId  String? // ID de la transacción en la pasarela
+
+  // Información de envío (Envia.com)
+  shippingTrackingNumber String? // Número de tracking
+  shippingCarrier String? // Nombre de la transportadora
+  shippingLabelUrl String? // URL de la etiqueta de envío
+  shippingEstimatedDelivery String? // Fecha estimada de entrega
+  shippingData Json? // Datos completos de Envia.com
 
   // Fechas
   createdAt DateTime @default(now())

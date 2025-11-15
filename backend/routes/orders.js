@@ -1,45 +1,31 @@
 /**
  * ====================================
- * RUTAS DE ÓRDENES
+ * RUTAS DE ÓRDENES - dtorreshaus
  * ====================================
  */
 
 const express = require('express')
 const router = express.Router()
-// const { PrismaClient } = require('@prisma/client')
-// const prisma = new PrismaClient()
+const ordersService = require('../services/orders.service')
 
 /**
- * GET /api/orders
- * Obtener todas las órdenes (para admin)
+ * POST /api/orders/create
+ * Crear nueva orden
  */
-router.get('/', async (req, res) => {
+router.post('/create', async (req, res) => {
   try {
-    // const orders = await prisma.order.findMany({
-    //   orderBy: { createdAt: 'desc' },
-    //   take: 100
-    // })
+    const result = await ordersService.createOrder(req.body)
 
-    const orders = [
-      {
-        id: 1,
-        reference: 'DTH-1234567890',
-        customerName: 'Ejemplo',
-        total: 150000,
-        status: 'pending',
-        createdAt: new Date()
-      }
-    ]
-
-    res.json({
-      success: true,
-      orders
-    })
+    if (result.success) {
+      return res.status(201).json(result)
+    } else {
+      return res.status(400).json(result)
+    }
   } catch (error) {
-    console.error('Error obteniendo órdenes:', error)
-    res.status(500).json({
-      error: 'Error obteniendo órdenes',
-      message: error.message
+    console.error('Error en POST /api/orders/create:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor'
     })
   }
 })
@@ -51,95 +37,114 @@ router.get('/', async (req, res) => {
 router.get('/:reference', async (req, res) => {
   try {
     const { reference } = req.params
+    const result = await ordersService.getOrderByReference(reference)
 
-    // const order = await prisma.order.findFirst({
-    //   where: { reference }
-    // })
-
-    const order = {
-      id: 1,
-      reference: reference,
-      customerName: 'Cliente Ejemplo',
-      customerEmail: 'cliente@ejemplo.com',
-      total: 150000,
-      status: 'pending',
-      createdAt: new Date()
+    if (result.success) {
+      return res.json(result)
+    } else {
+      return res.status(404).json(result)
     }
-
-    // if (!order) {
-    //   return res.status(404).json({ error: 'Orden no encontrada' })
-    // }
-
-    res.json({
-      success: true,
-      order
-    })
   } catch (error) {
-    console.error('Error obteniendo orden:', error)
-    res.status(500).json({
-      error: 'Error obteniendo orden',
-      message: error.message
+    console.error('Error en GET /api/orders/:reference:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor'
     })
   }
 })
 
 /**
- * GET /api/orders/customer/:email
- * Obtener órdenes de un cliente
+ * POST /api/orders/:reference/confirm-payment
+ * Confirmar pago de una orden (de pending a paid)
  */
-router.get('/customer/:email', async (req, res) => {
-  try {
-    const { email } = req.params
-
-    // const orders = await prisma.order.findMany({
-    //   where: { customerEmail: email },
-    //   orderBy: { createdAt: 'desc' }
-    // })
-
-    const orders = []
-
-    res.json({
-      success: true,
-      orders
-    })
-  } catch (error) {
-    console.error('Error obteniendo órdenes del cliente:', error)
-    res.status(500).json({
-      error: 'Error obteniendo órdenes',
-      message: error.message
-    })
-  }
-})
-
-/**
- * PUT /api/orders/:reference/status
- * Actualizar estado de una orden (para admin)
- */
-router.put('/:reference/status', async (req, res) => {
+router.post('/:reference/confirm-payment', async (req, res) => {
   try {
     const { reference } = req.params
-    const { status } = req.body
+    const result = await ordersService.confirmPayment(reference)
 
-    if (!status) {
-      return res.status(400).json({ error: 'Estado requerido' })
+    if (result.success) {
+      return res.json(result)
+    } else {
+      return res.status(400).json(result)
     }
-
-    // const order = await prisma.order.update({
-    //   where: { reference },
-    //   data: { status }
-    // })
-
-    console.log(`📝 Orden ${reference} actualizada a: ${status}`)
-
-    res.json({
-      success: true,
-      message: 'Estado actualizado correctamente'
-    })
   } catch (error) {
-    console.error('Error actualizando orden:', error)
-    res.status(500).json({
-      error: 'Error actualizando orden',
-      message: error.message
+    console.error('Error en POST /api/orders/:reference/confirm-payment:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor'
+    })
+  }
+})
+
+/**
+ * POST /api/orders/:reference/ship
+ * Marcar orden como enviada y crear etiqueta en Envia.com
+ */
+router.post('/:reference/ship', async (req, res) => {
+  try {
+    const { reference } = req.params
+    const result = await ordersService.shipOrder(reference)
+
+    if (result.success) {
+      return res.json(result)
+    } else {
+      return res.status(400).json(result)
+    }
+  } catch (error) {
+    console.error('Error en POST /api/orders/:reference/ship:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor'
+    })
+  }
+})
+
+/**
+ * POST /api/orders/:reference/deliver
+ * Marcar orden como entregada
+ */
+router.post('/:reference/deliver', async (req, res) => {
+  try {
+    const { reference } = req.params
+    const result = await ordersService.deliverOrder(reference)
+
+    if (result.success) {
+      return res.json(result)
+    } else {
+      return res.status(400).json(result)
+    }
+  } catch (error) {
+    console.error('Error en POST /api/orders/:reference/deliver:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor'
+    })
+  }
+})
+
+/**
+ * GET /api/orders
+ * Listar todas las órdenes (para admin)
+ */
+router.get('/', async (req, res) => {
+  try {
+    const { status, limit, offset } = req.query
+    const result = await ordersService.listOrders({
+      status,
+      limit: limit ? parseInt(limit) : 50,
+      offset: offset ? parseInt(offset) : 0
+    })
+
+    if (result.success) {
+      return res.json(result)
+    } else {
+      return res.status(400).json(result)
+    }
+  } catch (error) {
+    console.error('Error en GET /api/orders:', error)
+    return res.status(500).json({
+      success: false,
+      error: 'Error interno del servidor'
     })
   }
 })

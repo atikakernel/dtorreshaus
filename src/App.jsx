@@ -1,26 +1,27 @@
-import { useState } from 'react'
-import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target } from 'lucide-react'
+import { useState, useRef, useEffect } from 'react'
+import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target, Truck } from 'lucide-react'
 import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
+import { OrderTracking } from './components/OrderTracking'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
-  { name: 'Bogotá', shippingCost: 8000 },
-  { name: 'Medellín', shippingCost: 10000 },
-  { name: 'Cali', shippingCost: 12000 },
-  { name: 'Barranquilla', shippingCost: 15000 },
-  { name: 'Cartagena', shippingCost: 15000 },
-  { name: 'Bucaramanga', shippingCost: 12000 },
-  { name: 'Pereira', shippingCost: 11000 },
-  { name: 'Manizales', shippingCost: 11000 },
-  { name: 'Santa Marta', shippingCost: 16000 },
-  { name: 'Cúcuta', shippingCost: 13000 },
-  { name: 'Ibagué', shippingCost: 10000 },
-  { name: 'Pasto', shippingCost: 14000 },
-  { name: 'Villavicencio', shippingCost: 9000 },
-  { name: 'Armenia', shippingCost: 11000 },
-  { name: 'Tunja', shippingCost: 9000 },
-  { name: 'Otras ciudades', shippingCost: 18000 }
+  { name: 'Bogotá', shippingCost: 8000, region: 'Cundinamarca' },
+  { name: 'Medellín', shippingCost: 10000, region: 'Antioquia' },
+  { name: 'Cali', shippingCost: 12000, region: 'Valle del Cauca' },
+  { name: 'Barranquilla', shippingCost: 15000, region: 'Atlántico' },
+  { name: 'Cartagena', shippingCost: 15000, region: 'Bolívar' },
+  { name: 'Bucaramanga', shippingCost: 12000, region: 'Santander' },
+  { name: 'Pereira', shippingCost: 11000, region: 'Risaralda' },
+  { name: 'Manizales', shippingCost: 11000, region: 'Caldas' },
+  { name: 'Santa Marta', shippingCost: 16000, region: 'Magdalena' },
+  { name: 'Cúcuta', shippingCost: 13000, region: 'Norte de Santander' },
+  { name: 'Ibagué', shippingCost: 10000, region: 'Tolima' },
+  { name: 'Pasto', shippingCost: 14000, region: 'Nariño' },
+  { name: 'Villavicencio', shippingCost: 9000, region: 'Meta' },
+  { name: 'Armenia', shippingCost: 11000, region: 'Quindío' },
+  { name: 'Tunja', shippingCost: 9000, region: 'Boyacá' },
+  { name: 'Otras ciudades', shippingCost: 18000, region: 'Colombia' }
 ]
 
 // Formato de precio colombiano
@@ -71,9 +72,36 @@ function App() {
     email: '',
     phone: '',
     address: '',
-    city: 'Bogotá'
+    city: 'Bogotá',
+    region: 'Cundinamarca'
   })
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('')
+  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
+  const [trackingReference, setTrackingReference] = useState('')
+  const [trackingInput, setTrackingInput] = useState('')
+
+  // Ref para scroll a productos
+  const productsSectionRef = useRef(null)
+
+  // Cargar información guardada del cliente desde localStorage
+  useEffect(() => {
+    const savedInfo = localStorage.getItem('dtorreshaus_customer_info')
+    if (savedInfo) {
+      try {
+        const parsedInfo = JSON.parse(savedInfo)
+        setCustomerInfo(parsedInfo)
+      } catch (e) {
+        console.error('Error al cargar información guardada:', e)
+      }
+    }
+  }, [])
+
+  // Guardar información del cliente en localStorage cuando cambia
+  useEffect(() => {
+    if (customerInfo.name || customerInfo.email || customerInfo.phone) {
+      localStorage.setItem('dtorreshaus_customer_info', JSON.stringify(customerInfo))
+    }
+  }, [customerInfo])
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
@@ -152,6 +180,23 @@ function App() {
     setImageModal({ isOpen: false, sku: null, nombre: '' })
   }
 
+  // Cambiar categoría y hacer scroll a productos
+  const handleCategoryClick = (category) => {
+    setActiveCategory(category)
+    // Scroll suave a la sección de productos
+    setTimeout(() => {
+      productsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 100)
+  }
+
+  // Rastrear pedido
+  const handleTrackOrder = () => {
+    if (trackingInput.trim()) {
+      setTrackingReference(trackingInput.trim())
+      setIsTrackingModalOpen(true)
+    }
+  }
+
   return (
     <div className="app">
       {/* Header */}
@@ -161,11 +206,60 @@ function App() {
             <Home size={32} />
             <span>dtorreshaus</span>
           </div>
-          <button className="cart-button" onClick={() => setIsCartOpen(true)}>
-            <ShoppingCart size={20} />
-            Carrito
-            {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
-          </button>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center', flexWrap: 'wrap' }}>
+            <div style={{ position: 'relative', display: 'flex', gap: '5px' }}>
+              <input
+                type="text"
+                placeholder="DTH-xxxxx"
+                value={trackingInput}
+                onChange={(e) => setTrackingInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleTrackOrder()}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '20px',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  background: 'rgba(255,255,255,0.2)',
+                  color: 'white',
+                  fontSize: '14px',
+                  outline: 'none',
+                  width: '140px'
+                }}
+              />
+              <button
+                onClick={handleTrackOrder}
+                style={{
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: '2px solid white',
+                  color: 'white',
+                  padding: '8px 15px',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '5px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = 'white'
+                  e.target.style.color = 'var(--primary-color)'
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = 'rgba(255, 255, 255, 0.2)'
+                  e.target.style.color = 'white'
+                }}
+              >
+                <Truck size={16} />
+                Rastrear
+              </button>
+            </div>
+            <button className="cart-button" onClick={() => setIsCartOpen(true)}>
+              <ShoppingCart size={20} />
+              Carrito
+              {cartItemCount > 0 && <span className="cart-count">{cartItemCount}</span>}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -174,7 +268,7 @@ function App() {
         <div className="nav-buttons">
           <button
             className={`nav-button ${activeCategory === 'all' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('all')}
+            onClick={() => handleCategoryClick('all')}
           >
             <div className="nav-button-circle">
               <Home size={24} />
@@ -183,7 +277,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'cocina' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('cocina')}
+            onClick={() => handleCategoryClick('cocina')}
           >
             <div className="nav-button-circle">
               <ChefHat size={24} />
@@ -192,7 +286,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'baño' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('baño')}
+            onClick={() => handleCategoryClick('baño')}
           >
             <div className="nav-button-circle">
               <Droplet size={24} />
@@ -201,7 +295,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'limpieza' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('limpieza')}
+            onClick={() => handleCategoryClick('limpieza')}
           >
             <div className="nav-button-circle">
               <Sparkles size={24} />
@@ -210,7 +304,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'organización' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('organización')}
+            onClick={() => handleCategoryClick('organización')}
           >
             <div className="nav-button-circle">
               <Package size={24} />
@@ -219,7 +313,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'decoración' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('decoración')}
+            onClick={() => handleCategoryClick('decoración')}
           >
             <div className="nav-button-circle">
               <Lightbulb size={24} />
@@ -228,7 +322,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'tecnología' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('tecnología')}
+            onClick={() => handleCategoryClick('tecnología')}
           >
             <div className="nav-button-circle">
               <Zap size={24} />
@@ -237,7 +331,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'bienestar' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('bienestar')}
+            onClick={() => handleCategoryClick('bienestar')}
           >
             <div className="nav-button-circle">
               <Heart size={24} />
@@ -246,7 +340,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'deportes' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('deportes')}
+            onClick={() => handleCategoryClick('deportes')}
           >
             <div className="nav-button-circle">
               <Dumbbell size={24} />
@@ -255,7 +349,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('labubu')}
+            onClick={() => handleCategoryClick('labubu')}
           >
             <div className="nav-button-circle">
               <Gift size={24} />
@@ -264,7 +358,7 @@ function App() {
           </button>
           <button
             className={`nav-button ${activeCategory === 'armas' ? 'active' : ''}`}
-            onClick={() => setActiveCategory('armas')}
+            onClick={() => handleCategoryClick('armas')}
           >
             <div className="nav-button-circle">
               <Target size={24} />
@@ -310,7 +404,7 @@ function App() {
 
       {/* Products Section */}
       <main className="container">
-        <section className="products-section">
+        <section className="products-section" ref={productsSectionRef}>
           <h2 className="section-title">
             {activeCategory === 'all' && 'Todos los Productos'}
             {activeCategory === 'cocina' && 'Cocina'}
@@ -485,6 +579,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Nombre Completo *</label>
                   <input
                     type="text"
+                    name="name"
+                    autoComplete="name"
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo({...customerInfo, name: e.target.value})}
                     style={{
@@ -502,6 +598,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Email *</label>
                   <input
                     type="email"
+                    name="email"
+                    autoComplete="email"
                     value={customerInfo.email}
                     onChange={(e) => setCustomerInfo({...customerInfo, email: e.target.value})}
                     style={{
@@ -519,6 +617,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Teléfono *</label>
                   <input
                     type="tel"
+                    name="tel"
+                    autoComplete="tel"
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo({...customerInfo, phone: e.target.value})}
                     style={{
@@ -536,6 +636,8 @@ function App() {
                   <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Dirección *</label>
                   <input
                     type="text"
+                    name="address"
+                    autoComplete="street-address"
                     value={customerInfo.address}
                     onChange={(e) => setCustomerInfo({...customerInfo, address: e.target.value})}
                     style={{
@@ -556,7 +658,14 @@ function App() {
                   </label>
                   <select
                     value={customerInfo.city}
-                    onChange={(e) => setCustomerInfo({...customerInfo, city: e.target.value})}
+                    onChange={(e) => {
+                      const selectedCity = colombianCities.find(c => c.name === e.target.value)
+                      setCustomerInfo({
+                        ...customerInfo,
+                        city: e.target.value,
+                        region: selectedCity?.region || 'Colombia'
+                      })
+                    }}
                     style={{
                       width: '100%',
                       padding: '12px',
@@ -632,18 +741,50 @@ function App() {
                   // El usuario será redirigido a Wompi automáticamente
                   // Cuando regrese de Wompi, podríamos mostrar confirmación
                   setCheckoutStep('confirmation')
-                  setSelectedPaymentMethod('wompi')
+                  setSelectedPaymentMethod(result.payment?.method || 'wompi')
+                  // Guardar info de transferencia si aplica
+                  if (result.payment?.instructions) {
+                    sessionStorage.setItem('transfer_instructions', JSON.stringify(result.payment.instructions))
+                  }
                 }}
               />
             )}
 
             {checkoutStep === 'confirmation' && (
               <div style={{ padding: '30px', textAlign: 'center' }}>
-                <div style={{ fontSize: '64px', marginBottom: '20px' }}>✅</div>
-                <h3 style={{ marginBottom: '15px', color: 'var(--dark-color)' }}>¡Pedido Procesado!</h3>
-                <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
-                  Tu pedido ha sido procesado exitosamente. En un entorno real, serías redirigido a la pasarela de pago de <strong>{selectedPaymentMethod === 'pse' ? 'PSE' : selectedPaymentMethod === 'wompi' ? 'Wompi' : 'Mercado Pago'}</strong>.
-                </p>
+                <div style={{ fontSize: '64px', marginBottom: '20px' }}>
+                  {selectedPaymentMethod === 'transfer' ? '💸' : '✅'}
+                </div>
+                <h3 style={{ marginBottom: '15px', color: 'var(--dark-color)' }}>
+                  {selectedPaymentMethod === 'transfer' ? '¡Pedido Registrado!' : '¡Pedido Procesado!'}
+                </h3>
+
+                {selectedPaymentMethod === 'transfer' && (() => {
+                  const instructions = JSON.parse(sessionStorage.getItem('transfer_instructions') || '{}')
+                  return (
+                    <div style={{ marginBottom: '20px', padding: '20px', background: '#fef3c7', borderRadius: '10px', border: '2px solid #f59e0b' }}>
+                      <p style={{ color: '#92400e', fontWeight: '600', marginBottom: '15px' }}>
+                        📱 Instrucciones de Pago
+                      </p>
+                      <div style={{ textAlign: 'left', color: '#666' }}>
+                        <p style={{ marginBottom: '8px' }}><strong>Banco:</strong> {instructions.bank}</p>
+                        <p style={{ marginBottom: '8px' }}><strong>Nequi:</strong> {instructions.phone}</p>
+                        <p style={{ marginBottom: '8px' }}><strong>A nombre de:</strong> {instructions.name}</p>
+                        <p style={{ marginBottom: '8px' }}><strong>Referencia:</strong> <code style={{ background: 'white', padding: '2px 6px', borderRadius: '4px' }}>{instructions.reference}</code></p>
+                        <p style={{ marginTop: '15px', fontSize: '14px', fontStyle: 'italic' }}>
+                          Por favor envía el comprobante de pago a nuestro WhatsApp
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })()}
+
+                {selectedPaymentMethod !== 'transfer' && (
+                  <p style={{ marginBottom: '20px', color: '#666', lineHeight: '1.6' }}>
+                    Tu pedido ha sido procesado exitosamente con <strong>{selectedPaymentMethod === 'pse' ? 'PSE' : selectedPaymentMethod === 'nequi' ? 'Nequi' : selectedPaymentMethod === 'card' ? 'Tarjeta' : 'Wompi'}</strong>.
+                  </p>
+                )}
+
                 <p style={{ marginBottom: '20px', padding: '15px', background: 'var(--light-color)', borderRadius: '10px' }}>
                   <strong>Resumen del pedido:</strong><br />
                   Cliente: {customerInfo.name}<br />
@@ -656,8 +797,8 @@ function App() {
                     setCart([])
                     setIsCheckoutOpen(false)
                     setCheckoutStep('info')
-                    setCustomerInfo({ name: '', email: '', phone: '', address: '', city: 'Bogotá' })
                     setSelectedPaymentMethod('')
+                    sessionStorage.removeItem('transfer_instructions')
                   }}
                   style={{
                     padding: '15px 40px',
@@ -676,6 +817,17 @@ function App() {
             )}
           </div>
         </div>
+      )}
+
+      {/* Order Tracking Modal */}
+      {isTrackingModalOpen && (
+        <OrderTracking
+          reference={trackingReference}
+          onClose={() => {
+            setIsTrackingModalOpen(false)
+            setTrackingInput('')
+          }}
+        />
       )}
 
       {/* Footer */}
