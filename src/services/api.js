@@ -99,6 +99,10 @@ export async function createWompiPSEPayment(paymentData) {
   })
 }
 
+export async function getPSEBanks() {
+  return fetchAPI('/api/payments/wompi/pse-banks')
+}
+
 /**
  * ====================================
  * PAGOS - MERCADOPAGO

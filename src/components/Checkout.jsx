@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { createOrder, createWompiNequiPayment, createWompiCardPayment } from '../services/api'
+import { useState, useEffect } from 'react'
+import { createOrder, createWompiNequiPayment, createWompiCardPayment, createWompiPSEPayment, getPSEBanks } from '../services/api'
 
 export function Checkout({
   cart,
@@ -12,8 +12,30 @@ export function Checkout({
   const [selectedMethod, setSelectedMethod] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [pseBanks, setPseBanks] = useState([])
+  const [pseInfo, setPseInfo] = useState({
+    documentType: 'CC',
+    documentNumber: '',
+    userType: '0',
+    bankCode: ''
+  })
 
   const finalTotal = total + shippingCost
+
+  // Cargar bancos PSE al montar el componente
+  useEffect(() => {
+    const loadPSEBanks = async () => {
+      try {
+        const result = await getPSEBanks()
+        if (result.success && result.banks) {
+          setPseBanks(result.banks)
+        }
+      } catch (err) {
+        console.error('Error cargando bancos PSE:', err)
+      }
+    }
+    loadPSEBanks()
+  }, [])
 
   const handlePayment = async () => {
     if (!selectedMethod) {
@@ -64,6 +86,18 @@ export function Checkout({
           break
         case 'card':
           result = await createWompiCardPayment(paymentData)
+          break
+        case 'pse':
+          // Validar información PSE
+          if (!pseInfo.documentNumber || !pseInfo.bankCode) {
+            setError('Por favor completa la información de PSE')
+            setLoading(false)
+            return
+          }
+          result = await createWompiPSEPayment({
+            ...paymentData,
+            pseInfo
+          })
           break
         default:
           throw new Error('Método de pago no válido')
@@ -140,7 +174,119 @@ export function Checkout({
             Visa, Mastercard, American Express
           </p>
         </div>
+
+        <div
+          onClick={() => setSelectedMethod('pse')}
+          style={{
+            border: selectedMethod === 'pse' ? '2px solid var(--primary-color)' : '1px solid #ddd',
+            padding: '15px',
+            borderRadius: '8px',
+            marginBottom: '10px',
+            cursor: 'pointer',
+            background: selectedMethod === 'pse' ? '#f0f9ff' : 'white'
+          }}
+        >
+          <strong>🏦 PSE (Débito Bancario)</strong>
+          <p style={{ margin: '5px 0 0 0', fontSize: '14px', color: '#666' }}>
+            Paga desde tu cuenta bancaria
+          </p>
+        </div>
       </div>
+
+      {selectedMethod === 'pse' && (
+        <div style={{
+          background: '#f8f9fa',
+          padding: '15px',
+          borderRadius: '8px',
+          marginBottom: '20px'
+        }}>
+          <h3 style={{ marginTop: 0, marginBottom: '15px', fontSize: '16px' }}>Información PSE</h3>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
+              Tipo de documento
+            </label>
+            <select
+              value={pseInfo.documentType}
+              onChange={(e) => setPseInfo({ ...pseInfo, documentType: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                fontSize: '14px'
+              }}
+            >
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="CE">Cédula de Extranjería</option>
+              <option value="NIT">NIT</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
+              Número de documento
+            </label>
+            <input
+              type="text"
+              value={pseInfo.documentNumber}
+              onChange={(e) => setPseInfo({ ...pseInfo, documentNumber: e.target.value })}
+              placeholder="Ej: 1234567890"
+              style={{
+                width: '100%',
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                fontSize: '14px'
+              }}
+            />
+          </div>
+
+          <div style={{ marginBottom: '12px' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
+              Tipo de persona
+            </label>
+            <select
+              value={pseInfo.userType}
+              onChange={(e) => setPseInfo({ ...pseInfo, userType: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                fontSize: '14px'
+              }}
+            >
+              <option value="0">Persona Natural</option>
+              <option value="1">Persona Jurídica</option>
+            </select>
+          </div>
+
+          <div style={{ marginBottom: '0' }}>
+            <label style={{ display: 'block', marginBottom: '5px', fontSize: '14px', fontWeight: '500' }}>
+              Banco
+            </label>
+            <select
+              value={pseInfo.bankCode}
+              onChange={(e) => setPseInfo({ ...pseInfo, bankCode: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '8px',
+                borderRadius: '4px',
+                border: '1px solid #ddd',
+                fontSize: '14px'
+              }}
+            >
+              <option value="">Selecciona tu banco</option>
+              {pseBanks.map((bank) => (
+                <option key={bank.financial_institution_code} value={bank.financial_institution_code}>
+                  {bank.financial_institution_name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      )}
 
       <div style={{
         background: '#f8f9fa',

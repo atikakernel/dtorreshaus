@@ -26,7 +26,8 @@ router.post('/wompi/nequi', async (req, res) => {
     }
 
     const reference = `DTH-${Date.now()}-${uuidv4().slice(0, 8)}`
-    const finalTotal = total + (shippingCost || 0)
+    // El total ya incluye el shipping cost desde el frontend
+    const finalTotal = total
 
     // Crear pago en Wompi
     const payment = await wompiService.createNequiPayment({
@@ -85,7 +86,8 @@ router.post('/wompi/card', async (req, res) => {
     }
 
     const reference = `DTH-${Date.now()}-${uuidv4().slice(0, 8)}`
-    const finalTotal = total + (shippingCost || 0)
+    // El total ya incluye el shipping cost desde el frontend
+    const finalTotal = total
 
     const payment = await wompiService.createCardPayment({
       customerInfo,
@@ -124,7 +126,8 @@ router.post('/wompi/pse', async (req, res) => {
     }
 
     const reference = `DTH-${Date.now()}-${uuidv4().slice(0, 8)}`
-    const finalTotal = total + (shippingCost || 0)
+    // El total ya incluye el shipping cost desde el frontend
+    const finalTotal = total
 
     const payment = await wompiService.createPSEPayment({
       customerInfo,

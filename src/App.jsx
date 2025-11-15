@@ -3,25 +3,27 @@ import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles,
 import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
 import { OrderTracking } from './components/OrderTracking'
+import { PaymentConfirmation } from './components/PaymentConfirmation'
+import { quoteShipping } from './services/api'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
-  { name: 'Bogotá', shippingCost: 8000, region: 'Cundinamarca' },
-  { name: 'Medellín', shippingCost: 10000, region: 'Antioquia' },
-  { name: 'Cali', shippingCost: 12000, region: 'Valle del Cauca' },
-  { name: 'Barranquilla', shippingCost: 15000, region: 'Atlántico' },
-  { name: 'Cartagena', shippingCost: 15000, region: 'Bolívar' },
-  { name: 'Bucaramanga', shippingCost: 12000, region: 'Santander' },
-  { name: 'Pereira', shippingCost: 11000, region: 'Risaralda' },
-  { name: 'Manizales', shippingCost: 11000, region: 'Caldas' },
-  { name: 'Santa Marta', shippingCost: 16000, region: 'Magdalena' },
-  { name: 'Cúcuta', shippingCost: 13000, region: 'Norte de Santander' },
-  { name: 'Ibagué', shippingCost: 10000, region: 'Tolima' },
-  { name: 'Pasto', shippingCost: 14000, region: 'Nariño' },
-  { name: 'Villavicencio', shippingCost: 9000, region: 'Meta' },
-  { name: 'Armenia', shippingCost: 11000, region: 'Quindío' },
-  { name: 'Tunja', shippingCost: 9000, region: 'Boyacá' },
-  { name: 'Otras ciudades', shippingCost: 18000, region: 'Colombia' }
+  { name: 'Bogotá', region: 'Cundinamarca' },
+  { name: 'Medellín', region: 'Antioquia' },
+  { name: 'Cali', region: 'Valle del Cauca' },
+  { name: 'Barranquilla', region: 'Atlántico' },
+  { name: 'Cartagena', region: 'Bolívar' },
+  { name: 'Bucaramanga', region: 'Santander' },
+  { name: 'Pereira', region: 'Risaralda' },
+  { name: 'Manizales', region: 'Caldas' },
+  { name: 'Santa Marta', region: 'Magdalena' },
+  { name: 'Cúcuta', region: 'Norte de Santander' },
+  { name: 'Ibagué', region: 'Tolima' },
+  { name: 'Pasto', region: 'Nariño' },
+  { name: 'Villavicencio', region: 'Meta' },
+  { name: 'Armenia', region: 'Quindío' },
+  { name: 'Tunja', region: 'Boyacá' },
+  { name: 'Otras ciudades', region: 'Colombia' }
 ]
 
 // Formato de precio colombiano
@@ -79,6 +81,10 @@ function App() {
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
   const [trackingReference, setTrackingReference] = useState('')
   const [trackingInput, setTrackingInput] = useState('')
+  const [paymentConfirmation, setPaymentConfirmation] = useState({ show: false, transactionId: null })
+  const [shippingCost, setShippingCost] = useState(0)
+  const [loadingShipping, setLoadingShipping] = useState(false)
+  const [loadingLocation, setLoadingLocation] = useState(false)
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
@@ -102,6 +108,72 @@ function App() {
       localStorage.setItem('dtorreshaus_customer_info', JSON.stringify(customerInfo))
     }
   }, [customerInfo])
+
+  // Detectar si el usuario regresa de Wompi con un pago
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const transactionId = urlParams.get('id') // Wompi redirige con ?id=transaction_id
+
+    if (transactionId) {
+      setPaymentConfirmation({ show: true, transactionId })
+      // Limpiar la URL sin recargar la página
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+  }, [])
+
+  // Calcular costo de envío dinámicamente cuando cambia la ciudad
+  useEffect(() => {
+    const calculateShipping = async () => {
+      if (!customerInfo.city || cart.length === 0) {
+        setShippingCost(0)
+        return
+      }
+
+      setLoadingShipping(true)
+      try {
+        // Calcular peso total aproximado del carrito
+        const totalWeight = cart.reduce((sum, item) => sum + (item.quantity * 1), 0) // Asumimos 1kg por item
+
+        const result = await quoteShipping(
+          {
+            name: customerInfo.name || 'Cliente',
+            phone: customerInfo.phone || '3000000000',
+            city: customerInfo.city,
+            state: customerInfo.region || colombianCities.find(c => c.name === customerInfo.city)?.region || 'Colombia'
+          },
+          [{
+            content: 'Artículos de hogar',
+            amount: cart.length,
+            type: 'box',
+            weight: totalWeight,
+            insurance: 0,
+            declaredValue: cartTotal,
+            weightUnit: 'KG',
+            lengthUnit: 'CM',
+            dimensions: {
+              length: 30,
+              width: 30,
+              height: 30
+            }
+          }]
+        )
+
+        if (result.success && result.cheapest) {
+          setShippingCost(result.cheapest.price)
+        } else {
+          // Fallback a 0 si hay error
+          setShippingCost(0)
+        }
+      } catch (error) {
+        console.error('Error calculando envío:', error)
+        setShippingCost(0)
+      } finally {
+        setLoadingShipping(false)
+      }
+    }
+
+    calculateShipping()
+  }, [customerInfo.city, cart])
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
@@ -169,6 +241,97 @@ function App() {
   // Calcular total del carrito
   const cartTotal = cart.reduce((total, item) => total + (item.precio * item.quantity), 0)
   const cartItemCount = cart.reduce((count, item) => count + item.quantity, 0)
+
+  // Función para obtener ubicación del usuario
+  const getUserLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('Tu navegador no soporta geolocalización')
+      return
+    }
+
+    setLoadingLocation(true)
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords
+
+        try {
+          // Usar API de geocoding inverso de OpenStreetMap (Nominatim)
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1`,
+            {
+              headers: {
+                'Accept-Language': 'es'
+              }
+            }
+          )
+
+          const data = await response.json()
+
+          if (data && data.address) {
+            const address = data.address
+
+            // Construir dirección completa
+            let fullAddress = ''
+            if (address.road) fullAddress += address.road
+            if (address.house_number) fullAddress += ` #${address.house_number}`
+            if (address.neighbourhood) fullAddress += `, ${address.neighbourhood}`
+
+            // Determinar la ciudad más cercana
+            const city = address.city || address.town || address.municipality || address.county
+            let matchedCity = colombianCities.find(c =>
+              c.name.toLowerCase() === city?.toLowerCase()
+            )
+
+            // Si no hay match exacto, intentar con la región
+            if (!matchedCity && address.state) {
+              matchedCity = colombianCities.find(c =>
+                c.region.toLowerCase() === address.state?.toLowerCase()
+              )
+            }
+
+            // Actualizar información del cliente
+            setCustomerInfo(prev => ({
+              ...prev,
+              address: fullAddress || prev.address,
+              city: matchedCity?.name || prev.city,
+              region: matchedCity?.region || address.state || prev.region
+            }))
+
+            alert('📍 Ubicación detectada correctamente')
+          }
+        } catch (error) {
+          console.error('Error obteniendo dirección:', error)
+          alert('No se pudo obtener la dirección. Por favor ingrésala manualmente.')
+        } finally {
+          setLoadingLocation(false)
+        }
+      },
+      (error) => {
+        console.error('Error de geolocalización:', error)
+        setLoadingLocation(false)
+
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            alert('Debes permitir el acceso a tu ubicación para usar esta función')
+            break
+          case error.POSITION_UNAVAILABLE:
+            alert('No se pudo obtener tu ubicación. Inténtalo de nuevo.')
+            break
+          case error.TIMEOUT:
+            alert('El tiempo de espera se agotó. Inténtalo de nuevo.')
+            break
+          default:
+            alert('Error desconocido obteniendo tu ubicación')
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0
+      }
+    )
+  }
 
   // Abrir modal de imagen
   const openImageModal = (sku, nombre) => {
@@ -633,7 +796,30 @@ function App() {
                 </div>
 
                 <div style={{ marginBottom: '15px' }}>
-                  <label style={{ display: 'block', marginBottom: '5px', fontWeight: '600' }}>Dirección *</label>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '5px' }}>
+                    <label style={{ fontWeight: '600' }}>Dirección *</label>
+                    <button
+                      type="button"
+                      onClick={getUserLocation}
+                      disabled={loadingLocation}
+                      style={{
+                        background: loadingLocation ? '#ccc' : 'linear-gradient(135deg, #667eea, #764ba2)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        padding: '6px 12px',
+                        fontSize: '13px',
+                        cursor: loadingLocation ? 'not-allowed' : 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px',
+                        fontWeight: '500'
+                      }}
+                    >
+                      <MapPin size={14} />
+                      {loadingLocation ? 'Ubicando...' : 'Usar mi ubicación'}
+                    </button>
+                  </div>
                   <input
                     type="text"
                     name="address"
@@ -677,7 +863,7 @@ function App() {
                   >
                     {colombianCities.map(city => (
                       <option key={city.name} value={city.name}>
-                        {city.name} - Envío: {formatPrice(city.shippingCost)}
+                        {city.name}
                       </option>
                     ))}
                   </select>
@@ -691,12 +877,12 @@ function App() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <span>Envío a {customerInfo.city}:</span>
-                    <strong>{formatPrice(colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0)}</strong>
+                    <strong>{loadingShipping ? 'Calculando...' : formatPrice(shippingCost)}</strong>
                   </div>
                   <div style={{ borderTop: '2px solid var(--border-color)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '18px' }}>
                     <span>Total:</span>
                     <strong style={{ color: 'var(--accent-color)' }}>
-                      {formatPrice(cartTotal + (colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0))}
+                      {loadingShipping ? 'Calculando...' : formatPrice(cartTotal + shippingCost)}
                     </strong>
                   </div>
                 </div>
@@ -730,7 +916,7 @@ function App() {
               <Checkout
                 cart={cart}
                 total={cartTotal}
-                shippingCost={colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0}
+                shippingCost={shippingCost}
                 customerInfo={customerInfo}
                 onClose={() => {
                   setIsCheckoutOpen(false)
@@ -790,7 +976,7 @@ function App() {
                   Cliente: {customerInfo.name}<br />
                   Email: {customerInfo.email}<br />
                   Ciudad: {customerInfo.city}<br />
-                  Total: {formatPrice(cartTotal + (colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0))}
+                  Total: {formatPrice(cartTotal + shippingCost)}
                 </p>
                 <button
                   onClick={() => {
@@ -826,6 +1012,17 @@ function App() {
           onClose={() => {
             setIsTrackingModalOpen(false)
             setTrackingInput('')
+          }}
+        />
+      )}
+
+      {/* Payment Confirmation Modal */}
+      {paymentConfirmation.show && (
+        <PaymentConfirmation
+          transactionId={paymentConfirmation.transactionId}
+          onClose={() => {
+            setPaymentConfirmation({ show: false, transactionId: null })
+            setCart([]) // Limpiar el carrito después de un pago exitoso
           }}
         />
       )}
