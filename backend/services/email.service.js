@@ -24,7 +24,7 @@ transporter.verify((error, success) => {
  * Email de confirmación de pedido (con instrucciones de pago)
  */
 async function sendOrderConfirmation(order) {
-  const { customerEmail, customerName, reference, total, paymentMethod, cart } = order
+  const { customerEmail, customerName, reference, total, paymentMethod, cart, shippingCost } = order
 
   let paymentInstructions = ''
 
@@ -51,6 +51,10 @@ async function sendOrderConfirmation(order) {
       <td style="padding: 10px; border-bottom: 1px solid #e5e7eb; text-align: right;">$${(item.precio * item.quantity).toLocaleString('es-CO')}</td>
     </tr>
   `).join('')
+
+  // Calcular subtotal de productos
+  const subtotal = cart.reduce((sum, item) => sum + (item.precio * item.quantity), 0)
+  const shipping = shippingCost || 0
 
   const mailOptions = {
     from: `"dtorreshaus" <${process.env.EMAIL_FROM}>`,
@@ -91,6 +95,14 @@ async function sendOrderConfirmation(order) {
             </tbody>
             <tfoot>
               <tr>
+                <td colspan="3" style="padding: 10px; text-align: right;">Subtotal Productos:</td>
+                <td style="padding: 10px; text-align: right;">$${subtotal.toLocaleString('es-CO')}</td>
+              </tr>
+              <tr>
+                <td colspan="3" style="padding: 10px; text-align: right;">Costo de Envío:</td>
+                <td style="padding: 10px; text-align: right;">$${shipping.toLocaleString('es-CO')}</td>
+              </tr>
+              <tr style="border-top: 2px solid #6366f1;">
                 <td colspan="3" style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px;">TOTAL:</td>
                 <td style="padding: 15px; text-align: right; font-weight: bold; font-size: 18px; color: #ec4899;">$${total.toLocaleString('es-CO')}</td>
               </tr>

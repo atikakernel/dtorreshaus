@@ -178,11 +178,23 @@ async function createPSEPayment(orderData) {
   const { customerInfo, total, reference, shippingAddress, pseInfo } = orderData
 
   try {
-    const acceptanceToken = await getAcceptanceToken()
+    const merchantInfo = await getMerchantInfo()
+    const amountInCents = Math.round(total * 100)
+
+    // Generar firma de integridad
+    const integritySecret = merchantInfo.integritySecret
+    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
+    const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
+
+    console.log('🔐 PSE Signature info:')
+    console.log('  - Reference:', reference)
+    console.log('  - Amount:', amountInCents)
+    console.log('  - Integrity Secret:', integritySecret)
+    console.log('  - Signature:', signature)
 
     const transaction = {
-      acceptance_token: acceptanceToken,
-      amount_in_cents: Math.round(total * 100),
+      acceptance_token: merchantInfo.acceptanceToken,
+      amount_in_cents: amountInCents,
       currency: 'COP',
       customer_email: customerInfo.email,
       payment_method: {
@@ -194,6 +206,7 @@ async function createPSEPayment(orderData) {
         payment_description: `Compra en dtorreshaus - ${reference}`
       },
       reference: reference,
+      signature: signature,
       customer_data: {
         phone_number: customerInfo.phone,
         full_name: customerInfo.name,
@@ -203,6 +216,7 @@ async function createPSEPayment(orderData) {
       shipping_address: {
         address_line_1: shippingAddress.address,
         city: shippingAddress.city,
+        region: shippingAddress.region || 'Colombia',
         phone_number: customerInfo.phone,
         country: 'CO'
       },
@@ -229,7 +243,7 @@ async function createPSEPayment(orderData) {
       reference: reference
     }
   } catch (error) {
-    console.error('Error Wompi PSE:', error.response?.data || error.message)
+    console.error('Error Wompi PSE:', JSON.stringify(error.response?.data, null, 2) || error.message)
     throw new Error(error.response?.data?.error?.reason || 'Error procesando pago con PSE')
   }
 }
