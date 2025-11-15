@@ -94,6 +94,8 @@ async function createNequiPayment(orderData) {
       }
     )
 
+    console.log('📦 Wompi Nequi Response:', JSON.stringify(response.data, null, 2))
+
     return {
       success: true,
       transactionId: response.data.data.id,
@@ -157,6 +159,8 @@ async function createCardPayment(orderData) {
         }
       }
     )
+
+    console.log('📦 Wompi Card Response:', JSON.stringify(response.data, null, 2))
 
     return {
       success: true,

@@ -105,8 +105,10 @@ export function Checkout({
 
       if (result.success) {
         // Redirigir a la página de pago de Wompi
-        if (result.payment?.paymentLinkUrl) {
-          window.location.href = result.payment.paymentLinkUrl
+        // Para PSE usar asyncPaymentUrl, para otros métodos usar paymentLinkUrl
+        const redirectUrl = result.payment?.asyncPaymentUrl || result.payment?.paymentLinkUrl
+        if (redirectUrl) {
+          window.location.href = redirectUrl
         } else {
           onSuccess({
             ...result,
