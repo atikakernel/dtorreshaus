@@ -4,6 +4,11 @@
  * ====================================
  * Integración con Envia.com para cálculo de envíos
  * Documentación: https://docs.envia.com
+ *
+ * IMPORTANTE: Si Cloudflare sigue bloqueando (error 403):
+ * 1. Verifica que la API key sea válida en https://ship.envia.com/api
+ * 2. Contacta a soporte de Envia.com para verificar que tu IP no esté bloqueada
+ * 3. Verifica que tu cuenta esté activa y tenga permisos de API
  */
 
 const axios = require('axios')
@@ -12,12 +17,17 @@ const ENVIA_API_URL = 'https://queries.envia.com/v1'
 const ENVIA_API_KEY = process.env.ENVIA_API_KEY
 
 // Headers comunes para todas las peticiones a Envia.com
-// Cloudflare requiere User-Agent y Accept para no bloquear
+// Cloudflare requiere múltiples headers para no bloquear la petición
 const getEnviaHeaders = () => ({
   'Authorization': `Bearer ${ENVIA_API_KEY}`,
   'Content-Type': 'application/json',
   'Accept': 'application/json',
-  'User-Agent': 'dtorreshaus-ecommerce/1.0'
+  'Accept-Language': 'es-CO,es;q=0.9,en;q=0.8',
+  'Accept-Encoding': 'gzip, deflate, br',
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  'Origin': 'https://ship.envia.com',
+  'Referer': 'https://ship.envia.com/',
+  'Cache-Control': 'no-cache'
 })
 
 /**
@@ -205,7 +215,17 @@ async function createShipment(shipmentData) {
 
     // Si es error 403, dar más información sobre Cloudflare
     if (error.response?.status === 403) {
-      console.error('⚠️  Error 403: Cloudflare bloqueó la petición. Verifica los headers y la API key.')
+      console.error('⚠️  Error 403: Cloudflare bloqueó la petición.')
+      console.error('📝 Posibles causas:')
+      console.error('   1. API key incorrecta o expirada')
+      console.error('   2. IP del servidor bloqueada por Envia.com')
+      console.error('   3. Cuenta de Envia.com no activa')
+      console.error('💡 Solución: Verifica tu API key en https://ship.envia.com/api')
+
+      // Verificar si ENVIA_API_KEY está configurada
+      if (!ENVIA_API_KEY) {
+        console.error('❗ ENVIA_API_KEY no está configurada en las variables de entorno')
+      }
     }
 
     return {
