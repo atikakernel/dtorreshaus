@@ -3,6 +3,7 @@ import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles,
 import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
 import { OrderTracking } from './components/OrderTracking'
+import { PaymentConfirmation } from './components/PaymentConfirmation'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
@@ -79,6 +80,7 @@ function App() {
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false)
   const [trackingReference, setTrackingReference] = useState('')
   const [trackingInput, setTrackingInput] = useState('')
+  const [paymentConfirmation, setPaymentConfirmation] = useState({ show: false, transactionId: null })
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
@@ -102,6 +104,18 @@ function App() {
       localStorage.setItem('dtorreshaus_customer_info', JSON.stringify(customerInfo))
     }
   }, [customerInfo])
+
+  // Detectar si el usuario regresa de Wompi con un pago
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const transactionId = urlParams.get('id') // Wompi redirige con ?id=transaction_id
+
+    if (transactionId) {
+      setPaymentConfirmation({ show: true, transactionId })
+      // Limpiar la URL sin recargar la página
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+  }, [])
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
@@ -826,6 +840,17 @@ function App() {
           onClose={() => {
             setIsTrackingModalOpen(false)
             setTrackingInput('')
+          }}
+        />
+      )}
+
+      {/* Payment Confirmation Modal */}
+      {paymentConfirmation.show && (
+        <PaymentConfirmation
+          transactionId={paymentConfirmation.transactionId}
+          onClose={() => {
+            setPaymentConfirmation({ show: false, transactionId: null })
+            setCart([]) // Limpiar el carrito después de un pago exitoso
           }}
         />
       )}
