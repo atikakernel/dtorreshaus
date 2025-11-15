@@ -28,20 +28,44 @@ router.post('/wompi/checkout', async (req, res) => {
     const reference = `DTH-${Date.now()}-${uuidv4().slice(0, 8)}`
     const finalTotal = total
 
+    // Crear orden en la base de datos
+    const ordersService = require('../services/orders.service')
+    const orderResult = await ordersService.createOrder({
+      customerInfo,
+      cart,
+      total: finalTotal,
+      shippingCost,
+      shippingAddress,
+      paymentMethod: 'wompi_checkout',
+      paymentGateway: 'wompi',
+      transactionId: null
+    })
+
+    if (!orderResult.success) {
+      return res.status(500).json({
+        error: 'Error creando orden',
+        message: orderResult.error
+      })
+    }
+
+    // Usar la referencia generada por el servicio de órdenes
+    const orderReference = orderResult.order.reference
+
     // Crear checkout link de Wompi
     const payment = await wompiService.createCheckoutLink({
       customerInfo,
       total: finalTotal,
-      reference,
+      reference: orderReference,
       shippingAddress,
       cart
     })
 
-    console.log(`✅ Checkout Wompi creado: ${reference}`)
+    console.log(`✅ Checkout Wompi creado: ${orderReference}`)
 
     res.json({
       success: true,
       payment,
+      order: orderResult.order,
       message: 'Checkout creado exitosamente'
     })
 
@@ -296,6 +320,85 @@ router.get('/mercadopago/methods', async (req, res) => {
     console.error('Error obteniendo métodos de pago:', error)
     res.status(500).json({
       error: 'Error obteniendo métodos de pago',
+      message: error.message
+    })
+  }
+})
+
+/**
+ * POST /api/payments/confirm
+ * Confirmar pago manualmente usando transaction_id
+ * Usado cuando el usuario regresa de Wompi
+ */
+router.post('/confirm', async (req, res) => {
+  try {
+    const { transactionId } = req.body
+
+    if (!transactionId) {
+      return res.status(400).json({ error: 'Transaction ID requerido' })
+    }
+
+    // Obtener información de la transacción de Wompi
+    const transactionStatus = await wompiService.getTransactionStatus(transactionId)
+
+    if (transactionStatus.status !== 'APPROVED') {
+      return res.json({
+        success: false,
+        message: 'El pago no ha sido aprobado',
+        status: transactionStatus.status
+      })
+    }
+
+    // Buscar orden por referencia
+    const { PrismaClient } = require('@prisma/client')
+    const prisma = new PrismaClient()
+
+    const order = await prisma.order.findFirst({
+      where: { reference: transactionStatus.reference }
+    })
+
+    if (!order) {
+      return res.status(404).json({
+        error: 'Orden no encontrada',
+        reference: transactionStatus.reference
+      })
+    }
+
+    if (order.status === 'paid') {
+      return res.json({
+        success: true,
+        message: 'El pago ya fue confirmado anteriormente',
+        order: { reference: order.reference, status: order.status }
+      })
+    }
+
+    // Actualizar transaction ID y confirmar pago
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { transactionId }
+    })
+
+    const ordersService = require('../services/orders.service')
+    const result = await ordersService.confirmPayment(order.reference)
+
+    if (result.success) {
+      console.log(`✅ Pago confirmado manualmente: ${order.reference}`)
+      res.json({
+        success: true,
+        message: 'Pago confirmado exitosamente',
+        order: result.order
+      })
+    } else {
+      res.status(500).json({
+        success: false,
+        error: result.error
+      })
+    }
+
+  } catch (error) {
+    console.error('Error confirmando pago:', error)
+    res.status(500).json({
+      error: 'Error confirmando pago',
       message: error.message
     })
   }

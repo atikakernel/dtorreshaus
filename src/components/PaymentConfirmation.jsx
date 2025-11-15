@@ -19,6 +19,8 @@ export function PaymentConfirmation({ transactionId, onClose }) {
           switch (data.status.status) {
             case 'APPROVED':
               setStatus('success')
+              // Confirmar el pago en el backend para enviar el correo
+              confirmPayment(transactionId)
               break
             case 'DECLINED':
             case 'ERROR':
@@ -38,6 +40,19 @@ export function PaymentConfirmation({ transactionId, onClose }) {
         console.error('Error verificando pago:', err)
         setError('Error al verificar el estado del pago')
         setStatus('failed')
+      }
+    }
+
+    const confirmPayment = async (txId) => {
+      try {
+        await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/payments/confirm`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transactionId: txId })
+        })
+        console.log('✅ Pago confirmado en el backend, correo enviado')
+      } catch (err) {
+        console.error('Error confirmando pago:', err)
       }
     }
 
