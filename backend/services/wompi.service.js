@@ -356,10 +356,14 @@ async function createCheckoutLink(orderData) {
     console.log('📦 Wompi Payment Link Response:', JSON.stringify(response.data, null, 2))
 
     // El permalink es el link al checkout widget
+    // Wompi no devuelve el permalink en la respuesta, hay que construirlo
+    const paymentLinkId = response.data.data.id
+    const checkoutUrl = `https://checkout.wompi.co/l/${paymentLinkId}`
+
     return {
       success: true,
-      paymentLinkId: response.data.data.id,
-      checkoutUrl: response.data.data.permalink,
+      paymentLinkId: paymentLinkId,
+      checkoutUrl: checkoutUrl,
       reference: reference
     }
   } catch (error) {
