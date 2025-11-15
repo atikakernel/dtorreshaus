@@ -28,20 +28,99 @@ export function AdminPanel() {
   const [filter, setFilter] = useState('all')
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [actionLoading, setActionLoading] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [password, setPassword] = useState('')
+  const [loginError, setLoginError] = useState('')
+  const [loggingIn, setLoggingIn] = useState(false)
+
+  // Verificar si ya está autenticado al cargar
+  useEffect(() => {
+    const token = localStorage.getItem('admin_token')
+    if (token) {
+      // Verificar que el token sea válido
+      verifyToken(token)
+    }
+  }, [])
 
   useEffect(() => {
-    loadOrders()
-  }, [filter])
+    if (isAuthenticated) {
+      loadOrders()
+    }
+  }, [filter, isAuthenticated])
+
+  const verifyToken = async (token) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/verify`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (response.ok) {
+        setIsAuthenticated(true)
+      } else {
+        localStorage.removeItem('admin_token')
+        setIsAuthenticated(false)
+      }
+    } catch (error) {
+      console.error('Error verificando token:', error)
+      localStorage.removeItem('admin_token')
+      setIsAuthenticated(false)
+    }
+  }
+
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setLoggingIn(true)
+    setLoginError('')
+
+    try {
+      const response = await fetch(`${API_URL}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      })
+
+      const result = await response.json()
+
+      if (result.success) {
+        localStorage.setItem('admin_token', result.token)
+        setIsAuthenticated(true)
+        setPassword('')
+      } else {
+        setLoginError(result.error || 'Contraseña incorrecta')
+      }
+    } catch (error) {
+      console.error('Error en login:', error)
+      setLoginError('Error al iniciar sesión')
+    } finally {
+      setLoggingIn(false)
+    }
+  }
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin_token')
+    setIsAuthenticated(false)
+    setOrders([])
+  }
 
   const loadOrders = async () => {
     try {
       setLoading(true)
+      const token = localStorage.getItem('admin_token')
       const params = filter !== 'all' ? `?status=${filter}` : ''
-      const response = await fetch(`${API_URL}/api/orders${params}`)
+      const response = await fetch(`${API_URL}/api/orders${params}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
       const result = await response.json()
 
       if (result.success) {
         setOrders(result.orders || [])
+      } else if (response.status === 401) {
+        // Token inválido, cerrar sesión
+        handleLogout()
       }
     } catch (error) {
       console.error('Error cargando órdenes:', error)
@@ -56,8 +135,12 @@ export function AdminPanel() {
 
     try {
       setActionLoading(true)
+      const token = localStorage.getItem('admin_token')
       const response = await fetch(`${API_URL}/api/orders/${reference}/confirm-payment`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       const result = await response.json()
 
@@ -80,8 +163,12 @@ export function AdminPanel() {
 
     try {
       setActionLoading(true)
+      const token = localStorage.getItem('admin_token')
       const response = await fetch(`${API_URL}/api/orders/${reference}/ship`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       const result = await response.json()
 
@@ -104,8 +191,12 @@ export function AdminPanel() {
 
     try {
       setActionLoading(true)
+      const token = localStorage.getItem('admin_token')
       const response = await fetch(`${API_URL}/api/orders/${reference}/deliver`, {
-        method: 'POST'
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
       })
       const result = await response.json()
 
@@ -155,13 +246,113 @@ export function AdminPanel() {
     revenue: orders.filter(o => ['paid', 'shipped', 'delivered'].includes(o.status)).reduce((sum, o) => sum + o.total, 0)
   }
 
+  // Pantalla de login
+  if (!isAuthenticated) {
+    return (
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #6366f1 0%, #a78bfa 50%, #ec4899 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+        <div style={{ background: 'white', borderRadius: '15px', padding: '40px', maxWidth: '400px', width: '100%', boxShadow: '0 10px 40px rgba(0,0,0,0.2)' }}>
+          <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+            <h1 style={{ margin: 0, marginBottom: '10px', fontSize: '32px' }}>🏠</h1>
+            <h2 style={{ margin: 0, marginBottom: '5px', color: '#1e293b' }}>dtorreshaus</h2>
+            <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>Panel de Administración</p>
+          </div>
+
+          <form onSubmit={handleLogin}>
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600', color: '#334155' }}>
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Ingresa tu contraseña"
+                disabled={loggingIn}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  border: '2px solid #e5e7eb',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  outline: 'none',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#6366f1'}
+                onBlur={(e) => e.target.style.borderColor = '#e5e7eb'}
+                autoFocus
+              />
+            </div>
+
+            {loginError && (
+              <div style={{
+                background: '#fee2e2',
+                color: '#991b1b',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '20px',
+                fontSize: '14px',
+                textAlign: 'center'
+              }}>
+                {loginError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={loggingIn || !password}
+              style={{
+                width: '100%',
+                padding: '14px',
+                background: loggingIn || !password ? '#94a3b8' : 'linear-gradient(135deg, #6366f1 0%, #a78bfa 100%)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: loggingIn || !password ? 'not-allowed' : 'pointer',
+                transition: 'transform 0.2s'
+              }}
+              onMouseEnter={(e) => !loggingIn && password && (e.target.style.transform = 'translateY(-2px)')}
+              onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+            >
+              {loggingIn ? 'Verificando...' : 'Ingresar'}
+            </button>
+          </form>
+
+          <p style={{ marginTop: '20px', fontSize: '12px', color: '#94a3b8', textAlign: 'center' }}>
+            Acceso restringido solo para administradores
+          </p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div style={{ minHeight: '100vh', background: '#f8f9fa', padding: '20px' }}>
       {/* Header */}
       <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         <div style={{ background: 'linear-gradient(135deg, #6366f1 0%, #a78bfa 50%, #ec4899 100%)', padding: '30px', borderRadius: '15px', marginBottom: '20px', color: 'white' }}>
-          <h1 style={{ margin: 0, marginBottom: '10px' }}>🏠 Panel Admin - dtorreshaus</h1>
-          <p style={{ margin: 0, opacity: 0.9 }}>Gestión de Órdenes</p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h1 style={{ margin: 0, marginBottom: '10px' }}>🏠 Panel Admin - dtorreshaus</h1>
+              <p style={{ margin: 0, opacity: 0.9 }}>Gestión de Órdenes</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              style={{
+                padding: '10px 20px',
+                background: 'rgba(255, 255, 255, 0.2)',
+                border: '2px solid white',
+                borderRadius: '8px',
+                color: 'white',
+                cursor: 'pointer',
+                fontWeight: '600',
+                fontSize: '14px'
+              }}
+            >
+              Cerrar Sesión
+            </button>
+          </div>
         </div>
 
         {/* Stats */}

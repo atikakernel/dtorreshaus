@@ -18,6 +18,7 @@ const ordersRouter = require('./routes/orders')
 const webhooksRouter = require('./routes/webhooks')
 const productsRouter = require('./routes/products')
 const shippingRouter = require('./routes/shipping')
+const adminRouter = require('./routes/admin')
 
 // Inicializar Express
 const app = express()
@@ -125,7 +126,8 @@ app.get('/', (req, res) => {
       orders: '/api/orders',
       webhooks: '/api/webhooks',
       products: '/api/products',
-      shipping: '/api/shipping'
+      shipping: '/api/shipping',
+      admin: '/api/admin'
     }
   })
 })
@@ -136,6 +138,7 @@ app.use('/api/orders', ordersRouter)
 app.use('/api/webhooks', webhooksRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/shipping', shippingRouter)
+app.use('/api/admin', adminRouter)
 
 // ====================================
 // MANEJO DE ERRORES
