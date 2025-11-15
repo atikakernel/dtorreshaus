@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { getProducts } from '../services/api'
-import { productsData as fallbackData } from '../productsData'
+import { productsData as fallbackData, categoryConfig } from '../productsData'
 
 /**
  * Hook personalizado para manejar productos
