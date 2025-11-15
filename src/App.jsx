@@ -1,10 +1,24 @@
 import { useState, useRef, useEffect } from 'react'
 import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target, Truck } from 'lucide-react'
-import { productsData } from './productsData.js'
+import { productsData, categoryConfig } from './productsData.js'
 import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
 import { quoteShipping } from './services/api'
+
+// Mapeo de iconos para categorías
+const categoryIcons = {
+  cocina: ChefHat,
+  baño: Droplet,
+  limpieza: Sparkles,
+  organización: Package,
+  decoración: Lightbulb,
+  tecnología: Zap,
+  bienestar: Heart,
+  deportes: Dumbbell,
+  labubu: Gift,
+  armas: Target
+}
 
 // Colombian cities for shipping calculation
 const colombianCities = [
@@ -199,18 +213,12 @@ function App() {
   const getFilteredProducts = () => {
     let products = []
     if (activeCategory === 'all') {
-      products = [
-        ...productsData.cocina,
-        ...productsData.baño,
-        ...productsData.limpieza,
-        ...productsData.organización,
-        ...productsData.decoración,
-        ...productsData.tecnología,
-        ...productsData.bienestar,
-        ...productsData.deportes,
-        ...productsData.labubu,
-        ...productsData.armas
-      ]
+      // Solo mostrar productos de categorías activas
+      const activeCategories = Object.keys(categoryConfig)
+        .filter(cat => categoryConfig[cat].active)
+        .sort((a, b) => categoryConfig[a].order - categoryConfig[b].order)
+
+      products = activeCategories.flatMap(cat => productsData[cat] || [])
     } else {
       products = productsData[activeCategory] || []
     }
@@ -449,6 +457,7 @@ function App() {
       {/* Navigation - Estilo Rappi */}
       <nav className="nav">
         <div className="nav-buttons">
+          {/* Botón "Todo" */}
           <button
             className={`nav-button ${activeCategory === 'all' ? 'active' : ''}`}
             onClick={() => handleCategoryClick('all')}
@@ -458,96 +467,37 @@ function App() {
             </div>
             <span className="nav-button-label">Todo</span>
           </button>
-          <button
-            className={`nav-button ${activeCategory === 'cocina' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('cocina')}
-          >
-            <div className="nav-button-circle">
-              <ChefHat size={24} />
-            </div>
-            <span className="nav-button-label">Cocina</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'baño' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('baño')}
-          >
-            <div className="nav-button-circle">
-              <Droplet size={24} />
-            </div>
-            <span className="nav-button-label">Baño</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'limpieza' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('limpieza')}
-          >
-            <div className="nav-button-circle">
-              <Sparkles size={24} />
-            </div>
-            <span className="nav-button-label">Limpieza</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'organización' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('organización')}
-          >
-            <div className="nav-button-circle">
-              <Package size={24} />
-            </div>
-            <span className="nav-button-label">Organización</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'decoración' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('decoración')}
-          >
-            <div className="nav-button-circle">
-              <Lightbulb size={24} />
-            </div>
-            <span className="nav-button-label">Decoración</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'tecnología' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('tecnología')}
-          >
-            <div className="nav-button-circle">
-              <Zap size={24} />
-            </div>
-            <span className="nav-button-label">Tecnología</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'bienestar' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('bienestar')}
-          >
-            <div className="nav-button-circle">
-              <Heart size={24} />
-            </div>
-            <span className="nav-button-label">Bienestar</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'deportes' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('deportes')}
-          >
-            <div className="nav-button-circle">
-              <Dumbbell size={24} />
-            </div>
-            <span className="nav-button-label">Deportes</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'labubu' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('labubu')}
-          >
-            <div className="nav-button-circle">
-              <Gift size={24} />
-            </div>
-            <span className="nav-button-label">Labubu</span>
-          </button>
-          <button
-            className={`nav-button ${activeCategory === 'armas' ? 'active' : ''}`}
-            onClick={() => handleCategoryClick('armas')}
-          >
-            <div className="nav-button-circle">
-              <Target size={24} />
-            </div>
-            <span className="nav-button-label">Gel Blasters</span>
-          </button>
+
+          {/* Generar botones dinámicamente basados en categoryConfig */}
+          {Object.entries(categoryConfig)
+            .sort(([, a], [, b]) => a.order - b.order)
+            .map(([categoryKey, config]) => {
+              const IconComponent = categoryIcons[categoryKey]
+              const isComingSoon = config.comingSoon && !config.active
+
+              return (
+                <button
+                  key={categoryKey}
+                  className={`nav-button ${activeCategory === categoryKey ? 'active' : ''} ${isComingSoon ? 'coming-soon' : ''}`}
+                  onClick={() => !isComingSoon && handleCategoryClick(categoryKey)}
+                  disabled={isComingSoon}
+                  style={{
+                    opacity: isComingSoon ? 0.6 : 1,
+                    cursor: isComingSoon ? 'not-allowed' : 'pointer',
+                    position: 'relative'
+                  }}
+                >
+                  <div className="nav-button-circle">
+                    {IconComponent && <IconComponent size={24} />}
+                  </div>
+                  <span className="nav-button-label">
+                    {config.label}
+                    {isComingSoon && <span style={{ fontSize: '10px', display: 'block', marginTop: '2px' }}>Próximamente</span>}
+                  </span>
+                </button>
+              )
+            })
+          }
         </div>
       </nav>
 
@@ -589,18 +539,12 @@ function App() {
       <main className="container">
         <section className="products-section" ref={productsSectionRef}>
           <h2 className="section-title">
-            {activeCategory === 'all' && 'Todos los Productos'}
-            {activeCategory === 'cocina' && 'Cocina'}
-            {activeCategory === 'baño' && 'Baño'}
-            {activeCategory === 'limpieza' && 'Limpieza'}
-            {activeCategory === 'organización' && 'Organización'}
-            {activeCategory === 'decoración' && 'Decoración'}
-            {activeCategory === 'tecnología' && 'Tecnología'}
-            {activeCategory === 'bienestar' && 'Bienestar'}
-            {activeCategory === 'deportes' && 'Deportes'}
-            {activeCategory === 'labubu' && 'Labubu Pop Mart'}
-            {activeCategory === 'armas' && 'Gel Blasters'}
-            {searchTerm && `Resultados para: "${searchTerm}"`}
+            {searchTerm
+              ? `Resultados para: "${searchTerm}"`
+              : activeCategory === 'all'
+                ? 'Todos los Productos'
+                : categoryConfig[activeCategory]?.label || activeCategory
+            }
           </h2>
           <div className="products-grid">
             {getFilteredProducts().map(product => (
