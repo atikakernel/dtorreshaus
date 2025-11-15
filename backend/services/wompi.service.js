@@ -319,11 +319,10 @@ async function createCheckoutLink(orderData) {
   const { customerInfo, total, reference, shippingAddress, cart } = orderData
 
   try {
-    const merchantInfo = await getMerchantInfo()
     const amountInCents = Math.round(total * 100)
 
     // Generar firma de integridad
-    const integritySecret = merchantInfo.integritySecret
+    const integritySecret = WOMPI_INTEGRITY_SECRET
     const signatureString = `${reference}${amountInCents}COP${integritySecret}`
     const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
 
@@ -332,22 +331,20 @@ async function createCheckoutLink(orderData) {
     console.log('  - Amount:', amountInCents)
     console.log('  - Signature:', signature)
 
-    // Crear payment source para checkout
-    const paymentSource = {
-      type: 'NEQUI', // Tipo por defecto, pero el widget permite cambiar
-      acceptance_token: merchantInfo.acceptanceToken,
-      amount_in_cents: amountInCents,
+    // Crear payment link usando el endpoint correcto
+    const paymentLink = {
+      name: `Pedido ${reference}`,
+      description: `Compra en dtorreshaus`,
+      single_use: false,
+      collect_shipping: false,
       currency: 'COP',
-      customer_email: customerInfo.email,
-      reference: reference,
-      signature: signature,
-      redirect_url: process.env.PAYMENT_SUCCESS_URL
+      amount_in_cents: amountInCents,
+      redirect_url: process.env.PAYMENT_SUCCESS_URL || 'https://dtorreshaus.com'
     }
 
-    // Crear transacción que genera el checkout link
     const response = await axios.post(
-      `${WOMPI_API_URL}/transactions`,
-      paymentSource,
+      `${WOMPI_API_URL}/payment_links`,
+      paymentLink,
       {
         headers: {
           'Authorization': `Bearer ${WOMPI_PRIVATE_KEY}`,
@@ -356,13 +353,13 @@ async function createCheckoutLink(orderData) {
       }
     )
 
-    console.log('📦 Wompi Checkout Response:', JSON.stringify(response.data, null, 2))
+    console.log('📦 Wompi Payment Link Response:', JSON.stringify(response.data, null, 2))
 
-    // El payment_link_url es el link al checkout widget
+    // El permalink es el link al checkout widget
     return {
       success: true,
-      transactionId: response.data.data.id,
-      checkoutUrl: response.data.data.payment_link_url,
+      paymentLinkId: response.data.data.id,
+      checkoutUrl: response.data.data.permalink,
       reference: reference
     }
   } catch (error) {
