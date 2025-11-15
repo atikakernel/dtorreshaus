@@ -143,6 +143,142 @@ router.post('/mercadopago', async (req, res) => {
 })
 
 /**
+ * POST /api/webhooks/envia
+ * Webhook de Envia.com - Recibe notificaciones de cambios en el estado de envíos
+ * Actualiza el estado de la orden automáticamente
+ */
+router.post('/envia', async (req, res) => {
+  try {
+    const event = req.body
+
+    console.log('📨 Webhook Envia.com recibido:', JSON.stringify(event, null, 2))
+
+    // El webhook de Envia envía estos datos:
+    // {
+    //   trackingNumber: "123456789",
+    //   status: "in_transit" | "out_for_delivery" | "delivered" | "failed_attempt" | "returned",
+    //   carrier: "fedex",
+    //   statusDate: "2024-01-15T10:30:00Z",
+    //   location: "Bogotá, Colombia",
+    //   details: "El paquete está en tránsito"
+    // }
+
+    const { trackingNumber, status, carrier, statusDate, location, details } = event
+
+    if (!trackingNumber) {
+      console.error('❌ Webhook Envia sin trackingNumber')
+      return res.status(400).json({ error: 'trackingNumber requerido' })
+    }
+
+    // Buscar orden por tracking number
+    const order = await prisma.order.findFirst({
+      where: { shippingTrackingNumber: trackingNumber }
+    })
+
+    if (!order) {
+      console.log(`⚠️ No se encontró orden para tracking: ${trackingNumber}`)
+      return res.status(404).json({ error: 'Orden no encontrada' })
+    }
+
+    console.log(`📦 Orden encontrada: ${order.reference} - Nuevo estado: ${status}`)
+
+    // Actualizar datos de envío en la orden
+    const updatedShippingData = {
+      ...(typeof order.shippingData === 'object' ? order.shippingData : {}),
+      lastStatus: status,
+      lastUpdate: statusDate || new Date().toISOString(),
+      location: location,
+      details: details,
+      history: [
+        ...((order.shippingData?.history) || []),
+        {
+          status,
+          date: statusDate || new Date().toISOString(),
+          location,
+          details
+        }
+      ]
+    }
+
+    // Mapear estados de Envia a estados de orden
+    let newOrderStatus = order.status
+    let deliveredAt = order.deliveredAt
+
+    switch (status) {
+      case 'in_transit':
+      case 'out_for_delivery':
+        // Mantener como "shipped" si ya está enviado
+        newOrderStatus = 'shipped'
+        break
+
+      case 'delivered':
+        // Marcar como entregado
+        newOrderStatus = 'delivered'
+        deliveredAt = new Date()
+        console.log(`✅ Paquete entregado: ${order.reference}`)
+        break
+
+      case 'failed_attempt':
+      case 'exception':
+        // Mantener en shipped pero notificar
+        console.log(`⚠️ Intento fallido de entrega: ${order.reference}`)
+        break
+
+      case 'returned':
+      case 'returned_to_sender':
+        // Podríamos crear un estado especial o dejarlo en shipped
+        console.log(`🔙 Paquete devuelto al remitente: ${order.reference}`)
+        break
+    }
+
+    // Actualizar orden en la base de datos
+    const updatedOrder = await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        status: newOrderStatus,
+        shippingData: updatedShippingData,
+        deliveredAt: deliveredAt
+      }
+    })
+
+    // Enviar emails según el estado
+    const emailService = require('../services/email.service')
+
+    if (status === 'delivered') {
+      // Email de entrega
+      await emailService.sendOrderDelivered(updatedOrder)
+      console.log(`✉️ Email de entrega enviado a ${order.customerEmail}`)
+    } else if (status === 'in_transit') {
+      // Email opcional de "en tránsito" (puedes crear esta función si quieres)
+      // await emailService.sendOrderInTransit(updatedOrder)
+      console.log(`📧 Paquete en tránsito, no se envía email`)
+    } else if (status === 'out_for_delivery') {
+      // Email opcional de "en reparto" (puedes crear esta función si quieres)
+      console.log(`📧 Paquete en reparto, no se envía email`)
+    } else if (status === 'failed_attempt') {
+      // Email de intento fallido (opcional)
+      console.log(`⚠️ Intento fallido, considerar notificar al cliente`)
+    }
+
+    res.json({
+      success: true,
+      message: 'Webhook procesado correctamente',
+      order: {
+        reference: updatedOrder.reference,
+        status: updatedOrder.status
+      }
+    })
+
+  } catch (error) {
+    console.error('❌ Error en webhook Envia:', error)
+    res.status(500).json({
+      error: 'Error procesando webhook',
+      message: error.message
+    })
+  }
+})
+
+/**
  * GET /api/webhooks/test
  * Endpoint de prueba para webhooks
  */
@@ -152,7 +288,8 @@ router.get('/test', (req, res) => {
     timestamp: new Date().toISOString(),
     endpoints: {
       wompi: '/api/webhooks/wompi',
-      mercadopago: '/api/webhooks/mercadopago'
+      mercadopago: '/api/webhooks/mercadopago',
+      envia: '/api/webhooks/envia'
     }
   })
 })

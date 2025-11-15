@@ -121,6 +121,26 @@ function App() {
     }
   }, [])
 
+  // Detectar si hay un parámetro de tracking en la URL para abrir automáticamente el modal
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const trackParam = urlParams.get('track')
+
+    // También detectar si la ruta es /order/:reference
+    const path = window.location.pathname
+    const orderMatch = path.match(/\/order\/([A-Z0-9-]+)/)
+
+    const referenceToTrack = trackParam || (orderMatch ? orderMatch[1] : null)
+
+    if (referenceToTrack) {
+      setTrackingInput(referenceToTrack)
+      setTrackingReference(referenceToTrack)
+      setIsTrackingModalOpen(true)
+      // Limpiar la URL sin recargar la página
+      window.history.replaceState({}, document.title, '/')
+    }
+  }, [])
+
   // Calcular costo de envío dinámicamente cuando cambia la ciudad
   useEffect(() => {
     const calculateShipping = async () => {

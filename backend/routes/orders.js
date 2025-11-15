@@ -7,6 +7,7 @@
 const express = require('express')
 const router = express.Router()
 const ordersService = require('../services/orders.service')
+const { authenticateAdmin } = require('../middleware/auth')
 
 /**
  * POST /api/orders/create
@@ -56,8 +57,9 @@ router.get('/:reference', async (req, res) => {
 /**
  * POST /api/orders/:reference/confirm-payment
  * Confirmar pago de una orden (de pending a paid)
+ * Requiere autenticación de admin
  */
-router.post('/:reference/confirm-payment', async (req, res) => {
+router.post('/:reference/confirm-payment', authenticateAdmin, async (req, res) => {
   try {
     const { reference } = req.params
     const result = await ordersService.confirmPayment(reference)
@@ -79,8 +81,9 @@ router.post('/:reference/confirm-payment', async (req, res) => {
 /**
  * POST /api/orders/:reference/ship
  * Marcar orden como enviada y crear etiqueta en Envia.com
+ * Requiere autenticación de admin
  */
-router.post('/:reference/ship', async (req, res) => {
+router.post('/:reference/ship', authenticateAdmin, async (req, res) => {
   try {
     const { reference } = req.params
     const result = await ordersService.shipOrder(reference)
@@ -102,8 +105,9 @@ router.post('/:reference/ship', async (req, res) => {
 /**
  * POST /api/orders/:reference/deliver
  * Marcar orden como entregada
+ * Requiere autenticación de admin
  */
-router.post('/:reference/deliver', async (req, res) => {
+router.post('/:reference/deliver', authenticateAdmin, async (req, res) => {
   try {
     const { reference } = req.params
     const result = await ordersService.deliverOrder(reference)
@@ -125,8 +129,9 @@ router.post('/:reference/deliver', async (req, res) => {
 /**
  * GET /api/orders
  * Listar todas las órdenes (para admin)
+ * Requiere autenticación de admin
  */
-router.get('/', async (req, res) => {
+router.get('/', authenticateAdmin, async (req, res) => {
   try {
     const { status, limit, offset } = req.query
     const result = await ordersService.listOrders({

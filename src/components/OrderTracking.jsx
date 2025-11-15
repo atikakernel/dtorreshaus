@@ -22,6 +22,19 @@ const formatDate = (dateString) => {
   })
 }
 
+const getShippingStatusLabel = (status) => {
+  const labels = {
+    'in_transit': '🚚 En tránsito',
+    'out_for_delivery': '📦 En reparto',
+    'delivered': '✅ Entregado',
+    'failed_attempt': '⚠️ Intento de entrega fallido',
+    'exception': '⚠️ Excepción en la entrega',
+    'returned': '🔙 Devuelto al remitente',
+    'returned_to_sender': '🔙 Devuelto al remitente'
+  }
+  return labels[status] || status
+}
+
 export function OrderTracking({ reference, onClose }) {
   const [order, setOrder] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -225,6 +238,114 @@ export function OrderTracking({ reference, onClose }) {
               <p><strong>Número de Seguimiento:</strong> <code style={{ background: 'white', padding: '4px 8px', borderRadius: '4px' }}>{order.shippingTrackingNumber}</code></p>
               {order.shippingCarrier && <p><strong>Transportadora:</strong> {order.shippingCarrier}</p>}
               {order.shippingEstimatedDelivery && <p><strong>Entrega Estimada:</strong> {order.shippingEstimatedDelivery}</p>}
+
+              {/* Estado Actual del Envío */}
+              {order.shippingData?.lastStatus && (
+                <div style={{
+                  background: 'white',
+                  padding: '15px',
+                  borderRadius: '8px',
+                  marginTop: '15px',
+                  borderLeft: '4px solid #6366f1'
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'start', gap: '10px' }}>
+                    <Truck size={20} color="#6366f1" style={{ marginTop: '2px' }} />
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, fontWeight: '600', color: '#1e40af' }}>
+                        {getShippingStatusLabel(order.shippingData.lastStatus)}
+                      </p>
+                      {order.shippingData.location && (
+                        <p style={{ margin: '5px 0', fontSize: '14px', color: '#666' }}>
+                          📍 {order.shippingData.location}
+                        </p>
+                      )}
+                      {order.shippingData.details && (
+                        <p style={{ margin: '5px 0', fontSize: '13px', color: '#666' }}>
+                          {order.shippingData.details}
+                        </p>
+                      )}
+                      {order.shippingData.lastUpdate && (
+                        <p style={{ margin: '5px 0 0 0', fontSize: '12px', color: '#94a3b8' }}>
+                          {formatDate(order.shippingData.lastUpdate)}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Historial de Movimientos */}
+              {order.shippingData?.history && order.shippingData.history.length > 0 && (
+                <div style={{ marginTop: '20px' }}>
+                  <h5 style={{ color: '#1e40af', marginBottom: '15px', fontSize: '16px' }}>
+                    📋 Historial de Movimientos
+                  </h5>
+                  <div style={{ position: 'relative' }}>
+                    {/* Línea vertical del timeline */}
+                    <div style={{
+                      position: 'absolute',
+                      left: '9px',
+                      top: '10px',
+                      bottom: '10px',
+                      width: '2px',
+                      background: '#cbd5e1'
+                    }}></div>
+
+                    {/* Items del historial */}
+                    {[...order.shippingData.history].reverse().map((event, index) => (
+                      <div key={index} style={{
+                        position: 'relative',
+                        paddingLeft: '35px',
+                        paddingBottom: '20px'
+                      }}>
+                        {/* Punto del timeline */}
+                        <div style={{
+                          position: 'absolute',
+                          left: '0',
+                          top: '5px',
+                          width: '20px',
+                          height: '20px',
+                          borderRadius: '50%',
+                          background: index === 0 ? '#6366f1' : 'white',
+                          border: `2px solid ${index === 0 ? '#6366f1' : '#cbd5e1'}`,
+                          zIndex: 1
+                        }}></div>
+
+                        {/* Contenido del evento */}
+                        <div style={{
+                          background: 'white',
+                          padding: '12px',
+                          borderRadius: '6px',
+                          border: '1px solid #e5e7eb',
+                          boxShadow: index === 0 ? '0 2px 4px rgba(99, 102, 241, 0.1)' : 'none'
+                        }}>
+                          <p style={{
+                            margin: 0,
+                            fontWeight: index === 0 ? '600' : '500',
+                            color: index === 0 ? '#6366f1' : '#1e293b',
+                            fontSize: '14px'
+                          }}>
+                            {getShippingStatusLabel(event.status)}
+                          </p>
+                          {event.location && (
+                            <p style={{ margin: '5px 0', fontSize: '13px', color: '#666' }}>
+                              📍 {event.location}
+                            </p>
+                          )}
+                          {event.details && (
+                            <p style={{ margin: '5px 0', fontSize: '12px', color: '#64748b' }}>
+                              {event.details}
+                            </p>
+                          )}
+                          <p style={{ margin: '5px 0 0 0', fontSize: '11px', color: '#94a3b8' }}>
+                            {formatDate(event.date)}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           )}
 

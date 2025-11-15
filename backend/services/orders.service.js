@@ -42,16 +42,19 @@ async function createOrder(orderData) {
         subtotal,
         shippingCost,
         total,
-        status: paymentMethod === 'transfer' ? 'pending' : 'paid',
+        status: 'pending', // Siempre crear como pending, se actualiza cuando se confirma el pago
         paymentMethod,
         paymentGateway,
         transactionId,
-        paidAt: paymentMethod !== 'transfer' ? new Date() : null
+        paidAt: null
       }
     })
 
-    // Enviar email de confirmación
-    await emailService.sendOrderConfirmation(order)
+    // Solo enviar email de confirmación para transferencias
+    // Para pagos con gateway (Wompi, MP), se envía cuando se confirma el pago
+    if (paymentMethod === 'transfer') {
+      await emailService.sendOrderConfirmation(order)
+    }
 
     console.log('✅ Orden creada:', reference)
 
@@ -140,8 +143,11 @@ async function confirmPayment(reference) {
       }
     })
 
-    // Enviar email de pago confirmado
+    // Enviar email de pago confirmado al cliente
     await emailService.sendPaymentConfirmed(updatedOrder)
+
+    // Enviar notificación al admin de nuevo pedido
+    await emailService.sendAdminNewOrderNotification(updatedOrder)
 
     console.log('✅ Pago confirmado para orden:', reference)
 
