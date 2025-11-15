@@ -4,25 +4,26 @@ import { productsData } from './productsData.js'
 import { Checkout } from './components/Checkout'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
+import { quoteShipping } from './services/api'
 
 // Colombian cities for shipping calculation
 const colombianCities = [
-  { name: 'Bogotá', shippingCost: 8000, region: 'Cundinamarca' },
-  { name: 'Medellín', shippingCost: 10000, region: 'Antioquia' },
-  { name: 'Cali', shippingCost: 12000, region: 'Valle del Cauca' },
-  { name: 'Barranquilla', shippingCost: 15000, region: 'Atlántico' },
-  { name: 'Cartagena', shippingCost: 15000, region: 'Bolívar' },
-  { name: 'Bucaramanga', shippingCost: 12000, region: 'Santander' },
-  { name: 'Pereira', shippingCost: 11000, region: 'Risaralda' },
-  { name: 'Manizales', shippingCost: 11000, region: 'Caldas' },
-  { name: 'Santa Marta', shippingCost: 16000, region: 'Magdalena' },
-  { name: 'Cúcuta', shippingCost: 13000, region: 'Norte de Santander' },
-  { name: 'Ibagué', shippingCost: 10000, region: 'Tolima' },
-  { name: 'Pasto', shippingCost: 14000, region: 'Nariño' },
-  { name: 'Villavicencio', shippingCost: 9000, region: 'Meta' },
-  { name: 'Armenia', shippingCost: 11000, region: 'Quindío' },
-  { name: 'Tunja', shippingCost: 9000, region: 'Boyacá' },
-  { name: 'Otras ciudades', shippingCost: 18000, region: 'Colombia' }
+  { name: 'Bogotá', region: 'Cundinamarca' },
+  { name: 'Medellín', region: 'Antioquia' },
+  { name: 'Cali', region: 'Valle del Cauca' },
+  { name: 'Barranquilla', region: 'Atlántico' },
+  { name: 'Cartagena', region: 'Bolívar' },
+  { name: 'Bucaramanga', region: 'Santander' },
+  { name: 'Pereira', region: 'Risaralda' },
+  { name: 'Manizales', region: 'Caldas' },
+  { name: 'Santa Marta', region: 'Magdalena' },
+  { name: 'Cúcuta', region: 'Norte de Santander' },
+  { name: 'Ibagué', region: 'Tolima' },
+  { name: 'Pasto', region: 'Nariño' },
+  { name: 'Villavicencio', region: 'Meta' },
+  { name: 'Armenia', region: 'Quindío' },
+  { name: 'Tunja', region: 'Boyacá' },
+  { name: 'Otras ciudades', region: 'Colombia' }
 ]
 
 // Formato de precio colombiano
@@ -81,6 +82,8 @@ function App() {
   const [trackingReference, setTrackingReference] = useState('')
   const [trackingInput, setTrackingInput] = useState('')
   const [paymentConfirmation, setPaymentConfirmation] = useState({ show: false, transactionId: null })
+  const [shippingCost, setShippingCost] = useState(0)
+  const [loadingShipping, setLoadingShipping] = useState(false)
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
@@ -116,6 +119,60 @@ function App() {
       window.history.replaceState({}, document.title, window.location.pathname)
     }
   }, [])
+
+  // Calcular costo de envío dinámicamente cuando cambia la ciudad
+  useEffect(() => {
+    const calculateShipping = async () => {
+      if (!customerInfo.city || cart.length === 0) {
+        setShippingCost(0)
+        return
+      }
+
+      setLoadingShipping(true)
+      try {
+        // Calcular peso total aproximado del carrito
+        const totalWeight = cart.reduce((sum, item) => sum + (item.quantity * 1), 0) // Asumimos 1kg por item
+
+        const result = await quoteShipping(
+          {
+            name: customerInfo.name || 'Cliente',
+            phone: customerInfo.phone || '3000000000',
+            city: customerInfo.city,
+            state: customerInfo.region || colombianCities.find(c => c.name === customerInfo.city)?.region || 'Colombia'
+          },
+          [{
+            content: 'Artículos de hogar',
+            amount: cart.length,
+            type: 'box',
+            weight: totalWeight,
+            insurance: 0,
+            declaredValue: cartTotal,
+            weightUnit: 'KG',
+            lengthUnit: 'CM',
+            dimensions: {
+              length: 30,
+              width: 30,
+              height: 30
+            }
+          }]
+        )
+
+        if (result.success && result.cheapest) {
+          setShippingCost(result.cheapest.price)
+        } else {
+          // Fallback a 0 si hay error
+          setShippingCost(0)
+        }
+      } catch (error) {
+        console.error('Error calculando envío:', error)
+        setShippingCost(0)
+      } finally {
+        setLoadingShipping(false)
+      }
+    }
+
+    calculateShipping()
+  }, [customerInfo.city, cart])
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
@@ -691,7 +748,7 @@ function App() {
                   >
                     {colombianCities.map(city => (
                       <option key={city.name} value={city.name}>
-                        {city.name} - Envío: {formatPrice(city.shippingCost)}
+                        {city.name}
                       </option>
                     ))}
                   </select>
@@ -705,12 +762,12 @@ function App() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
                     <span>Envío a {customerInfo.city}:</span>
-                    <strong>{formatPrice(colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0)}</strong>
+                    <strong>{loadingShipping ? 'Calculando...' : formatPrice(shippingCost)}</strong>
                   </div>
                   <div style={{ borderTop: '2px solid var(--border-color)', paddingTop: '10px', display: 'flex', justifyContent: 'space-between', fontSize: '18px' }}>
                     <span>Total:</span>
                     <strong style={{ color: 'var(--accent-color)' }}>
-                      {formatPrice(cartTotal + (colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0))}
+                      {loadingShipping ? 'Calculando...' : formatPrice(cartTotal + shippingCost)}
                     </strong>
                   </div>
                 </div>
@@ -744,7 +801,7 @@ function App() {
               <Checkout
                 cart={cart}
                 total={cartTotal}
-                shippingCost={colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0}
+                shippingCost={shippingCost}
                 customerInfo={customerInfo}
                 onClose={() => {
                   setIsCheckoutOpen(false)
@@ -804,7 +861,7 @@ function App() {
                   Cliente: {customerInfo.name}<br />
                   Email: {customerInfo.email}<br />
                   Ciudad: {customerInfo.city}<br />
-                  Total: {formatPrice(cartTotal + (colombianCities.find(c => c.name === customerInfo.city)?.shippingCost || 0))}
+                  Total: {formatPrice(cartTotal + shippingCost)}
                 </p>
                 <button
                   onClick={() => {
