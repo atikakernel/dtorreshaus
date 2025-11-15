@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target, Truck } from 'lucide-react'
 import { productsData } from './productsData.js'
-import { Checkout } from './components/Checkout'
+import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
 import { quoteShipping } from './services/api'
@@ -913,7 +913,7 @@ function App() {
             )}
 
             {checkoutStep === 'payment' && (
-              <Checkout
+              <CheckoutSimple
                 cart={cart}
                 total={cartTotal}
                 shippingCost={shippingCost}

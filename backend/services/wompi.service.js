@@ -312,6 +312,65 @@ async function getPSEBanks() {
   }
 }
 
+/**
+ * Crear checkout link universal (todos los métodos de pago)
+ */
+async function createCheckoutLink(orderData) {
+  const { customerInfo, total, reference, shippingAddress, cart } = orderData
+
+  try {
+    const merchantInfo = await getMerchantInfo()
+    const amountInCents = Math.round(total * 100)
+
+    // Generar firma de integridad
+    const integritySecret = merchantInfo.integritySecret
+    const signatureString = `${reference}${amountInCents}COP${integritySecret}`
+    const signature = crypto.createHash('sha256').update(signatureString).digest('hex')
+
+    console.log('🔐 Checkout Signature info:')
+    console.log('  - Reference:', reference)
+    console.log('  - Amount:', amountInCents)
+    console.log('  - Signature:', signature)
+
+    // Crear payment source para checkout
+    const paymentSource = {
+      type: 'NEQUI', // Tipo por defecto, pero el widget permite cambiar
+      acceptance_token: merchantInfo.acceptanceToken,
+      amount_in_cents: amountInCents,
+      currency: 'COP',
+      customer_email: customerInfo.email,
+      reference: reference,
+      signature: signature,
+      redirect_url: process.env.PAYMENT_SUCCESS_URL
+    }
+
+    // Crear transacción que genera el checkout link
+    const response = await axios.post(
+      `${WOMPI_API_URL}/transactions`,
+      paymentSource,
+      {
+        headers: {
+          'Authorization': `Bearer ${WOMPI_PRIVATE_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      }
+    )
+
+    console.log('📦 Wompi Checkout Response:', JSON.stringify(response.data, null, 2))
+
+    // El payment_link_url es el link al checkout widget
+    return {
+      success: true,
+      transactionId: response.data.data.id,
+      checkoutUrl: response.data.data.payment_link_url,
+      reference: reference
+    }
+  } catch (error) {
+    console.error('Error Wompi Checkout:', JSON.stringify(error.response?.data, null, 2) || error.message)
+    throw new Error(error.response?.data?.error?.reason || 'Error creando checkout')
+  }
+}
+
 module.exports = {
   createNequiPayment,
   createCardPayment,
@@ -319,5 +378,6 @@ module.exports = {
   getTransactionStatus,
   verifyWebhookSignature,
   getPSEBanks,
-  getMerchantInfo
+  getMerchantInfo,
+  createCheckoutLink
 }
