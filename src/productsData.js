@@ -20,57 +20,57 @@ export const categoryConfig = {
     icon: '🔫'
   },
   cocina: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 3,
     label: 'Cocina',
     icon: '🍳'
   },
   baño: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 4,
     label: 'Baño',
     icon: '🛁'
   },
   limpieza: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 5,
     label: 'Limpieza',
     icon: '🧹'
   },
   organización: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 6,
     label: 'Organización',
     icon: '📦'
   },
   decoración: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 7,
     label: 'Decoración',
     icon: '💡'
   },
   tecnología: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 8,
     label: 'Tecnología',
     icon: '💻'
   },
   bienestar: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 9,
     label: 'Bienestar',
     icon: '🌱'
   },
   deportes: {
-    active: false,
-    comingSoon: true,
+    active: true,
+    comingSoon: false,
     order: 10,
     label: 'Deportes',
     icon: '⚽'
@@ -265,15 +265,6 @@ export const productsData = {
   cocina: [
     // Botellas y dispensadores
     {
-      sku: 'JAC01-1',
-      nombre: 'Botella deportiva térmica con asa y correa – 2 L',
-      descripcion: 'Botella de agua deportiva de 2 litros, disponible en 4 colores, con correa ajustable y tapa hermética.',
-      material: 'Plástico PP – 2000 ml',
-      categoria: 'Cocina – Hidratación',
-      precio: 39000,
-      emoji: '💧'
-    },
-    {
       sku: 'JAC01-5',
       nombre: 'Dispensador de vidrio con bomba cromada – 200 ml',
       descripcion: 'Dispensador de vidrio transparente con tapa metálica cromada y bomba dosificadora.',
@@ -361,7 +352,7 @@ export const productsData = {
       descripcion: 'Taza decorada con patrones geométricos coloridos. Ideal para café, té o regalo.',
       material: 'Cerámica – 7.4 × 8.5 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 5000,
+      precio: 6200,
       emoji: '🎨'
     },
     {
@@ -428,6 +419,16 @@ export const productsData = {
       precio: 15000,
       emoji: '🥛'
     },
+    {
+      sku: 'JAC01-170',
+      nombre: 'Set de 6 vasos de vidrio',
+      descripcion: 'Juego de 6 vasos de vidrio transparente de alta calidad para uso diario.',
+      material: 'Vidrio',
+      categoria: 'Cocina – Vajilla',
+      precio: 30000,
+      emoji: '🥛',
+      active: true
+    },
     // Almacenamiento
     {
       sku: 'JAC01-22',
@@ -480,7 +481,7 @@ export const productsData = {
       descripcion: 'Recipiente de 1 L con tapa hermética y esponja. Ideal para cocina o almacenamiento.',
       material: 'Plástico – 14.5 × 13.5 cm',
       categoria: 'Cocina – Almacenamiento',
-      precio: 6000,
+      precio: 9500,
       emoji: '🥡'
     },
     // Utensilios
@@ -513,12 +514,12 @@ export const productsData = {
     },
     {
       sku: 'JAC01-162',
-      nombre: 'Encendedor recargable largo a gas – 3 colores',
-      descripcion: 'Encendedor de cocina con cuello largo y ajuste de llama. Colores surtidos.',
-      material: 'Metal + ABS',
+      nombre: 'Pineapple Knife – Cuchillo para piña',
+      descripcion: 'Cuchillo pelador de piña con diseño ergonómico y hoja de acero inoxidable.',
+      material: 'Acero inoxidable + ABS',
       categoria: 'Cocina – Utensilios',
-      precio: 9000,
-      emoji: '🔥'
+      precio: 15300,
+      emoji: '🍍'
     },
     // Cubiertos
     {
@@ -572,7 +573,7 @@ export const productsData = {
       descripcion: 'Kit completo con 19 piezas: cucharones, espátulas, batidor, cuchillos, tijeras y tabla.',
       material: 'Silicona + madera + acero',
       categoria: 'Cocina – Utensilios',
-      precio: 95000,
+      precio: 99000,
       emoji: '🍳'
     },
     {
@@ -581,7 +582,7 @@ export const productsData = {
       descripcion: 'Juego de 19 utensilios de cocina de silicona con mango de madera.',
       material: 'Silicona + madera + acero',
       categoria: 'Cocina – Utensilios',
-      precio: 78000,
+      precio: 86600,
       emoji: '🍳'
     },
     // Jarras y termos
@@ -654,7 +655,7 @@ export const productsData = {
       descripcion: 'Soporte inclinable para dispensadores de agua. Estructura estable y resistente.',
       material: 'Metal',
       categoria: 'Cocina – Accesorios',
-      precio: 13000,
+      precio: 18900,
       emoji: '💧'
     },
     // Sets de vajilla
@@ -664,7 +665,7 @@ export const productsData = {
       descripcion: 'Conjunto de 4 tazas de cerámica blanca con platos. Diseño clásico.',
       material: 'Cerámica – 6.7×8.7 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 39000,
+      precio: 57600,
       emoji: '☕'
     },
     {
@@ -673,7 +674,7 @@ export const productsData = {
       descripcion: 'Set de 6 tazas blancas de cerámica resistente, aptas para microondas.',
       material: 'Cerámica – 8.5×7.6 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 28000,
+      precio: 43400,
       emoji: '☕'
     },
     {
@@ -682,7 +683,7 @@ export const productsData = {
       descripcion: 'Dispensador cerámico de lujo con base de bambú, grifo dorado y 6 tazas.',
       material: 'Cerámica + bambú',
       categoria: 'Cocina – Decoración',
-      precio: 360000,
+      precio: 408000,
       emoji: '🍵'
     },
     {
@@ -691,7 +692,7 @@ export const productsData = {
       descripcion: 'Dispensador blanco de cerámica con base de bambú y grifo dorado.',
       material: 'Cerámica + bambú',
       categoria: 'Cocina – Decoración',
-      precio: 290000,
+      precio: 367000,
       emoji: '🍵'
     },
     // Especieros y organización
@@ -701,7 +702,7 @@ export const productsData = {
       descripcion: 'Set de lujo con 4 frascos de vidrio, tapas en forma de flor dorada y base de bambú.',
       material: 'Vidrio + bambú + metal – 4 pzas',
       categoria: 'Cocina – Organización',
-      precio: 84000,
+      precio: 89900,
       emoji: '🧂'
     },
     {
@@ -710,7 +711,7 @@ export const productsData = {
       descripcion: 'Dos frascos de vidrio con tapas flor dorada, cucharas y soporte de bambú.',
       material: 'Vidrio + bambú + metal – 2 pzas',
       categoria: 'Cocina – Organización',
-      precio: 42000,
+      precio: 45000,
       emoji: '🧂'
     },
     {
@@ -746,7 +747,7 @@ export const productsData = {
       descripcion: 'Set de 12 individuales de mesa tejidos, resistentes al calor.',
       material: 'PVC – 30 × 45 cm',
       categoria: 'Cocina – Decoración',
-      precio: 4000,
+      precio: 11000,
       emoji: '🍽️'
     },
     {
@@ -821,10 +822,29 @@ export const productsData = {
       categoria: 'Cocina – Accesorios',
       precio: 40000,
       emoji: '🚰'
+    },
+    {
+      sku: 'JAC01-65',
+      nombre: 'Termo metálico deportivo – 420 ml',
+      descripcion: 'Botella térmica de acero inoxidable con tapa roscada.',
+      material: 'Acero inoxidable – 420 ml – 8 × 19.5 cm',
+      categoria: 'Cocina – Termos',
+      precio: 66000,
+      emoji: '🥤'
     }
   ],
 
   baño: [
+    {
+      sku: 'JAC01-26',
+      nombre: 'Dispensador de jabón',
+      descripcion: 'Dispensador de jabón líquido con diseño moderno y elegante.',
+      material: 'Plástico / Metal',
+      categoria: 'Baño – Accesorios',
+      precio: 15000,
+      emoji: '🧴',
+      active: true
+    },
     {
       sku: 'JAC01-28',
       nombre: 'Dispensador de jabón cerámico beige con dosificador dorado – 300 ml',
@@ -1110,6 +1130,15 @@ export const productsData = {
       categoria: 'Organización – Reutilizables',
       precio: 3500,
       emoji: '🛍️'
+    },
+    {
+      sku: 'JAC01-101',
+      nombre: 'Soporte ajustable para mueble',
+      descripcion: 'Base ajustable plegable para mueble con ajuste de altura y ángulo.',
+      material: 'Aluminio – 38.5×4.5 cm',
+      categoria: 'Organización – Hogar',
+      precio: 23300,
+      emoji: '🪑'
     }
   ],
 
@@ -1244,15 +1273,6 @@ export const productsData = {
 
   tecnología: [
     {
-      sku: 'JAC01-65',
-      nombre: 'Termo metálico deportivo – 420 ml',
-      descripcion: 'Botella térmica de acero inoxidable con tapa roscada.',
-      material: 'Acero inoxidable – 420 ml – 8 × 19.5 cm',
-      categoria: 'Tecnología – Accesorios',
-      precio: 34500,
-      emoji: '🥤'
-    },
-    {
       sku: 'JAC01-76',
       nombre: 'Máquina cortapelo recargable T9 Gold – Edición Barber Pro',
       descripcion: 'Cortadora T9 de metal dorado, motor silencioso.',
@@ -1332,15 +1352,6 @@ export const productsData = {
       categoria: 'Tecnología – Belleza',
       precio: 68000,
       emoji: '💨'
-    },
-    {
-      sku: 'JAC01-101',
-      nombre: 'Soporte ajustable para portátil en aluminio – plegable',
-      descripcion: 'Base ajustable plegable para laptop con ajuste de altura y ángulo.',
-      material: 'Aluminio – 38.5×4.5 cm',
-      categoria: 'Tecnología – Oficina',
-      precio: 19000,
-      emoji: '💻'
     }
   ],
 
@@ -1350,7 +1361,7 @@ export const productsData = {
       nombre: 'Manguera extensible para jardín – 7.5 m x 3X',
       descripcion: 'Manguera extensible azul de 7.5 m con adaptador universal.',
       material: 'Poliéster + látex – 7.5 m',
-      categoria: 'Bienestar – Jardinería',
+      categoria: 'Hogar – Jardinería',
       precio: 18500,
       emoji: '🌱'
     },
@@ -1401,6 +1412,15 @@ export const productsData = {
       categoria: 'Deportes – Fútbol',
       precio: 48000,
       emoji: '⚽'
+    },
+    {
+      sku: 'JAC01-1',
+      nombre: 'Botella deportiva térmica con asa y correa – 2 L',
+      descripcion: 'Botella de agua deportiva de 2 litros, disponible en 4 colores, con correa ajustable y tapa hermética.',
+      material: 'Plástico PP – 2000 ml',
+      categoria: 'Deportes – Hidratación',
+      precio: 39000,
+      emoji: '💧'
     }
   ]
 }

@@ -18,10 +18,10 @@ echo -e "${GREEN}=====================================${NC}"
 echo -e "${GREEN}🚀 Deployment Frontend - dtorreshaus${NC}"
 echo -e "${GREEN}=====================================${NC}"
 
-# Variables (configura estas)
+# Variables (configuradas para dtorreshaus)
 EC2_USER="ubuntu"
-EC2_HOST="YOUR_EC2_IP"  # ⚠️ CAMBIAR ESTO
-EC2_KEY="~/.ssh/your-key.pem"  # ⚠️ CAMBIAR ESTO
+EC2_HOST="3.149.250.204"
+EC2_KEY="./dtorresfhaus-key-backup.pem"
 REMOTE_DIR="/var/www/dtorreshaus/frontend"
 
 # 1. Build del frontend
