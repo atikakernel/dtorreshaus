@@ -109,7 +109,7 @@ export const productsData = {
       descripcion: 'Edición especial del clásico Labubu con traje peludo y cadena metálica. Diseño premium y exclusivo.',
       material: 'Plush + Metal – Edición especial',
       categoria: 'Labubu – Pop Mart',
-      precio: 39900,
+      precio: 49900,
       emoji: '🔗',
       active: true
     },
@@ -129,7 +129,7 @@ export const productsData = {
       descripcion: 'Figura gigante de 38 cm con textura premium y ojos brillantes. La joya de la colección Pop Mart.',
       material: 'Plush premium – 38 cm',
       categoria: 'Labubu – Pop Mart',
-      precio: 369000,
+      precio: 329900,
       emoji: '🦖',
       active: true
     }
@@ -270,7 +270,7 @@ export const productsData = {
       descripcion: 'Dispensador de vidrio transparente con tapa metálica cromada y bomba dosificadora.',
       material: 'Vidrio / Acero inox. – 200 ml – 14.5 × 6 cm',
       categoria: 'Cocina – Accesorios',
-      precio: 9900,
+      precio: 11000,
       emoji: '🧴'
     },
     {
@@ -284,20 +284,20 @@ export const productsData = {
     },
     {
       sku: 'JAC01-7',
-      nombre: 'Dispensador de aceite o vinagre – 170 ml',
+      nombre: 'Dispensador de aceite o vinagre – 200 ml',
       descripcion: 'Botella dispensadora de vidrio con pico vertedor metálico. Ideal para aceite de oliva o vinagre.',
-      material: 'Vidrio / Acero inox. – 170 ml – 17 × 4 cm',
+      material: 'Vidrio / Acero inox. – 200 ml – 17 × 4 cm',
       categoria: 'Cocina – Utensilios',
-      precio: 10200,
+      precio: 15900,
       emoji: '🫒'
     },
     {
       sku: 'JAC01-8',
-      nombre: 'Pulverizador de aceite – 300 ml (blanco / negro)',
+      nombre: 'Pulverizador de aceite – 220 ml (blanco / negro)',
       descripcion: 'Atomizador recargable de cocina para aceite o vinagre, con boquilla de pulverización fina.',
-      material: 'Plástico PET / Acero – 300 ml – 20 × 5.5 cm',
+      material: 'Plástico PET / Acero – 220 ml – 20 × 5.5 cm',
       categoria: 'Cocina – Utensilios',
-      precio: 18900,
+      precio: 14000,
       emoji: '💦'
     },
     // Mugs y tazas
@@ -307,7 +307,7 @@ export const productsData = {
       descripcion: 'Taza de cerámica decorada, disponible en 4 diseños florales. Ideal para café o té.',
       material: 'Cerámica – Ø 7.6 × 8 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 7000,
+      precio: 9900,
       emoji: '🌺'
     },
     {
@@ -316,7 +316,7 @@ export const productsData = {
       descripcion: 'Taza colorida con puntos blancos. Ideal para cafés cortos o capuchinos.',
       material: 'Cerámica – Ø 7.5 × 8.5 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 5500,
+      precio: 7900,
       emoji: '☕'
     },
     {
@@ -325,7 +325,7 @@ export const productsData = {
       descripcion: 'Taza con diseño "Coffee" en tonos tierra. Ideal para uso diario o cafeterías.',
       material: 'Cerámica – Ø 7.5 × 8.5 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 5500,
+      precio: 7900,
       emoji: '☕'
     },
     {
@@ -334,7 +334,7 @@ export const productsData = {
       descripcion: 'Taza grande para café o bebidas calientes. Diseño moderno en 3 colores surtidos.',
       material: 'Cerámica – Ø 8 × 11.5 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 6000,
+      precio: 10900,
       emoji: '☕'
     },
     {
@@ -343,7 +343,7 @@ export const productsData = {
       descripcion: 'Taza de cerámica estilo vintage, colores pastel y borde metálico. Ideal para regalo.',
       material: 'Cerámica – Ø 9 × 9.7 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 6500,
+      precio: 11500,
       emoji: '🍵'
     },
     {
@@ -352,7 +352,7 @@ export const productsData = {
       descripcion: 'Taza decorada con patrones geométricos coloridos. Ideal para café, té o regalo.',
       material: 'Cerámica – 7.4 × 8.5 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 6200,
+      precio: 6500,
       emoji: '🎨'
     },
     {
@@ -361,17 +361,17 @@ export const productsData = {
       descripcion: 'Taza blanca con ilustraciones y frases motivadoras en negro. Perfecta para oficina.',
       material: 'Cerámica – 8.8 × 9.3 cm',
       categoria: 'Cocina – Vajilla',
-      precio: 6500,
+      precio: 9800,
       emoji: '💭'
     },
     // Vasos
     {
       sku: 'JAC01-20',
-      nombre: 'Vaso alto de vidrio facetado – 475 ml',
-      descripcion: 'Vaso de vidrio transparente con diseño facetado tipo restaurante.',
-      material: 'Vidrio – 475 ml – 15 cm alto',
+      nombre: 'Set 6 vasos altos de vidrio facetado – 475 ml',
+      descripcion: 'Set de 6 vasos de vidrio transparente con diseño facetado tipo restaurante.',
+      material: 'Vidrio – 6 pcs – 475 ml – 15 cm alto',
       categoria: 'Cocina – Vajilla',
-      precio: 6500,
+      precio: 39900,
       emoji: '🥤'
     },
     {
@@ -389,7 +389,7 @@ export const productsData = {
       descripcion: 'Vaso de vidrio transparente con cuerpo liso y base gruesa. Resistente y elegante.',
       material: 'Vidrio – 500 ml – 16 cm alto',
       categoria: 'Cocina – Vajilla',
-      precio: 6900,
+      precio: 39900,
       emoji: '🥛'
     },
     {
@@ -398,7 +398,7 @@ export const productsData = {
       descripcion: 'Vaso de vidrio transparente con cuerpo estriado vertical y acabado brillante.',
       material: 'Vidrio – 450 ml – 16.5 cm alto',
       categoria: 'Cocina – Vajilla',
-      precio: 6500,
+      precio: 39900,
       emoji: '🍹'
     },
     {
@@ -407,7 +407,7 @@ export const productsData = {
       descripcion: 'Vaso de vidrio transparente sin relieve, acabado cristalino y base gruesa.',
       material: 'Vidrio – 450 ml – 16 cm alto',
       categoria: 'Cocina – Vajilla',
-      precio: 6400,
+      precio: 39900,
       emoji: '🥃'
     },
     {
@@ -441,20 +441,20 @@ export const productsData = {
     },
     {
       sku: 'JAC01-23',
-      nombre: 'Set de contenedores herméticos rosados – 3 piezas (variación B)',
-      descripcion: 'Conjunto de tres contenedores herméticos rosados. Sellado seguro y apilables.',
+      nombre: 'Set de contenedores herméticos colores variados – 3 piezas',
+      descripcion: 'Conjunto de tres contenedores herméticos en colores variados. Sellado seguro y apilables.',
       material: 'Vidrio / Silicona – 3 pzas',
       categoria: 'Cocina – Almacenamiento',
-      precio: 29000,
+      precio: 59500,
       emoji: '🍱'
     },
     {
       sku: 'JAC01-24',
-      nombre: 'Recipiente hermético de vidrio con tapa rosada – 650 ml',
-      descripcion: 'Contenedor individual de vidrio templado con tapa hermética rosada.',
-      material: 'Vidrio / Silicona – 650 ml – 14 × 6 cm',
+      nombre: 'Recipiente hermético de vidrio con tapa colores variados – 500 ml',
+      descripcion: 'Contenedor individual de vidrio templado con tapa hermética en dos colores variados.',
+      material: 'Vidrio / Silicona – 500 ml – 14 × 6 cm',
       categoria: 'Cocina – Almacenamiento',
-      precio: 12900,
+      precio: 44100,
       emoji: '🥡'
     },
     {
@@ -487,9 +487,9 @@ export const productsData = {
     // Utensilios
     {
       sku: 'JAC01-37',
-      nombre: 'Rallador multifuncional con tapa azul – Set 4 en 1',
-      descripcion: 'Rallador redondo con tapa y base plástica. Incluye cuchillas intercambiables.',
-      material: 'Plástico PP / Acero inox – 19 × 18.5 × 5 cm',
+      nombre: 'Rallador multifuncional con tapa colores variados – Set 4 en 1',
+      descripcion: 'Rallador redondo con tapa y base plástica. Incluye cuchillas intercambiables en colores variados.',
+      material: 'Plástico PP / Acero inox – 19 × 15.5 × 5 cm',
       categoria: 'Cocina – Utensilios',
       precio: 17000,
       emoji: '🔪'
@@ -533,20 +533,20 @@ export const productsData = {
     },
     {
       sku: 'JAC01-44',
-      nombre: 'Juego de cucharas bicolor negro-beige – 6 piezas',
-      descripcion: 'Cucharas decorativas con mango bicolor negro y beige.',
+      nombre: 'Juego de cuchillos bicolor negro-beige – 6 piezas',
+      descripcion: 'Cuchillos decorativos con mango bicolor negro y beige.',
       material: 'Acero inox / Plástico – 20.5 cm',
       categoria: 'Cocina – Cubiertos',
-      precio: 10500,
-      emoji: '🥄'
+      precio: 14900,
+      emoji: '🔪'
     },
     {
       sku: 'JAC01-45',
-      nombre: 'Set de cucharas plateadas – mango negro – 6 piezas',
-      descripcion: 'Cucharas con mango negro y acabado metálico brillante.',
+      nombre: 'Set de cucharas plateadas – colores variados – 6 piezas',
+      descripcion: 'Cucharas con mango en colores variados y acabado metálico brillante.',
       material: 'Acero inox / Plástico – 17 cm',
       categoria: 'Cocina – Cubiertos',
-      precio: 10500,
+      precio: 15600,
       emoji: '🍴'
     },
     {
@@ -588,21 +588,21 @@ export const productsData = {
     // Jarras y termos
     {
       sku: 'JAC01-50',
-      nombre: 'Tabla para picar y servir con diseño mármol negro-dorado',
-      descripcion: 'Tabla rectangular con diseño tipo mármol negro y vetas doradas.',
-      material: 'Plástico PP / Antideslizante – 28 × 19 cm',
+      nombre: 'Tabla para picar set de 3 piezas en 6 colores variados',
+      descripcion: 'Set de 3 tablas rectangulares en 6 colores variados. Medidas: 36×23×1.0CM y 30×20×1.0CM.',
+      material: 'Plástico PP / Antideslizante – 36×23×1.0CM / 30×20×1.0CM',
       categoria: 'Cocina – Utensilios',
-      precio: 17500,
+      precio: 32100,
       emoji: '🍽️'
     },
     {
       sku: 'JAC01-51',
-      nombre: 'Tapete antideslizante para lavaplatos o cocina – naranja',
-      descripcion: 'Tapete redondo de silicona resistente al calor, ideal para escurrir vajilla.',
-      material: 'Silicona – Ø 24 cm',
+      nombre: 'Set de cuatro coladores plásticos',
+      descripcion: 'Set de 4 coladores de diferentes tamaños, ideales para cocina.',
+      material: 'Plástico PP',
       categoria: 'Cocina – Accesorios',
-      precio: 9000,
-      emoji: '🟠'
+      precio: 30500,
+      emoji: '🩣'
     },
     {
       sku: 'JAC01-53',
@@ -615,12 +615,12 @@ export const productsData = {
     },
     {
       sku: 'JAC01-54',
-      nombre: 'Jarra decorativa color ámbar con relieve – 1.7 L',
-      descripcion: 'Jarra de vidrio con diseño vintage y relieve floral, color ámbar claro.',
-      material: 'Vidrio – 1.7 L – 8 × 25 cm',
+      nombre: 'Set de 5 piezas jarra con vasos colores variados',
+      descripcion: 'Juego de 5 piezas con jarra y vasos. Medidas: 24×9.5CM y 8×9.5CM. Colores variados.',
+      material: 'Vidrio – 24×9.5CM / 8×9.5CM',
       categoria: 'Cocina – Vajilla',
-      precio: 19000,
-      emoji: '🏺'
+      precio: 45000,
+      emoji: '🏵️'
     },
     {
       sku: 'JAC01-55',
@@ -725,18 +725,18 @@ export const productsData = {
     },
     {
       sku: 'JAC01-120',
-      nombre: 'Set 3 especieros cerámicos blancos con bandeja de bambú',
-      descripcion: 'Tres especieros de cerámica blanca con tapa y cucharita de bambú.',
-      material: 'Cerámica + bambú – 7 × 8 cm',
+      nombre: 'Set 3 especieros cerámicos blancos',
+      descripcion: 'Tres especieros de cerámica blanca con tapa.',
+      material: 'Cerámica – 7 × 8 cm',
       categoria: 'Cocina – Organización',
       precio: 34500,
       emoji: '🧂'
     },
     {
       sku: 'JAC01-121',
-      nombre: 'Set 3 especieros cerámicos verdes con bandeja de bambú',
-      descripcion: 'Conjunto de 3 especieros verdes con tapas de bambú y cucharitas.',
-      material: 'Cerámica + bambú – 8 × 7.5 cm',
+      nombre: 'Set 3 especieros cerámicos verdes',
+      descripcion: 'Conjunto de 3 especieros verdes con tapas.',
+      material: 'Cerámica – 8 × 7.5 cm',
       categoria: 'Cocina – Organización',
       precio: 36500,
       emoji: '🧂'
@@ -752,8 +752,8 @@ export const productsData = {
     },
     {
       sku: 'JAC01-75',
-      nombre: 'Individual de mesa cuadrado dorado – 38×38 cm (set × 12)',
-      descripcion: 'Individuales elegantes con acabado metálico. Resistentes y decorativos.',
+      nombre: 'Individual de mesa redondo dorado – 38×38 cm (set × 12)',
+      descripcion: 'Individuales elegantes redondos con acabado metálico. Resistentes y decorativos.',
       material: 'PVC – 38 × 38 cm',
       categoria: 'Cocina – Decoración',
       precio: 4500,
@@ -771,12 +771,13 @@ export const productsData = {
     },
     {
       sku: 'JAC01-96',
-      nombre: 'Freidora de aire RAF 5.5 L – negro dorado',
-      descripcion: 'Air Fryer RAF 5.5 L con panel digital táctil y cesta antiadherente.',
-      material: 'Plástico + acero – 5.5 L – 1000 W',
+      nombre: 'Freidora de aire RAF 5 L – panel análogo ref 5232b',
+      descripcion: 'Air Fryer RAF 5 L con panel análogo de perillas y cesta antiadherente. 1500 W.',
+      material: 'Plástico + acero – 5 L – 1500 W',
       categoria: 'Cocina – Electrodomésticos',
-      precio: 405000,
-      emoji: '🍟'
+      precio: 217000,
+      emoji: '🍟',
+      active: false
     },
     {
       sku: 'JAC01-97',
@@ -784,17 +785,17 @@ export const productsData = {
       descripcion: 'Licuadora RAF con vaso de vidrio grueso, motor potente y función pulso.',
       material: 'Vidrio + acero inoxidable – 1.5 L',
       categoria: 'Cocina – Electrodomésticos',
-      precio: 91000,
+      precio: 229000,
       emoji: '🥤'
     },
     {
       sku: 'JAC01-104',
-      nombre: 'Batidor eléctrico portátil recargable USB',
-      descripcion: 'Mini batidor eléctrico para café o proteína, recargable por USB.',
-      material: 'Plástico + metal – 11 × 7 cm',
-      categoria: 'Cocina – Electrodomésticos',
-      precio: 14000,
-      emoji: '☕'
+      nombre: 'Dispensador de agua con medidas 13.5×7.4 cm – dos colores',
+      descripcion: 'Dispensador de agua compacto disponible en dos colores.',
+      material: 'Plástico – 13.5×7.4 cm',
+      categoria: 'Cocina – Accesorios',
+      precio: 25900,
+      emoji: '💧'
     },
     {
       sku: 'JAC01-105',
@@ -812,7 +813,8 @@ export const productsData = {
       material: 'ABS + cerámica',
       categoria: 'Cocina – Accesorios',
       precio: 38000,
-      emoji: '💧'
+      emoji: '💧',
+      active: false
     },
     {
       sku: 'JAC01-108',
@@ -821,15 +823,16 @@ export const productsData = {
       material: 'ABS transparente + cerámica',
       categoria: 'Cocina – Accesorios',
       precio: 40000,
-      emoji: '🚰'
+      emoji: '🚰',
+      active: false
     },
     {
       sku: 'JAC01-65',
-      nombre: 'Termo metálico deportivo – 420 ml',
-      descripcion: 'Botella térmica de acero inoxidable con tapa roscada.',
-      material: 'Acero inoxidable – 420 ml – 8 × 19.5 cm',
+      nombre: 'Termo metálico deportivo – 1.9L',
+      descripcion: 'Botella térmica de acero inoxidable con tapa roscada. 1.9L y 37×13.5CM.',
+      material: 'Acero inoxidable – 1.9L – 37×13.5 cm',
       categoria: 'Cocina – Termos',
-      precio: 66000,
+      precio: 82500,
       emoji: '🥤'
     }
   ],
@@ -847,29 +850,29 @@ export const productsData = {
     },
     {
       sku: 'JAC01-28',
-      nombre: 'Dispensador de jabón cerámico beige con dosificador dorado – 300 ml',
-      descripcion: 'Dosificador decorativo en cerámica color beige con acabado brillante.',
+      nombre: 'Dispensador de jabón cerámico colores variados con dosificador dorado – 300 ml',
+      descripcion: 'Dosificador decorativo en cerámica en tres colores variados con acabado brillante.',
       material: 'Cerámica / Metal – 300 ml',
       categoria: 'Baño – Accesorios',
-      precio: 18900,
+      precio: 28900,
       emoji: '🧼'
     },
     {
       sku: 'JAC01-29',
-      nombre: 'Dispensador de jabón gris con tapa de madera clara – 280 ml',
-      descripcion: 'Elegante dispensador gris texturizado con tapa tipo bambú.',
+      nombre: 'Dispensador de jabón colores variados con tapa de madera clara – 280 ml',
+      descripcion: 'Elegante dispensador en tres colores variados con tapa tipo bambú.',
       material: 'Cerámica / Metal – 280 ml',
       categoria: 'Baño – Accesorios',
-      precio: 15000,
+      precio: 21800,
       emoji: '🧼'
     },
     {
       sku: 'JAC01-30',
-      nombre: 'Dispensador de jabón gris oscuro con tapa de bambú – 280 ml',
-      descripcion: 'Variante más oscura con bomba metálica plateada.',
+      nombre: 'Dispensador de jabón colores variados con tapa de bambú – 280 ml',
+      descripcion: 'Variante en colores variados con bomba metálica plateada.',
       material: 'Cerámica / Metal – 280 ml',
       categoria: 'Baño – Accesorios',
-      precio: 15500,
+      precio: 25400,
       emoji: '🧼'
     },
     {
@@ -883,11 +886,11 @@ export const productsData = {
     },
     {
       sku: 'JAC01-32',
-      nombre: 'Dispensador de jabón cerámico blanco con detalles dorados – 300 ml',
-      descripcion: 'Dosificador blanco elegante con líneas doradas y bomba metálica.',
+      nombre: 'Dispensador de jabón cerámico colores variados con detalles dorados – 300 ml',
+      descripcion: 'Dosificador elegante en tres colores variados con líneas doradas y bomba metálica.',
       material: 'Cerámica / Metal – 300 ml',
       categoria: 'Baño – Accesorios',
-      precio: 18500,
+      precio: 28900,
       emoji: '✨'
     },
     {
@@ -910,39 +913,39 @@ export const productsData = {
     },
     {
       sku: 'JAC01-58',
-      nombre: 'Cepillo sanitario con base cuadrada – color rosa',
-      descripcion: 'Cepillo de baño con cerdas duraderas y base estable color rosado.',
-      material: 'Plástico PP – 5.8 × 37 cm',
+      nombre: 'Cepillo sanitario colores variados – 58×12.5×12CM',
+      descripcion: 'Cepillo de baño con cerdas duraderas y base estable en tres colores variados.',
+      material: 'Plástico PP – 58×12.5×12 cm',
       categoria: 'Baño – Limpieza',
-      precio: 17000,
+      precio: 25900,
       emoji: '🚽'
     },
     {
       sku: 'JAC01-59',
-      nombre: 'Cepillo sanitario color verde oliva – base redonda',
-      descripcion: 'Escobilla de baño con mango ergonómico y base redonda.',
-      material: 'Plástico PP – 6.8 × 41 cm',
+      nombre: 'Cepillo sanitario colores variados – 48.5×13.4CM',
+      descripcion: 'Escobilla de baño con mango ergonómico y base redonda en colores variados.',
+      material: 'Plástico PP – 48.5×13.4 cm',
       categoria: 'Baño – Limpieza',
       precio: 18000,
       emoji: '🚽'
     },
     {
       sku: 'JAC01-60',
-      nombre: 'Cepillo sanitario color beige – base redonda',
-      descripcion: 'Cepillo para baño color beige con mango largo y base firme.',
-      material: 'Plástico PP – 6.8 × 41 cm',
+      nombre: 'Cepillo sanitario colores variados – 54×12CM',
+      descripcion: 'Cepillo para baño en colores variados con mango largo y base firme.',
+      material: 'Plástico PP – 54×12 cm',
       categoria: 'Baño – Limpieza',
-      precio: 12000,
+      precio: 26700,
       emoji: '🧹'
     },
     {
       sku: 'JAC01-62',
-      nombre: 'Dispensador de jabón portátil con tapa verde – 250 ml',
-      descripcion: 'Contenedor compacto para jabón líquido o champú, ideal para baño o viaje.',
-      material: 'Plástico PP – 250 ml – 21 × 12.5 × 8 cm',
-      categoria: 'Baño – Accesorios',
-      precio: 23000,
-      emoji: '🧴'
+      nombre: 'Caja para almuerzo en dos colores – 21×12.5×8CM',
+      descripcion: 'Contenedor para almuerzo con tapa hermética, disponible en dos colores.',
+      material: 'Plástico PP – 21×12.5×8 cm',
+      categoria: 'Cocina – Almuerzo',
+      precio: 43700,
+      emoji: '🍱'
     },
     // Cortinas y tapetes de baño
     {
@@ -969,7 +972,7 @@ export const productsData = {
       descripcion: 'Alfombra de baño con base antideslizante y textura suave.',
       material: 'PVC – 74 × 44.5 cm',
       categoria: 'Baño – Seguridad',
-      precio: 14500,
+      precio: 18500,
       emoji: '🛁'
     },
     {
@@ -978,13 +981,13 @@ export const productsData = {
       descripcion: 'Alfombra para baño de secado rápido, ideal para absorber humedad.',
       material: 'PVC – 38 × 58 cm',
       categoria: 'Baño – Seguridad',
-      precio: 9000,
+      precio: 10900,
       emoji: '🛁'
     },
     {
       sku: 'JAC01-72',
-      nombre: 'Tapete antideslizante de baño azul – 34×68 cm',
-      descripcion: 'Tapete con textura de burbujas, ideal para bañera o ducha.',
+      nombre: 'Tapete antideslizante de baño blanco – 34×68 cm',
+      descripcion: 'Tapete blanco con textura de burbujas, ideal para bañera o ducha.',
       material: 'PVC – 34 × 68 cm',
       categoria: 'Baño – Seguridad',
       precio: 14000,
@@ -992,11 +995,11 @@ export const productsData = {
     },
     {
       sku: 'JAC01-73',
-      nombre: 'Tapete antideslizante blanco con textura circular – 37×67 cm',
-      descripcion: 'Alfombra antideslizante con diseño moderno. Lavable y duradero.',
+      nombre: 'Tapete antideslizante azul con textura circular – 37×67 cm',
+      descripcion: 'Alfombra azul antideslizante con diseño moderno. Lavable y duradero.',
       material: 'PVC – 37 × 67 cm',
       categoria: 'Baño – Seguridad',
-      precio: 11000,
+      precio: 13000,
       emoji: '🛁'
     }
   ],
@@ -1004,38 +1007,38 @@ export const productsData = {
   limpieza: [
     {
       sku: 'JAC01-34',
-      nombre: 'Paños de microfibra multicolor – Set 5 unidades 30×30 cm',
-      descripcion: 'Paños suaves y absorbentes de microfibra con colores surtidos.',
-      material: 'Microfibra – 30×30 cm',
+      nombre: 'Paños de poliéster multicolor – Set 5 unidades 30×30 cm',
+      descripcion: 'Paños suaves y absorbentes de poliéster con colores surtidos.',
+      material: 'Poliéster – 30×30 cm',
       categoria: 'Limpieza – Hogar',
-      precio: 8500,
-      emoji: '🧽'
+      precio: 9900,
+      emoji: '🧻'
     },
     {
       sku: 'JAC01-35',
-      nombre: 'Paños de microfibra neutros – Set 5 unidades 30×30 cm',
-      descripcion: 'Paños beige y marrones de microfibra gruesa con alta absorción.',
-      material: 'Microfibra – 30×30 cm',
+      nombre: 'Paños de poliéster neutros – Set 5 unidades 30×30 cm',
+      descripcion: 'Paños beige y marrones de poliéster grueso con alta absorción.',
+      material: 'Poliéster – 30×30 cm',
       categoria: 'Limpieza – Hogar',
-      precio: 7500,
-      emoji: '🧽'
+      precio: 13990,
+      emoji: '🧻'
     },
     {
       sku: 'JAC01-36',
-      nombre: 'Set 3 paños de cocina microfibra – 25×25 cm',
-      descripcion: 'Paños absorbentes de microfibra para limpieza de cocina o baño.',
-      material: 'Microfibra – 25 × 25 cm',
+      nombre: 'Set 3 paños de cocina poliéster – 25×25 cm',
+      descripcion: 'Paños absorbentes de poliéster para limpieza de cocina o baño.',
+      material: 'Poliéster – 25 × 25 cm',
       categoria: 'Limpieza – Cocina',
       precio: 6500,
-      emoji: '🧽'
+      emoji: '🧻'
     },
     {
       sku: 'JAC01-46',
-      nombre: 'Recogedor con escobilla compacto – color rosado',
-      descripcion: 'Mini recogedor de plástico con cepillo de limpieza.',
-      material: 'Plástico PP – 28 × 22 cm',
+      nombre: 'Recogedor de cinco piezas en 3 colores variados – 40×16.5 cm',
+      descripcion: 'Set de recogedor con cepillo de 5 piezas en 3 colores variados.',
+      material: 'Plástico PP – 40 × 16.5 cm',
       categoria: 'Limpieza – Hogar',
-      precio: 11000,
+      precio: 30700,
       emoji: '🧹'
     },
     {
@@ -1044,7 +1047,7 @@ export const productsData = {
       descripcion: 'Set de limpieza 2 en 1 que incluye cepillo largo y recogedor.',
       material: 'Plástico PP – 66 × 28 × 14 cm',
       categoria: 'Limpieza – Hogar',
-      precio: 22000,
+      precio: 97800,
       emoji: '🧹'
     },
     {
@@ -1070,56 +1073,56 @@ export const productsData = {
     },
     {
       sku: 'JAC01-48',
-      nombre: 'Gancho doble de plástico color beige – Set 3 unidades',
-      descripcion: 'Ganchos de plástico resistente con doble cuelgue.',
-      material: 'Plástico PP – Set 3 pzas',
+      nombre: 'Gancho doble de plástico colores variados – Set 5 unidades',
+      descripcion: 'Ganchos de plástico resistente con doble cuelgue en colores variados.',
+      material: 'Plástico PP – Set 5 pzas',
       categoria: 'Organización – Hogar',
-      precio: 6500,
+      precio: 20600,
       emoji: '🪝'
     },
     {
       sku: 'JAC01-49',
-      nombre: 'Ganchos de plástico lila – Set 6 unidades',
+      nombre: 'Ganchos de plástico lila – Set 10 unidades',
       descripcion: 'Ganchos ligeros de plástico con gancho giratorio.',
-      material: 'Plástico PP – Set 6 pzas',
+      material: 'Plástico PP – Set 10 pzas',
       categoria: 'Organización – Hogar',
-      precio: 9900,
+      precio: 25100,
       emoji: '👕'
     },
     {
       sku: 'JAC01-56',
-      nombre: 'Caja organizadora con diseño infantil – 14×14 cm',
-      descripcion: 'Contenedor cuadrado con tapa abatible y diseño decorativo.',
-      material: 'Plástico PP – 14 × 14 cm',
-      categoria: 'Organización – Infantil',
+      nombre: 'Molde para helado de 4 piezas',
+      descripcion: 'Molde para hacer helados caseros de 4 piezas.',
+      material: 'Plástico PP',
+      categoria: 'Cocina – Utensilios',
       precio: 17500,
-      emoji: '🎨'
+      emoji: '🧁'
     },
     {
       sku: 'JAC01-63',
-      nombre: 'Caja organizadora verde oliva con tapa abatible – 19×19×7 cm',
-      descripcion: 'Contenedor cuadrado compacto color verde oliva.',
-      material: 'Plástico PP – 19 × 19 × 7 cm',
+      nombre: 'Caja organizadora en dos colores con tapa abatible – 17×17×7 cm',
+      descripcion: 'Contenedor cuadrado compacto en dos colores.',
+      material: 'Plástico PP – 17×17×7 cm',
       categoria: 'Organización – Hogar',
-      precio: 20500,
+      precio: 38000,
       emoji: '📦'
     },
     {
       sku: 'JAC01-64',
-      nombre: 'Caja organizadora azul rectangular – 28×14×9 cm',
-      descripcion: 'Caja plástica con tapa hermética color azul marino.',
-      material: 'Plástico PP – 28 × 14 × 9 cm',
+      nombre: 'Caja organizadora tres colores rectangular – 23×14×9 cm',
+      descripcion: 'Caja plástica con tapa hermética en tres colores.',
+      material: 'Plástico PP – 23×14×9 cm',
       categoria: 'Organización – Hogar',
-      precio: 20500,
+      precio: 39000,
       emoji: '🔧'
     },
     {
       sku: 'JAC01-86',
-      nombre: 'Carrito de mercado plegable con bolsa azul – 40 L',
-      descripcion: 'Carrito plegable con estructura de metal y bolsa de tela resistente.',
-      material: 'Metal + poliéster – 32 × 40 × 96 cm',
+      nombre: 'Carrito de mercado plegable en dos colores – 40 L',
+      descripcion: 'Carrito plegable con estructura de metal y bolsa de tela resistente en dos colores.',
+      material: 'Metal + poliéster – 94×33×19 cm',
       categoria: 'Organización – Compras',
-      precio: 38000,
+      precio: 79900,
       emoji: '🛒'
     },
     {
@@ -1133,8 +1136,8 @@ export const productsData = {
     },
     {
       sku: 'JAC01-101',
-      nombre: 'Soporte ajustable para mueble',
-      descripcion: 'Base ajustable plegable para mueble con ajuste de altura y ángulo.',
+      nombre: 'Soporte ajustable para neveras, lavadoras, etc.',
+      descripcion: 'Base ajustable plegable para electrodomésticos pesados con ajuste de altura y ángulo.',
       material: 'Aluminio – 38.5×4.5 cm',
       categoria: 'Organización – Hogar',
       precio: 23300,
@@ -1149,23 +1152,23 @@ export const productsData = {
       descripcion: 'Lámpara de mesa flexible con luz LED blanca y base decorativa de Stitch.',
       material: 'Plástico + LED – 28 × 8 cm',
       categoria: 'Decoración – Iluminación',
-      precio: 17000,
+      precio: 29900,
       emoji: '💡'
     },
     {
       sku: 'JAC01-156',
-      nombre: 'Lámpara decorativa de mesa redonda con efecto 3D – 25 cm',
+      nombre: 'Lámpara decorativa de mesa redonda con efecto 3D – 20 cm',
       descripcion: 'Lámpara LED decorativa en forma redonda con efecto 3D.',
-      material: 'Acrílico + ABS – 25 cm',
+      material: 'Acrílico + ABS – 20 cm',
       categoria: 'Decoración – Iluminación',
       precio: 79000,
       emoji: '🌙'
     },
     {
       sku: 'JAC01-157',
-      nombre: 'Lámpara decorativa de mesa en forma de corazón con efecto 3D – 25 cm',
+      nombre: 'Lámpara decorativa de mesa en forma de corazón con efecto 3D – 20 cm',
       descripcion: 'Lámpara LED efecto 3D en forma de corazón con base dorada.',
-      material: 'Acrílico + ABS – 25 cm',
+      material: 'Acrílico + ABS – 20 cm',
       categoria: 'Decoración – Iluminación',
       precio: 79000,
       emoji: '❤️'
@@ -1176,7 +1179,7 @@ export const productsData = {
       descripcion: 'Lámpara LED circular con base metálica. Diseño moderno.',
       material: 'Acrílico + ABS – 21 cm',
       categoria: 'Decoración – Iluminación',
-      precio: 23000,
+      precio: 55000,
       emoji: '💡'
     },
     {
@@ -1185,7 +1188,7 @@ export const productsData = {
       descripcion: 'Lámpara LED de 24 cm con base estable, luz cálida.',
       material: 'Acrílico + ABS – 24 cm',
       categoria: 'Decoración – Iluminación',
-      precio: 22000,
+      precio: 52000,
       emoji: '🔆'
     },
     {
@@ -1194,7 +1197,7 @@ export const productsData = {
       descripcion: 'Lámpara LED efecto 3D de 24 cm, luz cálida ajustable.',
       material: 'Acrílico + ABS – 24 cm',
       categoria: 'Decoración – Iluminación',
-      precio: 23500,
+      precio: 53000,
       emoji: '✨'
     },
     {
@@ -1239,14 +1242,14 @@ export const productsData = {
       descripcion: 'Pack de 6 velas rosadas tipo tea light, perfume floral ligero.',
       material: 'Parafina – 5.5 cm',
       categoria: 'Decoración – Aromaterapia',
-      precio: 2200,
+      precio: 13100,
       emoji: '🌸'
     },
     {
       sku: 'JAC01-118',
       nombre: 'Set 7 velas estrellas doradas – decoración navideña',
       descripcion: 'Velas doradas en forma de estrella ideal para centros de mesa.',
-      material: 'Parafina – 5.9 × 2 cm',
+      material: 'Parafina – 5.7 × 2 cm',
       categoria: 'Decoración – Navidad',
       precio: 12000,
       emoji: '⭐'
@@ -1260,15 +1263,7 @@ export const productsData = {
       precio: 8500,
       emoji: '❤️'
     },
-    {
-      sku: 'JAC01-167',
-      nombre: 'Tapete decorativo floral – 27×82 cm (3 unidades)',
-      descripcion: 'Tapetes decorativos con diseño floral, ideales para cocina o pasillo.',
-      material: 'PVC – 27 × 82 cm',
-      categoria: 'Decoración – Hogar',
-      precio: 36000,
-      emoji: '🌸'
-    }
+
   ],
 
   tecnología: [
@@ -1276,43 +1271,43 @@ export const productsData = {
       sku: 'JAC01-76',
       nombre: 'Máquina cortapelo recargable T9 Gold – Edición Barber Pro',
       descripcion: 'Cortadora T9 de metal dorado, motor silencioso.',
-      material: 'Metal + ABS – 16.8 cm',
+      material: 'Metal + ABS – 14.5 cm',
       categoria: 'Tecnología – Cuidado Personal',
       precio: 90000,
       emoji: '💈'
     },
     {
       sku: 'JAC01-77',
-      nombre: 'Mini ventilador USB de mesa – color azul',
-      descripcion: 'Ventilador compacto con base de metal y alimentación USB.',
-      material: 'Metal + plástico – 13 × 6.5 cm',
+      nombre: 'Mini ventilador USB de mesa – colores variados',
+      descripcion: 'Ventilador compacto con base de metal y alimentación USB en colores variados.',
+      material: 'Metal + plástico – 12.8×6.5 cm',
       categoria: 'Tecnología – Ventiladores',
-      precio: 19500,
+      precio: 30000,
       emoji: '💨'
     },
     {
       sku: 'JAC01-78',
-      nombre: 'Mini ventilador USB de mesa – color rosa',
-      descripcion: 'Ventilador silencioso de plástico rosado con USB.',
-      material: 'Plástico ABS – 13 × 12.8 cm',
+      nombre: 'Mini ventilador USB de mesa – colores variados',
+      descripcion: 'Ventilador silencioso de plástico en colores variados con USB.',
+      material: 'Plástico ABS – 13×12.5 cm',
       categoria: 'Tecnología – Ventiladores',
-      precio: 21500,
+      precio: 37900,
       emoji: '💨'
     },
     {
       sku: 'JAC01-79',
-      nombre: 'Mini ventilador con base color verde oliva',
-      descripcion: 'Ventilador recargable compacto con base plana.',
-      material: 'Plástico ABS – 10 × 11.5 cm',
+      nombre: 'Mini ventilador colores variados con base',
+      descripcion: 'Ventilador recargable compacto con base plana en colores variados.',
+      material: 'Plástico ABS – 14×10.5 cm',
       categoria: 'Tecnología – Ventiladores',
-      precio: 19500,
+      precio: 35000,
       emoji: '🍃'
     },
     {
       sku: 'JAC01-80',
-      nombre: 'Ventilador de clip recargable blanco – giro ajustable',
-      descripcion: 'Ventilador portátil con clip. Rotación 360°.',
-      material: 'Plástico ABS – 8.3 cm',
+      nombre: 'Ventilador de clip recargable blanco',
+      descripcion: 'Ventilador portátil con clip. Medidas 16.5×32 cm.',
+      material: 'Plástico ABS – 16.5×32 cm',
       categoria: 'Tecnología – Ventiladores',
       precio: 34500,
       emoji: '💨'
@@ -1321,37 +1316,37 @@ export const productsData = {
       sku: 'JAC01-87',
       nombre: 'Secador de cabello profesional Mozh 1875 W – negro',
       descripcion: 'Secador con motor potente de 1875 W.',
-      material: 'Plástico + metal – 220 V / 50-60 Hz',
+      material: 'Plástico + metal – 110 V / 50-60 Hz',
       categoria: 'Tecnología – Belleza',
-      precio: 69000,
+      precio: 130000,
       emoji: '💨'
     },
     {
       sku: 'JAC01-88',
       nombre: 'Secador de cabello VGR V-508 – colores surtidos',
-      descripcion: 'Secador compacto de 2000 W con 2 velocidades.',
-      material: 'Plástico + metal – 2000 W',
+      descripcion: 'Secador compacto de 2000 W con 2 velocidades. 110V.',
+      material: 'Plástico + metal – 2000 W – 110 V',
       categoria: 'Tecnología – Belleza',
-      precio: 61500,
+      precio: 72000,
       emoji: '💨'
     },
     {
       sku: 'JAC01-89',
       nombre: 'Plancha alisadora Kemei KM-329 – 3 colores',
-      descripcion: 'Plancha para el cabello con placas cerámicas.',
-      material: 'Cerámica + plástico',
+      descripcion: 'Plancha para el cabello con placas cerámicas. 110V.',
+      material: 'Cerámica + plástico – 110 V',
       categoria: 'Tecnología – Belleza',
-      precio: 32000,
+      precio: 89900,
       emoji: '💇'
     },
     {
       sku: 'JAC01-95',
-      nombre: 'Secador de cabello Super Power 3200 – profesional',
-      descripcion: 'Secador 3200 W con tecnología iónica.',
-      material: 'Plástico + metal – 220 V',
-      categoria: 'Tecnología – Belleza',
-      precio: 68000,
-      emoji: '💨'
+      nombre: 'Plancha para ropa profesional – 110 V',
+      descripcion: 'Plancha para la ropa de alta potencia. 110V.',
+      material: 'Plástico + metal – 110 V',
+      categoria: 'Tecnología – Hogar',
+      precio: 169000,
+      emoji: '👔'
     }
   ],
 
@@ -1367,27 +1362,27 @@ export const productsData = {
     },
     {
       sku: 'JAC01-110',
-      nombre: 'Bolsa térmica de agua con funda oso marrón – 19×28 cm',
-      descripcion: 'Bolsa de agua caliente con funda de felpa marrón.',
-      material: 'PVC + felpa – 19 × 28 cm',
+      nombre: 'Bolsa térmica de agua colores variados – 19×24.5 cm',
+      descripcion: 'Bolsa de agua caliente con funda de felpa en colores variados.',
+      material: 'PVC + felpa – 19×24.5 cm',
       categoria: 'Bienestar – Salud',
       precio: 15000,
       emoji: '🧸'
     },
     {
       sku: 'JAC01-111',
-      nombre: 'Bolsa térmica de agua con funda conejo – 19×28 cm',
-      descripcion: 'Bolsa de agua caliente con funda de felpa crema.',
-      material: 'PVC + felpa – 19 × 28 cm',
+      nombre: 'Bolsa térmica de agua colores variados – 19×24.5 cm',
+      descripcion: 'Bolsa de agua caliente con funda de felpa en colores variados.',
+      material: 'PVC + felpa – 19×24.5 cm',
       categoria: 'Bienestar – Salud',
       precio: 15000,
       emoji: '🐰'
     },
     {
       sku: 'JAC01-112',
-      nombre: 'Bolsa térmica de agua con funda rosa oso – 19×28 cm',
-      descripcion: 'Versión rosada de bolsa de agua caliente con diseño de oso.',
-      material: 'PVC + felpa – 19 × 28 cm',
+      nombre: 'Bolsa térmica de agua colores variados – 19×24.5 cm',
+      descripcion: 'Bolsa de agua caliente con funda de felpa en colores variados.',
+      material: 'PVC + felpa – 19×24.5 cm',
       categoria: 'Bienestar – Salud',
       precio: 15000,
       emoji: '🧸'
