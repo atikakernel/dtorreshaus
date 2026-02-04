@@ -4,15 +4,45 @@ Guía paso a paso para desplegar tu ecommerce en producción.
 
 ---
 
+## 📋 Información del Servidor (Actualizado Feb 2026)
+
+| Recurso | Valor |
+|---------|-------|
+| **EC2 IP** | `18.191.192.164` |
+| **SSH Key** | `./dtorresfhaus-key-backup.pem` |
+| **Repo Git** | `https://github.com/atikakernel/dtorreshaus.git` |
+| **Branch** | `main` |
+| **Ruta código EC2** | `/var/www/dtorreshaus/dtorreshaus` |
+| **Ruta frontend EC2** | `/var/www/dtorreshaus/frontend` |
+| **Ruta backend EC2** | `/var/www/dtorreshaus/backend` |
+
+---
+
+## 🚀 Deployment Rápido (Frontend)
+
+Desde la carpeta del proyecto local:
+
+```bash
+# 1. Commit y push cambios
+git add -A
+git commit -m "feat: descripción de cambios"
+git push origin main
+
+# 2. SSH al EC2, pull y build
+ssh -i "./dtorresfhaus-key-backup.pem" ubuntu@18.191.192.164 "cd /var/www/dtorreshaus/dtorreshaus && git pull origin main && npm run build && sudo cp -r dist/* /var/www/dtorreshaus/frontend/ && sudo chown -R www-data:www-data /var/www/dtorreshaus/frontend"
+```
+
+---
+
 ## 📋 Pre-requisitos
 
 ✅ Instancia EC2 con Ubuntu
 ✅ Node.js 18+ instalado en EC2
 ✅ PM2 instalado globalmente (`sudo npm i -g pm2`)
 ✅ Dominios apuntando a tu IP:
-  - `dtorreshaus.com` → TU_IP_EC2
-  - `www.dtorreshaus.com` → TU_IP_EC2
-  - `api.dtorreshaus.com` → TU_IP_EC2
+  - `dtorreshaus.com` → 18.191.192.164
+  - `www.dtorreshaus.com` → 18.191.192.164
+  - `api.dtorreshaus.com` → 18.191.192.164
 
 ---
 
@@ -23,9 +53,9 @@ Ve a tu proveedor de dominios y crea estos registros A:
 ```
 Tipo    Nombre    Valor
 ----    ------    -----
-A       @         18.224.137.24
-A       www       18.224.137.24
-A       api       18.224.137.24
+A       @         18.191.192.164
+A       www       18.191.192.164
+A       api       18.191.192.164
 ```
 
 **⏱️ Espera 5-10 minutos** para propagación de DNS.
@@ -38,36 +68,16 @@ nslookup api.dtorreshaus.com
 
 ---
 
-## 🎯 Paso 2: Setup de Nginx
-
-### 2.1 Conectar a EC2
+## 🎯 Paso 2: Conectar a EC2
 
 ```bash
-ssh -i ~/.ssh/tu-llave-ec2.pem ubuntu@18.224.137.24
+ssh -i "./dtorresfhaus-key-backup.pem" ubuntu@18.191.192.164
 ```
 
-### 2.2 Clonar repositorio (si no lo has hecho)
-
-```bash
-cd /var/www/dtorreshaus
-git clone https://github.com/TU_USUARIO/dtorreshaus.git dtorreshaus
-```
-
-### 2.3 Ejecutar script de setup
-
-```bash
-cd /var/www/dtorreshaus/dtorreshaus
-chmod +x setup-actual.sh
-sudo ./setup-actual.sh
-```
-
-Este script:
-- Instala Nginx
-- Configura virtual hosts para ambos dominios
-- Crea directorios necesarios
-- Reinicia Nginx
+El repositorio ya está clonado en: `/var/www/dtorreshaus/dtorreshaus`
 
 ---
+
 
 ## 🎯 Paso 3: Configurar Backend
 
