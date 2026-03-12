@@ -1,16 +1,27 @@
 #!/bin/bash
 set -e
 
-echo "Deploying to EC2..."
+# Detectar si estamos corriendo en la EC2 o localmente
+if [ "$USER" == "ubuntu" ]; then
+    IS_EC2=true
+else
+    IS_EC2=false
+fi
 
-# 1. Copiar llave SSH con permisos correctos a WSL
-cp ./dtorresfhaus-key-backup.pem ~/.ssh/key.pem 2>/dev/null || true
-chmod 400 ~/.ssh/key.pem
+if [ "$IS_EC2" = false ]; then
+    echo "🚀 Iniciando despliegue remoto desde local..."
+    # 1. Copiar llave SSH con permisos correctos a WSL
+    cp ./dtorresfhaus-key-backup.pem ~/.ssh/key.pem 2>/dev/null || true
+    chmod 400 ~/.ssh/key.pem
 
-# 2. Conectar a EC2 y desplega
-ssh -i ~/.ssh/key.pem -o StrictHostKeyChecking=no ubuntu@18.191.192.164 << 'EOF'
-set -e
-echo "✅ Conectado a EC2."
+    # 2. Conectar a EC2 y ejecutar este mismo script allí
+    ssh -i ~/.ssh/key.pem -o StrictHostKeyChecking=no ubuntu@18.191.192.164 "cd /var/www/dtorreshaus/dtorreshaus && bash ./run_ec2_deploy.sh"
+    echo "✅ Despliegue remoto completado."
+    exit 0
+fi
+
+# --- LOGICA QUE SOLO CORRE EN LA EC2 ---
+echo "✅ Ejecutando script internamente en EC2..."
 
 # Instalar PostgreSQL si no existe
 echo "🐘 Verificando PostgreSQL..."
@@ -37,6 +48,10 @@ git reset --hard origin/main
 cd backend
 
 # Asegurar que el .env tiene la cadena de conexión
+if [ ! -f .env ]; then
+    cp .env.example .env || touch .env
+fi
+
 if ! grep -q "DATABASE_URL" .env; then
   echo "DATABASE_URL=\"postgresql://dtorres:dtorres123@localhost:5432/dtorreshaus?schema=public\"" >> .env
 fi
@@ -56,7 +71,5 @@ echo "🔄 Reiniciando backend con PM2..."
 pm2 restart dtorreshaus-backend || pm2 start server.js --name dtorreshaus-backend
 pm2 save
 
-echo "✅ Backend desplegado con éxito!"
-EOF
+echo "✅ Proceso interno de EC2 finalizado con éxito!"
 
-echo "Deployment local script finished."

@@ -1,0 +1,40 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install Frontend Dependencies & Build
+        run: |
+          npm install
+          npm run build
+
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+          if_key_exists: replace
+
+      - name: Deploy to EC2
+        run: |
+          # 1. Ejecutar despliegue de backend y base de datos
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && sed -i \"s/\\r\$//\" run_ec2_deploy.sh && ./run_ec2_deploy.sh'"
+          
+          # 2. Desplegar frontend (usando scp)
+          scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/frontend-deploy/
+          
+          # 3. Finalizar despliegue frontend en el servidor
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && sed -i \"s/\\r\$//\" deploy-frontend.sh && ./deploy-frontend.sh'"
