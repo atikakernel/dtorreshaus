@@ -28,9 +28,10 @@ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE dtorreshaus TO dtorre
 # Ir al repositorio
 cd /var/www/dtorreshaus/dtorreshaus
 
-# Hacer un stash si hay cambios locales no deseados y pull
-git stash
-git pull origin main
+# Hacer un reset fuerte para asegurar que la rama coincida exactamente con main
+git fetch origin main
+git checkout main
+git reset --hard origin/main
 
 # Entrar al backend
 cd backend
