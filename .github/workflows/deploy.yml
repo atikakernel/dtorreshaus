@@ -30,8 +30,8 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          # 1. Ejecutar despliegue de backend y base de datos
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && sed -i \"s/\\r\$//\" run_ec2_deploy.sh && ./run_ec2_deploy.sh'"
+          # 1. Actualizar el código en el servidor y luego ejecutar despliegue
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && git fetch origin main && git reset --hard origin/main && sed -i \"s/\\r\$//\" run_ec2_deploy.sh && ./run_ec2_deploy.sh'"
           
           # 2. Desplegar frontend (usando scp)
           scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/frontend-deploy/
