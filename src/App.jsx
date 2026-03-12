@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
-import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target, Truck } from 'lucide-react'
-import { productsData, categoryConfig } from './productsData.js'
+import { ShoppingCart, Home, X, Plus, Minus, Trash2, ChefHat, Droplet, Sparkles, Package, Lightbulb, Zap, Heart, Dumbbell, Search, CreditCard, MapPin, Gift, Target, Truck, AlertCircle } from 'lucide-react'
+import { categoryConfig } from './productsData.js'
+import { useProducts } from './hooks/useProducts'
 import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
@@ -99,6 +100,9 @@ function App() {
   const [shippingCost, setShippingCost] = useState(0)
   const [loadingShipping, setLoadingShipping] = useState(false)
   const [loadingLocation, setLoadingLocation] = useState(false)
+
+  // Cargar productos usando el hook
+  const { products: productsData, loading: loadingProducts, error: errorProducts, usingFallback } = useProducts()
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
@@ -211,24 +215,48 @@ function App() {
 
   // Filtrar productos según categoría activa y búsqueda
   const getFilteredProducts = () => {
+    console.log("=== DEBUG getFilteredProducts ===")
+    console.log("productsData:", productsData)
+    console.log("activeCategory:", activeCategory)
+
+    if (!productsData) return []
+    
     let products = []
     if (activeCategory === 'all') {
-      // Solo mostrar productos de categorías activas
+      // Mostrar productos de categorías configuradas activas
       const activeCategories = Object.keys(categoryConfig)
         .filter(cat => categoryConfig[cat].active)
         .sort((a, b) => categoryConfig[a].order - categoryConfig[b].order)
 
-      products = activeCategories.flatMap(cat => productsData[cat] || [])
+      console.log("activeCategories:", activeCategories)
+      let mappedProducts = activeCategories.flatMap(cat => {
+        const catProducts = productsData[cat] || []
+        console.log(`Cat: ${cat}, Found items: ${catProducts.length}`)
+        return catProducts
+      })
+      
+      // Mostrar también productos de categorías NUEVAS (que no estén en categoryConfig)
+      const unconfiguredCats = Object.keys(productsData).filter(pCat => !categoryConfig[pCat])
+      if (unconfiguredCats.length > 0) {
+        console.log("Found unconfigured categories with products:", unconfiguredCats)
+        const newProducts = unconfiguredCats.flatMap(cat => productsData[cat] || [])
+        mappedProducts = [...mappedProducts, ...newProducts]
+      }
+
+      products = mappedProducts
+      console.log("Total mapped products before search:", products?.length)
     } else {
       products = productsData[activeCategory] || []
     }
 
     // Filtrar por búsqueda
     if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase()
       products = products.filter(product =>
-        product.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+        (product.nombre || '').toLowerCase().includes(lowerSearch) ||
+        (product.descripcion || '').toLowerCase().includes(lowerSearch) ||
+        (product.sku || '').toLowerCase().includes(lowerSearch) ||
+        (product.categoria || '').toLowerCase().includes(lowerSearch)
       )
     }
 
@@ -498,6 +526,25 @@ function App() {
               )
             })
           }
+
+          {/* Categorías dinámicas (no configuradas pero que tienen productos) */}
+          {productsData && Object.keys(productsData)
+            .filter(cat => !categoryConfig[cat])
+            .map(categoryKey => (
+               <button
+                  key={categoryKey}
+                  className={`nav-button ${activeCategory === categoryKey ? 'active' : ''}`}
+                  onClick={() => handleCategoryClick(categoryKey)}
+                >
+                  <div className="nav-button-circle">
+                    <Package size={24} />
+                  </div>
+                  <span className="nav-button-label">
+                    {categoryKey.charAt(0).toUpperCase() + categoryKey.slice(1)}
+                  </span>
+                </button>
+            ))
+          }
         </div>
       </nav>
 
@@ -538,42 +585,80 @@ function App() {
       {/* Products Section */}
       <main className="container">
         <section className="products-section" ref={productsSectionRef}>
-          <h2 className="section-title">
-            {searchTerm
-              ? `Resultados para: "${searchTerm}"`
-              : activeCategory === 'all'
-                ? 'Todos los Productos'
-                : categoryConfig[activeCategory]?.label || activeCategory
-            }
-          </h2>
-          <div className="products-grid">
-            {getFilteredProducts().map(product => (
-              <div key={product.sku} className="product-card">
-                <ProductImage
-                  sku={product.sku}
-                  emoji={product.emoji}
-                  onClick={() => openImageModal(product.sku, product.nombre)}
-                />
-                <div className="product-info">
-                  <div className="product-sku">{product.sku}</div>
-                  <h3 className="product-name">{product.nombre}</h3>
-                  <p className="product-description">{product.descripcion}</p>
-                  <div className="product-details">{product.material}</div>
-                  <span className="product-category">{product.categoria}</span>
-                  <div className="product-footer">
-                    <span className="product-price">{formatPrice(product.precio)}</span>
-                    <button
-                      className="add-to-cart"
-                      onClick={() => addToCart(product)}
-                    >
-                      <Plus size={16} />
-                      Agregar
-                    </button>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <h2 className="section-title">
+              {searchTerm
+                ? `Resultados para: "${searchTerm}"`
+                : activeCategory === 'all'
+                  ? 'Todos los Productos'
+                  : categoryConfig[activeCategory]?.label || activeCategory
+              }
+              <span style={{ fontSize: '14px', marginLeft: '10px', color: '#666' }}>
+                ({productsData ? getFilteredProducts().length : 0} encontrados)
+              </span>
+            </h2>
+            {usingFallback && (
+              <span style={{ fontSize: '12px', background: '#fee2e2', color: '#991b1b', padding: '4px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <AlertCircle size={12} />
+                Modo Offline
+              </span>
+            )}
+          </div>
+          
+          {loadingProducts ? (
+            <div style={{ textAlign: 'center', padding: '60px 0' }}>
+              <div className="spinning" style={{ display: 'inline-block', marginBottom: '15px' }}>
+                <Package size={40} color="var(--primary-color)" />
+              </div>
+              <p style={{ color: '#666' }}>Cargando catálogo...</p>
+            </div>
+          ) : errorProducts && !productsData ? (
+             <div style={{ textAlign: 'center', padding: '60px 0', background: '#fee2e2', borderRadius: '10px', color: '#991b1b' }}>
+              <AlertCircle size={40} style={{ marginBottom: '15px' }} />
+              <p>Error cargando los productos.</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                style={{ marginTop: '15px', padding: '8px 16px', background: '#991b1b', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}
+              >
+                Reintentar
+              </button>
+            </div>
+          ) : getFilteredProducts().length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 0', background: '#f8f9fa', borderRadius: '10px' }}>
+              <Search size={40} color="#ccc" style={{ marginBottom: '15px' }} />
+              <p style={{ color: '#666' }}>No se encontraron productos.</p>
+              {searchTerm && <button onClick={() => setSearchTerm('')} style={{ marginTop: '10px', padding: '8px 16px', background: 'var(--primary-color)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer' }}>Limpiar búsqueda</button>}
+            </div>
+          ) : (
+            <div className="products-grid">
+              {getFilteredProducts().map(product => (
+                <div key={product.sku} className="product-card">
+                  <ProductImage
+                    sku={product.sku}
+                    emoji={product.emoji}
+                    onClick={() => openImageModal(product.sku, product.nombre)}
+                  />
+                  <div className="product-info">
+                    <div className="product-sku">{product.sku}</div>
+                    <h3 className="product-name">{product.nombre}</h3>
+                    <p className="product-description">{product.descripcion}</p>
+                    <div className="product-details">{product.material}</div>
+                    <span className="product-category">{product.categoria}</span>
+                    <div className="product-footer">
+                      <span className="product-price">{formatPrice(product.precio)}</span>
+                      <button
+                        className="add-to-cart"
+                        onClick={() => addToCart(product)}
+                      >
+                        <Plus size={16} />
+                        Agregar
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
 

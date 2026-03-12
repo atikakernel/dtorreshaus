@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Package, CheckCircle, Truck, X, RefreshCw, Eye, DollarSign, Send } from 'lucide-react'
+import { Package, CheckCircle, Truck, X, RefreshCw, Eye, DollarSign, Send, ShoppingBag } from 'lucide-react'
+import { AdminProducts } from './AdminProducts'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -23,6 +24,7 @@ const formatDate = (dateString) => {
 }
 
 export function AdminPanel() {
+  const [activeTab, setActiveTab] = useState('orders') // 'orders' or 'products'
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState('all')
@@ -335,28 +337,72 @@ export function AdminPanel() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <h1 style={{ margin: 0, marginBottom: '10px' }}>🏠 Panel Admin - dtorreshaus</h1>
-              <p style={{ margin: 0, opacity: 0.9 }}>Gestión de Órdenes</p>
+                <p style={{ margin: 0, opacity: 0.9 }}>Sistema de Gestión Integral</p>
+              </div>
+              <button
+                onClick={handleLogout}
+                style={{
+                  padding: '10px 20px',
+                  background: 'rgba(255, 255, 255, 0.2)',
+                  border: '2px solid white',
+                  borderRadius: '8px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  fontSize: '14px'
+                }}
+              >
+                Cerrar Sesión
+              </button>
             </div>
-            <button
-              onClick={handleLogout}
-              style={{
-                padding: '10px 20px',
-                background: 'rgba(255, 255, 255, 0.2)',
-                border: '2px solid white',
-                borderRadius: '8px',
-                color: 'white',
-                cursor: 'pointer',
-                fontWeight: '600',
-                fontSize: '14px'
-              }}
-            >
-              Cerrar Sesión
-            </button>
+            
+            {/* Tabs Navigation */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button
+                onClick={() => setActiveTab('orders')}
+                style={{
+                  padding: '10px 20px',
+                  background: activeTab === 'orders' ? 'white' : 'transparent',
+                  color: activeTab === 'orders' ? '#6366f1' : 'white',
+                  border: 'none',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <Package size={18} />
+                Órdenes
+              </button>
+              <button
+                onClick={() => setActiveTab('products')}
+                style={{
+                  padding: '10px 20px',
+                  background: activeTab === 'products' ? 'white' : 'transparent',
+                  color: activeTab === 'products' ? '#ec4899' : 'white',
+                  border: 'none',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  fontWeight: '600',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  transition: 'all 0.2s'
+                }}
+              >
+                <ShoppingBag size={18} />
+                Productos
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Stats */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '20px' }}>
+          {activeTab === 'orders' ? (
+            <>
+              {/* Stats */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '20px' }}>
           <div style={{ background: 'white', padding: '20px', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
             <p style={{ margin: 0, fontSize: '14px', color: '#666' }}>Total Órdenes</p>
             <p style={{ margin: '10px 0 0 0', fontSize: '32px', fontWeight: 'bold', color: '#1e293b' }}>{stats.total}</p>
@@ -646,7 +692,11 @@ export function AdminPanel() {
             </div>
           </div>
         )}
-      </div>
+      </>
+    ) : (
+      <AdminProducts />
+    )}
+    </div>
 
       <style>{`
         .spinning {

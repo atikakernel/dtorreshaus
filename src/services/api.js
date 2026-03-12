@@ -44,7 +44,10 @@ async function fetchAPI(endpoint, options = {}) {
  */
 
 export async function getProducts() {
-  return fetchAPI('/api/products')
+  // Agregar timestamp para evitar que el navegador guarde la respuesta en caché
+  return fetchAPI(`/api/products?t=${new Date().getTime()}`, {
+    cache: 'no-store'
+  })
 }
 
 export async function getProductsByCategory(category) {

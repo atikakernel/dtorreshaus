@@ -16,8 +16,39 @@ export function useProducts() {
     async function fetchProducts() {
       try {
         setLoading(true)
-        const data = await getProducts()
-        setProducts(data)
+        const result = await getProducts()
+        console.log("API Result:", result)
+        
+        if (result && result.success && result.data) {
+          // Si el formato es un objeto ({"labubu": [], "armas": []}) 
+          if (!Array.isArray(result.data)) {
+            setProducts(result.data)
+          } else {
+            // Si es un arreglo por alguna razon, tratar de convertir a objeto
+            const grouped = result.data.reduce((acc, p) => {
+              let catKey = p.categoria ? p.categoria.split(' ')[0].toLowerCase() : 'otros'
+              if (p.categoria && p.categoria.includes('Armas')) catKey = 'armas'
+              if (!acc[catKey]) acc[catKey] = []
+              acc[catKey].push(p)
+              return acc
+            }, {})
+            setProducts(grouped)
+          }
+        } else if (Array.isArray(result)) {
+           // Fallback en caso de que sea el viejo formato de array
+           const grouped = result.reduce((acc, p) => {
+              let catKey = p.categoria ? p.categoria.split(' ')[0].toLowerCase() : 'otros'
+              if (p.categoria && p.categoria.includes('Armas')) catKey = 'armas'
+              if (!acc[catKey]) acc[catKey] = []
+              acc[catKey].push(p)
+              return acc
+            }, {})
+           setProducts(grouped)
+        } else {
+           // Algún error inesperado en API
+           console.error("API format unrecognised", result)
+           setProducts(staticProductsData)
+        }
         setUsingFallback(false)
         setError(null)
       } catch (err) {
