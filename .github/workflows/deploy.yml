@@ -33,10 +33,13 @@ jobs:
       - name: Deploy to EC2
         run: |
           # 1. Actualizar el código en el servidor y luego ejecutar despliegue
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && git fetch origin main && git reset --hard origin/main && chmod +x *.sh && sed -i \"s/\\r\$//\" run_ec2_deploy.sh && ./run_ec2_deploy.sh'"
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && git fetch origin main && git reset --hard origin/main && chmod +x *.sh && sed -i \"s/\\r\$//\" *.sh && ./run_ec2_deploy.sh'"
           
-          # 2. Desplegar frontend (usando scp)
+          # 2. Configurar GTM Server Side
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && ./setup-gtm-server.sh'"
+
+          # 3. Desplegar frontend (usando scp)
           scp -o StrictHostKeyChecking=no -r dist/* ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:/tmp/frontend-deploy/
           
-          # 3. Finalizar despliegue frontend en el servidor
-          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && chmod +x deploy-frontend.sh && sed -i \"s/\\r\$//\" deploy-frontend.sh && ./deploy-frontend.sh'"
+          # 4. Finalizar despliegue frontend en el servidor
+          ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} "bash -c 'cd /var/www/dtorreshaus/dtorreshaus && ./deploy-frontend.sh'"
