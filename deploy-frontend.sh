@@ -51,10 +51,15 @@ ssh -i "$EC2_KEY" "$EC2_USER@$EC2_HOST" << 'ENDSSH'
 # Crear directorio si no existe
 sudo mkdir -p /var/www/dtorreshaus/frontend
 
+# Rescatar productos nuevos creados por el administrador desde la EC2 antes del rm -rf
+echo "Rescatando imágenes subidas por el admin..."
+sudo mkdir -p /tmp/frontend-deploy/assets/products
+sudo cp -rn /var/www/dtorreshaus/frontend/assets/products/* /tmp/frontend-deploy/assets/products/ 2>/dev/null || true
+
 # Limpiar archivos viejos
 sudo rm -rf /var/www/dtorreshaus/frontend/*
 
-# Copiar nuevos archivos
+# Copiar nuevos archivos incluyendo el rescate
 sudo cp -r /tmp/frontend-deploy/* /var/www/dtorreshaus/frontend/
 
 # Configurar permisos
