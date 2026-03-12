@@ -7,7 +7,7 @@ echo "Deploying to EC2..."
 cp ./dtorresfhaus-key-backup.pem ~/.ssh/key.pem 2>/dev/null || true
 chmod 400 ~/.ssh/key.pem
 
-# 2. Conectar a EC2 y desplegar
+# 2. Conectar a EC2 y desplega
 ssh -i ~/.ssh/key.pem -o StrictHostKeyChecking=no ubuntu@18.191.192.164 << 'EOF'
 set -e
 echo "✅ Conectado a EC2."

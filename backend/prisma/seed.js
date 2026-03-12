@@ -1,7 +1,6 @@
-import { PrismaClient } from '@prisma/client'
-import fs from 'fs'
-import path from 'path'
-import { fileURLToPath } from 'url'
+const { PrismaClient } = require('@prisma/client')
+const fs = require('fs')
+const path = require('path')
 
 // We need to read productsData.js which is an ES module
 // The easiest way is to copy it to a temporary JSON or just evaluate it

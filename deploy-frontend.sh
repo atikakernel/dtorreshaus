@@ -6,13 +6,13 @@
 # Despliega el frontend de React a EC2
 # ====================================
 
-set -e  # Salir si hay error
+set -e  # Salir si hay erro
 
 # Colores para output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+NC='\033[0m' # No Colo
 
 echo -e "${GREEN}=====================================${NC}"
 echo -e "${GREEN}🚀 Deployment Frontend - dtorreshaus${NC}"
