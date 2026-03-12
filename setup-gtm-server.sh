@@ -36,7 +36,7 @@ sudo docker run -d \
   -e CONTAINER_CONFIG="$CONTAINER_CONFIG" \
   -e RUN_AS_IMAGE_SERVER=true \
   --name gtm-server \
-  gcr.io/cloud-tagging-free/google-tag-manager-server:latest
+  gcr.io/cloud-tagging-10302018/gtm-cloud-image:stable
 
 echo "✅ Contenedor GTM corriendo en puerto 8080."
 
