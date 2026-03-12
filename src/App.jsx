@@ -593,9 +593,6 @@ function App() {
                   ? 'Todos los Productos'
                   : categoryConfig[activeCategory]?.label || activeCategory
               }
-              <span style={{ fontSize: '14px', marginLeft: '10px', color: '#666' }}>
-                ({productsData ? getFilteredProducts().length : 0} encontrados)
-              </span>
             </h2>
             {usingFallback && (
               <span style={{ fontSize: '12px', background: '#fee2e2', color: '#991b1b', padding: '4px 8px', borderRadius: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>

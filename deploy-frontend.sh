@@ -21,7 +21,7 @@ echo -e "${GREEN}=====================================${NC}"
 # Variables (configuradas para dtorreshaus)
 EC2_USER="ubuntu"
 EC2_HOST="18.191.192.164"
-EC2_KEY="./dtorresfhaus-key-backup.pem"
+EC2_KEY="$HOME/.ssh/key.pem"
 REMOTE_DIR="/var/www/dtorreshaus/frontend"
 
 # 1. Build del frontend
