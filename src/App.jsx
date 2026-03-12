@@ -6,6 +6,14 @@ import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
 import { quoteShipping } from './services/api'
+import { 
+  trackAddToCart, 
+  trackRemoveFromCart, 
+  trackBeginCheckout, 
+  trackViewItem,
+  trackViewItemList,
+  trackPurchase
+} from './services/gtm'
 
 // Mapeo de iconos para categorías
 const categoryIcons = {
@@ -107,7 +115,7 @@ function App() {
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
 
-  // Cargar información guardada del cliente desde localStorage
+  // Cargar información guardada del cliente y carrito desde localStorage
   useEffect(() => {
     const savedInfo = localStorage.getItem('dtorreshaus_customer_info')
     if (savedInfo) {
@@ -118,7 +126,22 @@ function App() {
         console.error('Error al cargar información guardada:', e)
       }
     }
+
+    const savedCart = localStorage.getItem('dtorreshaus_cart')
+    if (savedCart) {
+      try {
+        const parsedCart = JSON.parse(savedCart)
+        setCart(parsedCart)
+      } catch (e) {
+        console.error('Error al cargar carrito guardado:', e)
+      }
+    }
   }, [])
+
+  // Guardar carrito en localStorage cuando cambia
+  useEffect(() => {
+    localStorage.setItem('dtorreshaus_cart', JSON.stringify(cart))
+  }, [cart])
 
   // Guardar información del cliente en localStorage cuando cambia
   useEffect(() => {
@@ -263,8 +286,19 @@ function App() {
     return products
   }
 
+  // Track product list view when products are loaded or category changes
+  useEffect(() => {
+    if (productsData && !loadingProducts) {
+      const filtered = getFilteredProducts()
+      if (filtered.length > 0) {
+        trackViewItemList(filtered)
+      }
+    }
+  }, [productsData, activeCategory, loadingProducts, searchTerm])
+
   // Agregar producto al carrito
   const addToCart = (product) => {
+    trackAddToCart(product)
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.sku === product.sku)
       if (existingItem) {
@@ -291,6 +325,10 @@ function App() {
 
   // Remover del carrito
   const removeFromCart = (sku) => {
+    const itemToRemove = cart.find(item => item.sku === sku)
+    if (itemToRemove) {
+      trackRemoveFromCart(itemToRemove)
+    }
     setCart(prevCart => prevCart.filter(item => item.sku !== sku))
   }
 
@@ -391,6 +429,10 @@ function App() {
 
   // Abrir modal de imagen
   const openImageModal = (sku, nombre) => {
+    const product = getFilteredProducts().find(p => p.sku === sku)
+    if (product) {
+      trackViewItem(product)
+    }
     setImageModal({ isOpen: true, sku, nombre })
   }
 
@@ -719,6 +761,7 @@ function App() {
                       setIsCartOpen(false)
                       setIsCheckoutOpen(true)
                       setCheckoutStep('info')
+                      trackBeginCheckout(cart, cartTotal)
                     }}
                     style={{
                       width: '100%',
@@ -1066,6 +1109,8 @@ function App() {
       {paymentConfirmation.show && (
         <PaymentConfirmation
           transactionId={paymentConfirmation.transactionId}
+          cart={cart}
+          shippingCost={shippingCost}
           onClose={() => {
             setPaymentConfirmation({ show: false, transactionId: null })
             setCart([]) // Limpiar el carrito después de un pago exitoso

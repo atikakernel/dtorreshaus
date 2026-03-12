@@ -1,10 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { CheckCircle, XCircle, Clock, Loader } from 'lucide-react'
+import { trackPurchase } from '../services/gtm'
 
-export function PaymentConfirmation({ transactionId, onClose }) {
+export function PaymentConfirmation({ transactionId, onClose, cart, shippingCost }) {
   const [status, setStatus] = useState('loading') // loading, success, failed, pending
   const [transactionData, setTransactionData] = useState(null)
   const [error, setError] = useState(null)
+  const trackedRef = useRef(false)
 
   useEffect(() => {
     const checkPaymentStatus = async () => {
@@ -19,6 +21,12 @@ export function PaymentConfirmation({ transactionId, onClose }) {
           switch (data.status.status) {
             case 'APPROVED':
               setStatus('success')
+              // Track purchase if not already tracked
+              if (!trackedRef.current && cart && cart.length > 0) {
+                const total = cart.reduce((sum, item) => sum + (item.precio * item.quantity), 0)
+                trackPurchase(transactionId, cart, total, shippingCost)
+                trackedRef.current = true
+              }
               // Confirmar el pago en el backend para enviar el correo
               confirmPayment(transactionId)
               break
