@@ -2,7 +2,7 @@
 set -e
 
 # ID de configuración de GTM Server Side
-CONTAINER_CONFIG='aWQ9R1RNLU0yWDdRUkdUJmVudj0xJmF1dGg9UU5QeUlFTk5yWXJLSnZERHVqaDByUQ=='
+CONTAINER_CONFIG='aWQ9R1RNLU0yWDdRUkdUJmVudj03JmF1dGg9cEpLRXFKS3pIaDBocm5EQlJGWjU4UQ=='
 DOMAIN='sst.dtorreshaus.com'
 
 echo "🚀 Iniciando configuración de GTM Server Side en EC2..."
