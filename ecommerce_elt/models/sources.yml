@@ -1,0 +1,7 @@
+version: 2
+
+sources:
+  - name: raw_ecommerce
+    schema: python_simulator
+    tables:
+      - name: page_view
