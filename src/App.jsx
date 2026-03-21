@@ -5,6 +5,7 @@ import { useProducts } from './hooks/useProducts'
 import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
+import { Recommendations } from './components/Recommendations'
 import { quoteShipping } from './services/api'
 import { 
   trackAddToCart, 
@@ -623,6 +624,9 @@ function App() {
           <p>Tu tienda de artículos para el hogar en Colombia</p>
         </div>
       </div>
+
+      {/* AI Recommendations */}
+      <Recommendations addToCart={addToCart} cart={cart} />
 
       {/* Products Section */}
       <main className="container">

@@ -128,6 +128,23 @@ export async function createMercadoPagoPayment(paymentData) {
 
 /**
  * ====================================
+ * RECOMENDACIONES (IA)
+ * ====================================
+ */
+
+export async function getGeneralRecommendations() {
+  return fetchAPI('/api/recommendations/general')
+}
+
+export async function getPersonalizedRecommendations(data) {
+  return fetchAPI('/api/recommendations/personalized', {
+    method: 'POST',
+    body: JSON.stringify(data)
+  })
+}
+
+/**
+ * ====================================
  * HEALTH CHECK
  * ====================================
  */

@@ -19,6 +19,7 @@ const webhooksRouter = require('./routes/webhooks')
 const productsRouter = require('./routes/products')
 const shippingRouter = require('./routes/shipping')
 const adminRouter = require('./routes/admin')
+const recommendationsRouter = require('./routes/recommendations')
 
 // Inicializar Express
 const app = express()
@@ -139,6 +140,7 @@ app.use('/api/webhooks', webhooksRouter)
 app.use('/api/products', productsRouter)
 app.use('/api/shipping', shippingRouter)
 app.use('/api/admin', adminRouter)
+app.use('/api/recommendations', recommendationsRouter)
 
 // ====================================
 // MANEJO DE ERRORES
