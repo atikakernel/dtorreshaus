@@ -6,14 +6,16 @@ import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
 import { Recommendations } from './components/Recommendations'
-import { quoteShipping } from './services/api'
+import { DynamicBanner } from './components/DynamicBanner'
+import { quoteShipping, analyzeInteractions } from './services/api'
 import { 
   trackAddToCart, 
   trackRemoveFromCart, 
   trackBeginCheckout, 
   trackViewItem,
   trackViewItemList,
-  trackPurchase
+  trackPurchase,
+  trackVIPProfile
 } from './services/gtm'
 
 // Mapeo de iconos para categorías
@@ -110,6 +112,38 @@ function App() {
   const [loadingShipping, setLoadingShipping] = useState(false)
   const [loadingLocation, setLoadingLocation] = useState(false)
 
+  // VIP Lead Scoring State
+  const [interactions, setInteractions] = useState([])
+  const [userLabel, setUserLabel] = useState('Usuario Nuevo')
+  const lastActionTime = useRef(Date.now())
+
+  const trackInteraction = (action, item, category = 'unknown') => {
+    const now = Date.now()
+    const duration = Math.round((now - lastActionTime.current) / 1000)
+    lastActionTime.current = now
+
+    setInteractions(prev => {
+      const newArr = [...prev, { action, item, category, duration }]
+      console.log(`🖱️ [Click Registrado] Acción: ${action} | Item: ${item} | Faltan ${5 - (newArr.length % 5)} clics para la IA`);
+      return newArr
+    })
+  }
+
+  // Disparar IA de Lead Scoring cuando lleguemos a múltiplos de 5
+  useEffect(() => {
+    if (interactions.length > 0 && interactions.length % 5 === 0) {
+      console.log('🔮 Disparando IA de Lead Scoring... total clicks:', interactions.length)
+      analyzeInteractions(interactions.slice(-10))
+        .then(res => {
+          if (res.success && res.scoring?.label) {
+            console.log('✅ Etiqueta asignada por IA:', res.scoring.label)
+            setUserLabel(res.scoring.label)
+            trackVIPProfile(res.scoring.label)
+          }
+        })
+        .catch(err => console.error('❌ Error analyzing interactions:', err))
+    }
+  }, [interactions.length]);
   // Cargar productos usando el hook
   const { products: productsData, loading: loadingProducts, error: errorProducts, usingFallback } = useProducts()
 
@@ -300,6 +334,7 @@ function App() {
   // Agregar producto al carrito
   const addToCart = (product) => {
     trackAddToCart(product)
+    trackInteraction('add_to_cart', product.sku, product.categoria)
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.sku === product.sku)
       if (existingItem) {
@@ -315,6 +350,7 @@ function App() {
 
   // Actualizar cantidad
   const updateQuantity = (sku, change) => {
+    trackInteraction(change > 0 ? 'increase_qty' : 'decrease_qty', sku)
     setCart(prevCart =>
       prevCart.map(item =>
         item.sku === sku
@@ -329,6 +365,7 @@ function App() {
     const itemToRemove = cart.find(item => item.sku === sku)
     if (itemToRemove) {
       trackRemoveFromCart(itemToRemove)
+      trackInteraction('remove_from_cart', sku, itemToRemove.categoria)
     }
     setCart(prevCart => prevCart.filter(item => item.sku !== sku))
   }
@@ -433,6 +470,9 @@ function App() {
     const product = getFilteredProducts().find(p => p.sku === sku)
     if (product) {
       trackViewItem(product)
+      trackInteraction('view_item', sku, product.categoria)
+    } else {
+      trackInteraction('view_item', sku, 'unknown')
     }
     setImageModal({ isOpen: true, sku, nombre })
   }
@@ -444,6 +484,7 @@ function App() {
 
   // Cambiar categoría y hacer scroll a productos
   const handleCategoryClick = (category) => {
+    trackInteraction('view_category', 'all_items', category)
     setActiveCategory(category)
     // Scroll suave a la sección de productos
     setTimeout(() => {
@@ -624,6 +665,9 @@ function App() {
           <p>Tu tienda de artículos para el hogar en Colombia</p>
         </div>
       </div>
+
+      {/* Banner VIP Lead Scoring */}
+      <DynamicBanner label={userLabel} />
 
       {/* AI Recommendations */}
       <Recommendations addToCart={addToCart} cart={cart} />

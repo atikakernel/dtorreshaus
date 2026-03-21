@@ -49,6 +49,17 @@ Each block in the CDP uses an independent tool. Want to swap RudderStack for Seg
 
 ---
 
+## 🤖 AI Intelligence Layer — Smart User Profiling
+
+| Feature | Tool | What it does |
+|---------|------|--------------|
+| **Lead Scoring** | Ollama (Local LLM) | Analyzes session clicks & time via queue to classify user intent (*e.g., "Comprador Impulsivo"*) |
+| **Dynamic UI** | React Components | Renders targeted banners based on the Semantic AI Label in real-time |
+| **CDP Enrichment**| GTM + RudderStack | Pushes the AI label into the Data Warehouse so the Reverse ETL brings it to the CRM |
+| **Product AI** | Ollama + Embeddings | Generates semantic product recommendations bypassing static DB queries |
+
+---
+
 ## 🔬 dbt Models — The transformation brain
 
 ```

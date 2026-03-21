@@ -20,6 +20,7 @@ const productsRouter = require('./routes/products')
 const shippingRouter = require('./routes/shipping')
 const adminRouter = require('./routes/admin')
 const recommendationsRouter = require('./routes/recommendations')
+const leadScoringRoutes = require('./routes/leadScoring')
 
 // Inicializar Express
 const app = express()
@@ -141,6 +142,7 @@ app.use('/api/products', productsRouter)
 app.use('/api/shipping', shippingRouter)
 app.use('/api/admin', adminRouter)
 app.use('/api/recommendations', recommendationsRouter)
+app.use('/api/lead-scoring', leadScoringRoutes)
 
 // ====================================
 // MANEJO DE ERRORES

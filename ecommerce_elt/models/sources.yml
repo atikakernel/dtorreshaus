@@ -5,3 +5,8 @@ sources:
     schema: python_simulator
     tables:
       - name: page_view
+
+  - name: hubspot_raw
+    schema: hubspot_raw
+    tables:
+      - name: contacts

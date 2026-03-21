@@ -100,3 +100,11 @@ export const trackPurchase = (transactionId, cart, total, shipping) => {
     }
   });
 };
+
+export const trackVIPProfile = (label) => {
+  pushToDataLayer('vip_scoring_assigned', {
+    user_properties: {
+      customer_profile_ai: label
+    }
+  });
+};

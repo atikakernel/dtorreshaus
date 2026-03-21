@@ -6,6 +6,7 @@
  */
 
 const axios = require('axios');
+const { aiQueue } = require('./queue.service');
 
 const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'deepseek-r1:14b';
@@ -18,12 +19,14 @@ const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'deepseek-r1:14b';
  */
 async function generateResponse(prompt, systemPrompt = 'Eres un experto en recomendaciones de productos para un ecommerce.') {
   try {
-    const response = await axios.post(`${OLLAMA_URL}/api/generate`, {
-      model: OLLAMA_MODEL,
-      prompt: prompt,
-      system: systemPrompt,
-      stream: false,
-    });
+    const response = await aiQueue.enqueue(() => 
+      axios.post(`${OLLAMA_URL}/api/generate`, {
+        model: OLLAMA_MODEL,
+        prompt: prompt,
+        system: systemPrompt,
+        stream: false,
+      })
+    );
 
     return response.data.response;
   } catch (error) {
@@ -42,11 +45,13 @@ async function generateResponse(prompt, systemPrompt = 'Eres un experto en recom
  */
 async function chat(messages) {
   try {
-    const response = await axios.post(`${OLLAMA_URL}/api/chat`, {
-      model: OLLAMA_MODEL,
-      messages: messages,
-      stream: false,
-    });
+    const response = await aiQueue.enqueue(() => 
+      axios.post(`${OLLAMA_URL}/api/chat`, {
+        model: OLLAMA_MODEL,
+        messages: messages,
+        stream: false,
+      })
+    );
 
     return response.data.message;
   } catch (error) {

@@ -189,3 +189,16 @@ export async function createShipment(destination, packages, orderId) {
 export async function trackShipment(trackingNumber) {
   return fetchAPI(`/api/shipping/track/${trackingNumber}`)
 }
+
+/**
+ * ====================================
+ * VIP LEAD SCORING (IA)
+ * ====================================
+ */
+
+export async function analyzeInteractions(interactions) {
+  return fetchAPI('/api/lead-scoring', {
+    method: 'POST',
+    body: JSON.stringify({ interactions })
+  })
+}
