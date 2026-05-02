@@ -54,7 +54,7 @@ VITE_API_URL=https://api.dtorreshaus.com
 1. Crear una base de datos en Neon y copiar la connection string con `sslmode=require`.
 2. Crear el backend en Render desde este repo usando `render.yaml`.
 3. En Render, configurar las variables del backend.
-4. Ejecutar `npm run db:deploy` en el backend una vez para crear tablas en Neon.
+4. Ejecutar `npm run db:deploy` una vez contra Neon para crear tablas. En plan Starter se puede mover a `preDeployCommand`.
 5. Crear el frontend en Render y configurar `VITE_API_URL`.
 6. Apuntar `api.dtorreshaus.com` al backend de Render.
 7. Apuntar `dtorreshaus.com` y `www.dtorreshaus.com` al frontend.
