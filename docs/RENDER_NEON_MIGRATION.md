@@ -5,7 +5,7 @@ Esta guia mueve la tienda estable fuera de EC2 sin incluir los experimentos de I
 ## Arquitectura objetivo
 
 - Frontend: Static Site en Render, o Cloudflare Pages si prefieres.
-- Backend: Web Service en Render, plan Starter.
+- Backend: Web Service en Render, plan Free para probar sin tarjeta. Para produccion estable, subir a Starter cuando quieras evitar cold starts.
 - Base de datos: Neon Postgres.
 - Dominio: mantener `dtorreshaus.com` para frontend y usar `api.dtorreshaus.com` para backend.
 

@@ -3,7 +3,7 @@ services:
     name: dtorreshaus-backend
     runtime: node
     rootDir: backend
-    plan: starter
+    plan: free
     buildCommand: npm ci && npm run db:generate
     startCommand: npm start
     healthCheckPath: /health
@@ -54,8 +54,9 @@ services:
       - key: JWT_EXPIRES_IN
         value: 7d
 
-  - type: static
+  - type: web
     name: dtorreshaus-frontend
+    runtime: static
     rootDir: .
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
