@@ -16,7 +16,9 @@ async function createOrder(orderData) {
       shippingAddress,
       paymentMethod,
       paymentGateway = 'manual',
-      transactionId = null
+      transactionId = null,
+      sourceData = null,
+      analyticsSessionId = null
     } = orderData
 
     // Generar referencia única: DTH-timestamp-random
@@ -46,7 +48,9 @@ async function createOrder(orderData) {
         paymentMethod,
         paymentGateway,
         transactionId,
-        paidAt: null
+        paidAt: null,
+        sourceData,
+        analyticsSessionId
       }
     })
 

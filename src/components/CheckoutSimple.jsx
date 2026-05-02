@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { createWompiCheckout } from '../services/api'
+import { trackEvent } from '../services/analytics'
 
 export default function CheckoutSimple({ cart, total, shippingCost, customerInfo, onClose, onSuccess }) {
   const [loading, setLoading] = useState(false)
@@ -8,6 +9,15 @@ export default function CheckoutSimple({ cart, total, shippingCost, customerInfo
   const finalTotal = total + shippingCost
 
   const handlePayment = async () => {
+    trackEvent('payment_started', {
+      paymentMethod: 'wompi_checkout',
+      cartValue: total,
+      shippingCost,
+      total: finalTotal,
+      cartItemCount: cart.reduce((sum, item) => sum + item.quantity, 0),
+      city: customerInfo.city
+    })
+
     setLoading(true)
     setError(null)
 
@@ -29,13 +39,26 @@ export default function CheckoutSimple({ cart, total, shippingCost, customerInfo
       const result = await createWompiCheckout(orderData)
 
       if (result.success && result.payment?.checkoutUrl) {
+        trackEvent('payment_redirected', {
+          paymentGateway: 'wompi',
+          orderReference: result.order?.reference,
+          total: finalTotal
+        })
         // Redirigir al checkout de Wompi
         window.location.href = result.payment.checkoutUrl
       } else {
+        trackEvent('payment_failed', {
+          paymentGateway: 'wompi',
+          reason: 'missing_checkout_url'
+        })
         setError('Error al generar el link de pago')
       }
     } catch (err) {
       console.error('Error en el pago:', err)
+      trackEvent('payment_failed', {
+        paymentGateway: 'wompi',
+        reason: err.message || 'unknown_error'
+      })
       setError(err.message || 'Error al procesar el pago')
     } finally {
       setLoading(false)

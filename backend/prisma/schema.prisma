@@ -65,10 +65,66 @@ model Order {
   customerNotes String?
   adminNotes    String?
 
+  // Analitica first-party
+  sourceData         Json?
+  analyticsSessionId String?
+
   @@index([customerEmail])
   @@index([status])
   @@index([createdAt])
+  @@index([analyticsSessionId])
   @@map("orders")
+}
+
+// ====================================
+// ANALITICA FIRST-PARTY
+// ====================================
+model AnalyticsSession {
+  id          String   @id @default(uuid())
+  sessionId   String   @unique
+  anonymousId String
+
+  userId         String?
+  customerEmail  String?
+  orderReference String?
+
+  sourceData Json?
+  context    Json?
+
+  firstSeenAt DateTime @default(now())
+  lastSeenAt  DateTime @updatedAt
+
+  events AnalyticsEvent[]
+
+  @@index([anonymousId])
+  @@index([customerEmail])
+  @@index([firstSeenAt])
+  @@map("analytics_sessions")
+}
+
+model AnalyticsEvent {
+  id        String @id @default(uuid())
+  eventName String
+
+  anonymousId    String?
+  sessionId      String?
+  userId         String?
+  orderReference String?
+
+  sourceData Json?
+  context    Json?
+  properties Json?
+
+  createdAt DateTime @default(now())
+
+  session AnalyticsSession? @relation(fields: [sessionId], references: [sessionId])
+
+  @@index([eventName])
+  @@index([anonymousId])
+  @@index([sessionId])
+  @@index([orderReference])
+  @@index([createdAt])
+  @@map("analytics_events")
 }
 
 // ====================================

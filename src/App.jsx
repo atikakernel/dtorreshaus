@@ -5,6 +5,7 @@ import CheckoutSimple from './components/CheckoutSimple'
 import { OrderTracking } from './components/OrderTracking'
 import { PaymentConfirmation } from './components/PaymentConfirmation'
 import { quoteShipping } from './services/api'
+import { captureSourceData, trackEvent } from './services/analytics'
 
 // Mapeo de iconos para categorías
 const categoryIcons = {
@@ -102,6 +103,14 @@ function App() {
 
   // Ref para scroll a productos
   const productsSectionRef = useRef(null)
+
+  useEffect(() => {
+    captureSourceData()
+    trackEvent('page_view', {
+      path: window.location.pathname,
+      search: window.location.search
+    })
+  }, [])
 
   // Cargar información guardada del cliente desde localStorage
   useEffect(() => {
@@ -237,6 +246,14 @@ function App() {
 
   // Agregar producto al carrito
   const addToCart = (product) => {
+    trackEvent('add_to_cart', {
+      sku: product.sku,
+      name: product.nombre,
+      category: product.categoria,
+      price: product.precio,
+      quantity: 1
+    })
+
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.sku === product.sku)
       if (existingItem) {
@@ -252,6 +269,18 @@ function App() {
 
   // Actualizar cantidad
   const updateQuantity = (sku, change) => {
+    const item = cart.find(product => product.sku === sku)
+    if (item) {
+      trackEvent(change > 0 ? 'cart_quantity_increased' : 'cart_quantity_decreased', {
+        sku: item.sku,
+        name: item.nombre,
+        category: item.categoria,
+        price: item.precio,
+        previousQuantity: item.quantity,
+        nextQuantity: Math.max(0, item.quantity + change)
+      })
+    }
+
     setCart(prevCart =>
       prevCart.map(item =>
         item.sku === sku
@@ -263,6 +292,17 @@ function App() {
 
   // Remover del carrito
   const removeFromCart = (sku) => {
+    const item = cart.find(product => product.sku === sku)
+    if (item) {
+      trackEvent('remove_from_cart', {
+        sku: item.sku,
+        name: item.nombre,
+        category: item.categoria,
+        price: item.precio,
+        quantity: item.quantity
+      })
+    }
+
     setCart(prevCart => prevCart.filter(item => item.sku !== sku))
   }
 
@@ -634,6 +674,18 @@ function App() {
                 <div style={{ padding: '20px', paddingTop: '0' }}>
                   <button
                     onClick={() => {
+                      trackEvent('checkout_started', {
+                        cartValue: cartTotal,
+                        cartItemCount,
+                        shippingCost,
+                        items: cart.map(item => ({
+                          sku: item.sku,
+                          name: item.nombre,
+                          category: item.categoria,
+                          price: item.precio,
+                          quantity: item.quantity
+                        }))
+                      })
                       setIsCartOpen(false)
                       setIsCheckoutOpen(true)
                       setCheckoutStep('info')
@@ -857,6 +909,13 @@ function App() {
                       alert('Por favor completa todos los campos requeridos')
                       return
                     }
+                    trackEvent('checkout_info_submitted', {
+                      cartValue: cartTotal,
+                      cartItemCount,
+                      shippingCost,
+                      city: customerInfo.city,
+                      region: customerInfo.region
+                    })
                     setCheckoutStep('payment')
                   }}
                   style={{

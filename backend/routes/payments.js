@@ -18,7 +18,7 @@ const mercadopagoService = require('../services/mercadopago.service')
  */
 router.post('/wompi/checkout', async (req, res) => {
   try {
-    const { customerInfo, cart, total, shippingCost, shippingAddress } = req.body
+    const { customerInfo, cart, total, shippingCost, shippingAddress, sourceData, analyticsSessionId } = req.body
 
     // Validaciones
     if (!customerInfo || !cart || !total) {
@@ -38,7 +38,9 @@ router.post('/wompi/checkout', async (req, res) => {
       shippingAddress,
       paymentMethod: 'wompi_checkout',
       paymentGateway: 'wompi',
-      transactionId: null
+      transactionId: null,
+      sourceData,
+      analyticsSessionId
     })
 
     if (!orderResult.success) {

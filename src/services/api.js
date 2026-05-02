@@ -5,6 +5,8 @@
  * Cliente para comunicarse con el backend
  */
 
+import { enrichOrderData } from './analytics'
+
 // URL base del API - se toma de las variables de entorno
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001'
 
@@ -60,7 +62,7 @@ export async function getProductsByCategory(category) {
 export async function createOrder(orderData) {
   return fetchAPI('/api/orders/create', {
     method: 'POST',
-    body: JSON.stringify(orderData)
+    body: JSON.stringify(enrichOrderData(orderData))
   })
 }
 
@@ -81,21 +83,21 @@ export async function getOrderStatus(reference) {
 export async function createWompiNequiPayment(paymentData) {
   return fetchAPI('/api/payments/wompi/nequi', {
     method: 'POST',
-    body: JSON.stringify(paymentData)
+    body: JSON.stringify(enrichOrderData(paymentData))
   })
 }
 
 export async function createWompiCardPayment(paymentData) {
   return fetchAPI('/api/payments/wompi/card', {
     method: 'POST',
-    body: JSON.stringify(paymentData)
+    body: JSON.stringify(enrichOrderData(paymentData))
   })
 }
 
 export async function createWompiPSEPayment(paymentData) {
   return fetchAPI('/api/payments/wompi/pse', {
     method: 'POST',
-    body: JSON.stringify(paymentData)
+    body: JSON.stringify(enrichOrderData(paymentData))
   })
 }
 
@@ -106,7 +108,7 @@ export async function getPSEBanks() {
 export async function createWompiCheckout(orderData) {
   return fetchAPI('/api/payments/wompi/checkout', {
     method: 'POST',
-    body: JSON.stringify(orderData)
+    body: JSON.stringify(enrichOrderData(orderData))
   })
 }
 
@@ -119,7 +121,7 @@ export async function createWompiCheckout(orderData) {
 export async function createMercadoPagoPayment(paymentData) {
   return fetchAPI('/api/payments/mercadopago', {
     method: 'POST',
-    body: JSON.stringify(paymentData)
+    body: JSON.stringify(enrichOrderData(paymentData))
   })
 }
 
