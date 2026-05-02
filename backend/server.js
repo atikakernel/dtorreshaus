@@ -35,7 +35,7 @@ app.set('trust proxy', 1)
 app.use(helmet())
 
 // CORS - Permitir requests del frontend
-const allowedOrigins = [
+const defaultAllowedOrigins = [
   'http://localhost:5173',
   'http://localhost:3000',
   'https://dtorreshaus.com',
@@ -44,12 +44,25 @@ const allowedOrigins = [
   'http://www.dtorreshaus.com'
 ]
 
+const envAllowedOrigins = [
+  process.env.FRONTEND_URL,
+  ...(process.env.CORS_ORIGINS || '').split(',')
+]
+  .filter(Boolean)
+  .map(origin => origin.trim().replace(/\/$/, ''))
+
+const allowedOrigins = Array.from(new Set([
+  ...defaultAllowedOrigins,
+  ...envAllowedOrigins
+]))
+
 app.use(cors({
   origin: function (origin, callback) {
     // Permitir requests sin origin (como mobile apps o curl)
     if (!origin) return callback(null, true)
 
-    if (allowedOrigins.indexOf(origin) === -1) {
+    const normalizedOrigin = origin.replace(/\/$/, '')
+    if (allowedOrigins.indexOf(normalizedOrigin) === -1) {
       const msg = 'La política de CORS no permite el acceso desde este origen.'
       return callback(new Error(msg), false)
     }
