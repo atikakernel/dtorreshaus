@@ -13,6 +13,8 @@ const multer = require('multer')
 const path = require('path')
 const fs = require('fs')
 
+const { filterProducts } = require('../services/productSearch.service')
+
 const prisma = new PrismaClient()
 
 // Configurar almacenamiento de multer
@@ -85,6 +87,44 @@ router.get('/', async (req, res) => {
  * GET /api/products/:sku
  * Obtener producto por SKU
  */
+/**
+ * GET /api/products/search
+ * Buscar productos activos por texto libre y filtros.
+ * Query params: q, categoria, minPrecio, maxPrecio, inStock (true/false).
+ * Registrada antes de GET /:sku para que "search" no se tome como SKU.
+ */
+router.get('/search', async (req, res) => {
+  try {
+    const { q, categoria, minPrecio, maxPrecio, inStock } = req.query
+    const products = await prisma.product.findMany({
+      where: { active: true },
+      orderBy: { categoria: 'asc' }
+    })
+
+    const results = filterProducts(products, {
+      q,
+      categoria,
+      minPrecio,
+      maxPrecio,
+      inStock: inStock === 'true' || inStock === '1'
+    })
+
+    res.json({
+      success: true,
+      data: results,
+      count: results.length,
+      filters: { q: q || null, categoria: categoria || null, minPrecio: minPrecio || null, maxPrecio: maxPrecio || null, inStock: inStock || null }
+    })
+  } catch (error) {
+    console.error('Error buscando productos:', error)
+    res.status(500).json({
+      success: false,
+      error: 'Error buscando productos',
+      message: error.message
+    })
+  }
+})
+
 router.get('/:sku', async (req, res) => {
   try {
     const { sku } = req.params

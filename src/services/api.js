@@ -50,6 +50,21 @@ export async function getProducts() {
   })
 }
 
+/**
+ * Buscar productos por texto libre y filtros.
+ * @param {{ q?: string, categoria?: string, minPrecio?: number, maxPrecio?: number, inStock?: boolean }} filters
+ */
+export async function searchProducts({ q, categoria, minPrecio, maxPrecio, inStock } = {}) {
+  const params = new URLSearchParams()
+  if (q) params.set('q', q)
+  if (categoria) params.set('categoria', categoria)
+  if (minPrecio !== undefined && minPrecio !== null) params.set('minPrecio', String(minPrecio))
+  if (maxPrecio !== undefined && maxPrecio !== null) params.set('maxPrecio', String(maxPrecio))
+  if (inStock) params.set('inStock', 'true')
+  const query = params.toString()
+  return fetchAPI(`/api/products/search${query ? `?${query}` : ''}`)
+}
+
 export async function getProductsByCategory(category) {
   return fetchAPI(`/api/products/category/${category}`)
 }

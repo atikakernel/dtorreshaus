@@ -136,6 +136,16 @@ The real store that generates all the pipeline events.
 | **Hosting** | AWS EC2 (Ubuntu) + Nginx + PM2 |
 | **SSL** | Certbot (Let's Encrypt) |
 
+### Product search
+
+`GET /api/products/search` searches active products by free text
+(accent-insensitive, across name, description, material, category, and SKU)
+with optional `categoria`, `minPrecio`, `maxPrecio`, and `inStock` filters.
+The frontend client exposes it as `searchProducts()` in
+`src/services/api.js`, the filtering logic lives in
+`backend/services/productSearch.service.js`, and its tests run with
+`npm test` inside `backend/`.
+
 ---
 
 ## 🚀 Quick Start
